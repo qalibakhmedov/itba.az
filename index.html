@@ -1,1352 +1,1265 @@
 <!DOCTYPE html>
-<html lang="az">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>itba.az – IT Business Analysis Akademiyası</title>
-  <meta name="description" content="itba.az – IT Business Analysis üzrə peşəkar təlimlər, korporativ proqramlar və karyera yönümlü inkişaf." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #050816;
-      --bg-alt: #0b1020;
-      --bg-soft: #101629;
-      --accent: #ff4b2b;
-      --accent-soft: rgba(255, 75, 43, 0.12);
-      --text: #f5f5f7;
-      --muted: #a0a3b1;
-      --border: #23283b;
-      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.45);
-      --radius-lg: 18px;
-      --radius-xl: 26px;
-      --radius-pill: 999px;
-      --transition-fast: 0.18s ease-out;
-      --container-width: 1120px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: radial-gradient(circle at top, #101629 0, #050816 48%, #02030a 100%);
-      color: var(--text);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    img {
-      max-width: 100%;
-      display: block;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .container {
-      width: 100%;
-      max-width: var(--container-width);
-      margin: 0 auto;
-      padding: 0 16px;
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      backdrop-filter: blur(16px);
-      background: linear-gradient(to bottom, rgba(5, 8, 22, 0.94), rgba(5, 8, 22, 0.7), transparent);
-      border-bottom: 1px solid rgba(35, 40, 59, 0.6);
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 0;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .logo-mark {
-      width: 34px;
-      height: 34px;
-      border-radius: 14px;
-      background: radial-gradient(circle at 20% 0, #ff805a, #ff4b2b 55%, #ff9f43);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 18px;
-      box-shadow: 0 0 25px rgba(255, 75, 43, 0.6);
-    }
-
-    .logo-text-main {
-      font-weight: 700;
-      font-size: 18px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    .logo-text-sub {
-      font-size: 11px;
-      text-transform: uppercase;
-      color: var(--muted);
-      letter-spacing: 0.16em;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      font-size: 14px;
-      color: var(--muted);
-    }
-
-    .nav-links a {
-      position: relative;
-      padding-bottom: 2px;
-    }
-
-    .nav-links a::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: -4px;
-      width: 0;
-      height: 2px;
-      border-radius: 999px;
-      background: linear-gradient(to right, #ff4b2b, #ff9f43);
-      transition: width var(--transition-fast);
-    }
-
-    .nav-links a:hover {
-      color: #ffffff;
-    }
-
-    .nav-links a:hover::after {
-      width: 100%;
-    }
-
-    .nav-cta {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 9px 18px;
-      border-radius: var(--radius-pill);
-      border: 1px solid transparent;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #ff4b2b, #ff9f43);
-      color: #050816;
-      box-shadow: 0 12px 30px rgba(255, 75, 43, 0.55);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 34px rgba(255, 75, 43, 0.7);
-    }
-
-    .btn-outline {
-      border-color: rgba(160, 163, 177, 0.4);
-      color: var(--muted);
-      background: rgba(5, 8, 22, 0.7);
-    }
-
-    .btn-outline:hover {
-      border-color: rgba(255, 255, 255, 0.7);
-      color: #ffffff;
-      background: rgba(16, 22, 41, 0.95);
-    }
-
-    /* HERO */
-
-    .hero {
-      padding: 40px 0 60px;
-    }
-
-    .hero-inner {
-      display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.1fr);
-      gap: 40px;
-      align-items: center;
-    }
-
-    .hero-badge-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .hero-badge {
-      border-radius: var(--radius-pill);
-      padding: 4px 10px;
-      background: rgba(16, 22, 41, 0.95);
-      border: 1px solid rgba(255, 75, 43, 0.4);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .hero-badge-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0, #8cffc7, #2dfcb0);
-      box-shadow: 0 0 14px rgba(45, 252, 176, 0.8);
-    }
-
-    .hero-kpi {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .hero-title {
-      font-size: clamp(30px, 4vw, 40px);
-      font-weight: 700;
-      line-height: 1.18;
-      margin-bottom: 14px;
-    }
-
-    .hero-title span.gradient {
-      background: linear-gradient(120deg, #ff9f43, #ff4b2b, #ffc857);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .hero-subtitle {
-      font-size: 15px;
-      color: var(--muted);
-      max-width: 540px;
-      margin-bottom: 22px;
-    }
-
-    .hero-bullets {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px 16px;
-      margin-bottom: 24px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .hero-bullet {
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-    }
-
-    .hero-bullet-icon {
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      color: #ff9f43;
-      margin-top: 1px;
-    }
-
-    .hero-cta-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-
-    .hero-note {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .hero-note span {
-      color: #ffffff;
-      font-weight: 500;
-    }
-
-    .hero-right {
-      position: relative;
-    }
-
-    .hero-card {
-      background: radial-gradient(circle at top, #141a32, #050816);
-      border-radius: var(--radius-xl);
-      border: 1px solid rgba(35, 40, 59, 0.9);
-      padding: 20px 18px;
-      box-shadow: var(--shadow-soft);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-card-tag {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .hero-card-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 14px;
-    }
-
-    .hero-card-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      font-size: 12px;
-    }
-
-    .hero-card-pill {
-      padding: 8px 10px;
-      border-radius: 12px;
-      background: rgba(10, 15, 32, 0.95);
-      border: 1px solid rgba(51, 61, 92, 0.85);
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .hero-card-pill-label {
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .hero-card-pill-value {
-      font-weight: 500;
-    }
-
-    .hero-card-kpi-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .hero-kpi-chip {
-      padding: 6px 10px;
-      border-radius: 13px;
-      background: rgba(8, 143, 118, 0.12);
-      font-size: 11px;
-      color: #4ee4b6;
-      border: 1px solid rgba(78, 228, 182, 0.4);
-    }
-
-    .hero-card-glow {
-      position: absolute;
-      inset: -40%;
-      background: radial-gradient(circle at 0 0, rgba(255, 75, 43, 0.32), transparent 60%);
-      opacity: 0.8;
-      pointer-events: none;
-      mix-blend-mode: screen;
-    }
-
-    /* Sections */
-
-    section {
-      padding: 40px 0;
-    }
-
-    .section-header {
-      margin-bottom: 22px;
-    }
-
-    .section-eyebrow {
-      font-size: 12px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .section-title {
-      font-size: 22px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .section-subtitle {
-      font-size: 13px;
-      color: var(--muted);
-      max-width: 560px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .card {
-      background: var(--bg-soft);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      padding: 16px 14px;
-      font-size: 13px;
-      color: var(--muted);
-      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-soft);
-      border-color: rgba(255, 255, 255, 0.18);
-      background: linear-gradient(145deg, #101629, #050816);
-    }
-
-    .card-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #ffffff;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 9px;
-      border-radius: 999px;
-      font-size: 11px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(160, 163, 177, 0.32);
-      color: var(--muted);
-    }
-
-    .chip-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #ff9f43, #ff4b2b);
-    }
-
-    /* Benefits */
-
-    .benefits-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      font-size: 13px;
-    }
-
-    .benefit {
-      background: var(--bg-soft);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      padding: 14px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .benefit-label {
-      font-size: 12px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .benefit-value {
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    /* Program */
-
-    .program-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      font-size: 13px;
-    }
-
-    .program-module {
-      background: var(--bg-soft);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      padding: 14px 12px;
-    }
-
-    .program-module-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    .program-module-tag {
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .program-module ul {
-      padding-left: 16px;
-    }
-
-    .program-module li {
-      margin-bottom: 3px;
-      color: var(--muted);
-    }
-
-    /* FAQ */
-
-    .faq-list {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    details {
-      background: var(--bg-soft);
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      padding: 10px 12px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    summary {
-      cursor: pointer;
-      font-weight: 500;
-      color: #ffffff;
-      list-style: none;
-      position: relative;
-      padding-right: 20px;
-    }
-
-    summary::marker {
-      display: none;
-    }
-
-    summary::after {
-      content: "＋";
-      position: absolute;
-      right: 0;
-      top: 0;
-      font-size: 13px;
-      color: var(--muted);
-      transition: transform var(--transition-fast);
-    }
-
-    details[open] summary::after {
-      content: "–";
-      transform: translateY(1px);
-    }
-
-    details[open] {
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    details p {
-      margin-top: 8px;
-    }
-
-    /* Forms */
-
-    .apply-section {
-      padding: 40px 0 50px;
-    }
-
-    .apply-inner {
-      display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-      gap: 24px;
-      align-items: flex-start;
-    }
-
-    .apply-card {
-      background: radial-gradient(circle at top left, #171d35, #050816);
-      border-radius: var(--radius-xl);
-      border: 1px solid rgba(35, 40, 59, 0.9);
-      padding: 20px 18px 22px;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 12px;
-    }
-
-    .form-field label {
-      color: var(--muted);
-    }
-
-    .form-input,
-    .form-select,
-    .form-textarea {
-      background: rgba(6, 10, 26, 0.9);
-      border-radius: 10px;
-      border: 1px solid rgba(48, 56, 90, 0.9);
-      padding: 8px 10px;
-      font-size: 13px;
-      color: #ffffff;
-      outline: none;
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
-    }
-
-    .form-input:focus,
-    .form-select:focus,
-    .form-textarea:focus {
-      border-color: #ff9f43;
-      box-shadow: 0 0 0 1px rgba(255, 159, 67, 0.35);
-      background: rgba(7, 12, 32, 0.95);
-    }
-
-    .form-textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .form-full {
-      grid-column: 1 / -1;
-    }
-
-    .apply-aside {
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .apply-aside-box {
-      background: var(--bg-soft);
-      border-radius: var(--radius-lg);
-      border: 1px dashed rgba(255, 255, 255, 0.18);
-      padding: 12px 12px;
-      margin-bottom: 10px;
-    }
-
-    .apply-aside-title {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: #ffffff;
-    }
-
-    .apply-aside-list {
-      padding-left: 16px;
-      margin-top: 4px;
-    }
-
-    .apply-aside-list li {
-      margin-bottom: 3px;
-    }
-
-    /* Footer */
-
-    footer {
-      border-top: 1px solid rgba(35, 40, 59, 0.85);
-      padding: 18px 0 22px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .footer-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .footer-links a {
-      text-decoration: underline;
-      text-decoration-style: dotted;
-      text-decoration-color: rgba(160, 163, 177, 0.7);
-    }
-
-    /* Responsive */
-
-    @media (max-width: 960px) {
-      .hero-inner,
-      .apply-inner {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .hero-right {
-        order: -1;
-      }
-
-      .nav-links {
-        display: none;
-      }
-
-      .nav-cta {
-        display: none;
-      }
-
-      .section-title {
-        font-size: 20px;
-      }
-
-      .program-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .benefits-grid,
-      .grid-3 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .faq-list {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    @media (max-width: 640px) {
-      .hero-bullets {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .grid-2,
-      .grid-3,
-      .program-grid,
-      .benefits-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .hero {
-        padding-top: 26px;
-      }
-
-      section {
-        padding: 32px 0;
-      }
-
-      .apply-card {
-        padding: 18px 14px 20px;
-      }
-
-      .form-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>itba.az - IT Business Analysis Academy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0e27;
+            color: #e0e7ff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1340 50%, #0d1b2a 100%);
+        }
+
+        .animated-bg canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            padding: 15px 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-mark {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff6b35 0%, #e63946 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-mark::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        .logo-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b35 0%, #e63946 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-text p {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: -2px;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ff6b35;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            border: none;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: #e0e7ff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-ghost:hover {
+            border-color: #ff6b35;
+            color: #ff6b35;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b35 0%, #e63946 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ff6b35;
+            border: 2px solid #ff6b35;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 0 80px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 20px;
+            color: #ff6b35;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 48px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .subheadline {
+            font-size: 18px;
+            color: #cbd5e1;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+
+        .bullet-points {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .bullet-points li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #cbd5e1;
+        }
+
+        .bullet-points li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #ff6b35;
+            font-weight: bold;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .hero-card h3 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-item strong {
+            color: #ffffff;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-item span {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .chips {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            padding: 6px 12px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 15px;
+            font-size: 12px;
+            color: #22c55e;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 42px;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: #94a3b8;
+            margin-bottom: 50px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 107, 53, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Fade in animation for sections */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        section {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .card h3 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .card p {
+            color: #cbd5e1;
+            line-height: 1.7;
+        }
+
+        .card-label {
+            display: inline-block;
+            padding: 5px 12px;
+            background: linear-gradient(135deg, #ff6b35 0%, #e63946 100%);
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .card-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        /* Benefits Grid */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .benefit-tile {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .benefit-tile h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .benefit-tile p {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        /* Program Modules */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .module-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid #ff6b35;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .module-card h4 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .module-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .module-card li {
+            color: #cbd5e1;
+            padding: 5px 0;
+            font-size: 14px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .module-card li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #ff6b35;
+        }
+
+        /* FAQ */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .faq-question:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .faq-question h4 {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .faq-icon {
+            color: #ff6b35;
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-answer-content {
+            padding: 0 25px 20px 25px;
+            color: #cbd5e1;
+            line-height: 1.7;
+        }
+
+        /* Apply Section */
+        .apply-section {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .apply-content {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 50px;
+            align-items: start;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e0e7ff;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #e0e7ff;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff6b35;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .consent-note {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 15px;
+            line-height: 1.5;
+        }
+
+        .apply-info {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            position: sticky;
+            top: 100px;
+        }
+
+        .apply-info h4 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .info-section {
+            margin-bottom: 25px;
+        }
+
+        .info-section h5 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-section li {
+            color: #cbd5e1;
+            padding: 5px 0;
+            font-size: 14px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .info-section li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #ff6b35;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(10, 14, 39, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        footer p {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #cbd5e1;
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #ff6b35;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #e0e7ff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            h2 {
+                font-size: 36px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .header-buttons {
+                display: none;
+            }
+
+            .apply-content {
+                grid-template-columns: 1fr;
+            }
+
+            .apply-info {
+                position: static;
+            }
+        }
+
+        @media (max-width: 640px) {
+            h2 {
+                font-size: 28px;
+            }
+
+            .hero {
+                padding: 120px 0 60px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 50px 0;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <div class="container">
-      <div class="nav">
-        <div class="logo">
-          <div class="logo-mark">BA</div>
-          <div>
-            <div class="logo-text-main">itba.az</div>
-            <div class="logo-text-sub">IT Business Analysis Akademiyası</div>
-          </div>
-        </div>
-        <nav class="nav-links">
-          <a href="#about">Haqqımızda</a>
-          <a href="#who">Kimlər üçün</a>
-          <a href="#services">Xidmətlər</a>
-          <a href="#program">Proqram</a>
-          <a href="#faq">FAQ</a>
-        </nav>
-        <div class="nav-cta">
-          <a href="#apply" class="btn btn-outline">Məlumat al</a>
-          <a href="#apply" class="btn btn-primary">Qeydiyyatdan keç</a>
-        </div>
-      </div>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <canvas id="particleCanvas"></canvas>
     </div>
-  </header>
 
-  <!-- Hero -->
-  <main>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-mark">BA</div>
+                    <div class="logo-text">
+                        <h1>itba.az</h1>
+                        <p>IT Business Analysis Academy</p>
+                    </div>
+                </div>
+                <nav>
+                    <a href="#about">About</a>
+                    <a href="#who">Who is it for</a>
+                    <a href="#services">Services</a>
+                    <a href="#program">Program</a>
+                    <a href="#faq">FAQ</a>
+                    <a href="#apply">Apply</a>
+                </nav>
+                <div class="header-buttons">
+                    <a href="#apply" class="btn btn-ghost">Get Info</a>
+                    <a href="#apply" class="btn btn-primary">Apply Now</a>
+                </div>
+                <button class="mobile-menu-btn">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
     <section class="hero">
-      <div class="container">
-        <div class="hero-inner">
-          <div class="hero-left">
-            <div class="hero-badge-row">
-              <div class="hero-badge">
-                <span class="hero-badge-dot"></span>
-                <span>Yeni qruplara qeydiyyat açıqdır</span>
-              </div>
-              <div class="hero-kpi">
-                IT Business Analysis üzrə fokuslanmış təlim platforması
-              </div>
-            </div>
-
-            <h1 class="hero-title">
-              IT Business Analysis karyerasına
-              <span class="gradient">peşəkar start</span> ver
-            </h1>
-
-            <p class="hero-subtitle">
-              itba.az – IT Business Analysis sahəsində peşəkar karyera qurmaq istəyənlər və
-              komandasında güclü analitiklər formalaşdırmaq istəyən şirkətlər üçün
-              strukturlaşdırılmış təlim və inkişaf mərkəzidir.
-            </p>
-
-            <div class="hero-bullets">
-              <div class="hero-bullet">
-                <div class="hero-bullet-icon">✓</div>
-                <div>Real bank və fintech кейs-ləri əsasında praktiki tapşırıqlar.</div>
-              </div>
-              <div class="hero-bullet">
-                <div class="hero-bullet-icon">✓</div>
-                <div>Biznes proseslər, requirement engineering, Agile, API və Data üzrə baza.</div>
-              </div>
-              <div class="hero-bullet">
-                <div class="hero-bullet-icon">✓</div>
-                <div>Portfolio üçün final layihə: proseslər, sənədlər və user story paketi.</div>
-              </div>
-              <div class="hero-bullet">
-                <div class="hero-bullet-icon">✓</div>
-                <div>Şəxsi inkişaf planı və karyera istiqamətinin müəyyənləşdirilməsi.</div>
-              </div>
-            </div>
-
-            <div class="hero-cta-row">
-              <a href="#apply" class="btn btn-primary">IT BA kursuna yazıl</a>
-              <a href="#corporate" class="btn btn-outline">Korporativ təlim üçün təklif al</a>
-            </div>
-            <p class="hero-note">
-              Hal-hazırda <span>online və hibrid qruplar</span> üçün qeydiyyat qəbul edilir.
-            </p>
-          </div>
-
-          <div class="hero-right">
-            <div class="hero-card">
-              <div class="hero-card-glow"></div>
-              <div class="hero-card-tag">itba.az dashboard</div>
-              <div class="hero-card-title">IT Business Analysis İnkişaf Xətləri</div>
-              <div class="hero-card-grid">
-                <div class="hero-card-pill">
-                  <span class="hero-card-pill-label">Təlim modeli</span>
-                  <span class="hero-card-pill-value">Kompetensiya matrisi əsasında</span>
+        <div class="container">
+            <div class="hero-content">
+                <div>
+                    <span class="badge">Enrollment for new groups is open</span>
+                    <h2>Launch your IT Business Analysis career with a professional start</h2>
+                    <p class="subheadline">itba.az is a focused training platform for those who want to build a career in IT Business Analysis and for companies that want to grow strong internal BA teams.</p>
+                    <ul class="bullet-points">
+                        <li>Practical cases based on real bank and fintech projects</li>
+                        <li>Foundations of business processes, requirements, Agile, APIs and data</li>
+                        <li>Final project and portfolio package (processes + documents + user stories)</li>
+                        <li>Personal development plan aligned with an IT BA competency model</li>
+                    </ul>
+                    <div class="hero-buttons">
+                        <a href="#apply" class="btn btn-primary">Join the IT BA Program</a>
+                        <a href="#apply" class="btn btn-secondary">Request Corporate Training</a>
+                    </div>
                 </div>
-                <div class="hero-card-pill">
-                  <span class="hero-card-pill-label">Struktur</span>
-                  <span class="hero-card-pill-value">6 modul, final layihə</span>
+                <div>
+                    <div class="hero-card">
+                        <h3>IT Business Analysis Competency Path</h3>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <strong>6 modules</strong>
+                                <span>Comprehensive curriculum</span>
+                            </div>
+                            <div class="stat-item">
+                                <strong>Final project</strong>
+                                <span>Portfolio ready</span>
+                            </div>
+                            <div class="stat-item">
+                                <strong>Online / Hybrid</strong>
+                                <span>Flexible format</span>
+                            </div>
+                            <div class="stat-item">
+                                <strong>Bank & fintech</strong>
+                                <span>Real case studies</span>
+                            </div>
+                        </div>
+                        <div class="chips">
+                            <span class="chip">Requirement quality ↑</span>
+                            <span class="chip">Change requests ↓</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="hero-card-pill">
-                  <span class="hero-card-pill-label">Format</span>
-                  <span class="hero-card-pill-value">Online / Hibrid</span>
-                </div>
-                <div class="hero-card-pill">
-                  <span class="hero-card-pill-label">Fokus</span>
-                  <span class="hero-card-pill-value">Bank & fintech кейs-ləri</span>
-                </div>
-              </div>
-              <div class="hero-card-kpi-row">
-                <div class="hero-kpi-chip">Requirement quality ↑</div>
-                <div class="hero-kpi-chip">Change request-lər ↓</div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
     </section>
 
-    <!-- Why itba -->
+    <!-- About Section -->
     <section id="about">
-      <div class="container">
-        <div class="section-header">
-          <div class="section-eyebrow">Haqqımızda</div>
-          <h2 class="section-title">Niyə məhz itba.az?</h2>
-          <p class="section-subtitle">
-            Məqsəd yalnız dərs keçmək deyil. Məqsəd – IT Business Analysis üzrə
-            real layihələrdə işləyə bilən, bizneslə və development komandası ilə
-            eyni dildə danışan analitiklər formalaşdırmaqdır.
-          </p>
+        <div class="container">
+            <h3 class="section-title">Why itba.az?</h3>
+            <p class="section-subtitle">The academy focuses only on IT Business Analysis, with competency-based, practice-oriented training designed to prepare you for real-world projects in banking, fintech, and enterprise environments.</p>
+            <div class="cards-grid">
+                <div class="card">
+                    <h3>Focused on IT Business Analysis only</h3>
+                    <p>All modules (business processes, requirements, Agile, APIs, data) are tailored to the everyday needs of IT BA roles.</p>
+                </div>
+                <div class="card">
+                    <h3>Competency-based approach</h3>
+                    <p>Training is structured around an IT BA competency matrix to systematically measure and develop skills.</p>
+                </div>
+                <div class="card">
+                    <h3>Business value oriented</h3>
+                    <p>Each module is designed to create real business value in projects, not just theoretical knowledge.</p>
+                </div>
+            </div>
         </div>
-
-        <div class="grid-3">
-          <div class="card">
-            <h3 class="card-title">Yalnız IT Business Analysis fokusunda</h3>
-            <p>
-              Proqramın bütün modulları – biznes proseslər, requirement-lər,
-              Agile, API, data və s. – məhz IT BA rolunun gündəlik ehtiyaclarına uyğunlaşdırılıb.
-            </p>
-          </div>
-          <div class="card">
-            <h3 class="card-title">Kompetensiya əsaslı yanaşma</h3>
-            <p>
-              Təlim strukturu IT BA üçün zəruri olan kompetensiyaları sistemli şəkildə ölçmək
-              və inkişaf etdirmək üçün xüsusi matrisi nəzərə alır.
-            </p>
-          </div>
-          <div class="card">
-            <h3 class="card-title">Biznes dəyər yönümlü təlim</h3>
-            <p>
-              Hər modulda məqsəd – yalnız nəzəriyyə deyil, real layihələrdə
-              tətbiq edilə bilən nəticə və biznes dəyər yaratmaqdır.
-            </p>
-          </div>
-        </div>
-      </div>
     </section>
 
-    <!-- Who -->
+    <!-- Who Is It For Section -->
     <section id="who">
-      <div class="container">
-        <div class="section-header">
-          <div class="section-eyebrow">Kimlər üçün</div>
-          <h2 class="section-title">Bu proqram kimə uyğundur?</h2>
-          <p class="section-subtitle">
-            Fərdi iştirakçılar üçün karyera dəyişikliyi, şirkətlər üçün isə daxili
-            IT BA komandası qurmaq və ya mövcud komandanı gücləndirmək üçün nəzərdə tutulub.
-          </p>
+        <div class="container">
+            <h3 class="section-title">Who is this program for?</h3>
+            <p class="section-subtitle">This program is designed for career changers looking to enter IT Business Analysis, as well as corporate teams wanting to strengthen their internal BA capabilities.</p>
+            <div class="cards-grid">
+                <div class="card">
+                    <h3>Career changers</h3>
+                    <p>People from operations, customer service, call centers, business roles who want to move into IT BA.</p>
+                </div>
+                <div class="card">
+                    <h3>Junior / aspiring analysts</h3>
+                    <p>People with some IT or BA experience who want a structured path and stronger foundation.</p>
+                </div>
+                <div class="card">
+                    <h3>Product / Project teams</h3>
+                    <p>Product Owners, PMs who want to improve requirement quality and communication with dev teams.</p>
+                </div>
+                <div class="card">
+                    <h3>Banks and fintech companies</h3>
+                    <p>Organizations that want to build or strengthen internal IT BA capabilities (mobile banking, cards, payments, internal systems, etc.)</p>
+                </div>
+            </div>
         </div>
-
-        <div class="grid-4 grid-3">
-          <div class="card">
-            <h3 class="card-title">Karyera dəyişikliyi edənlər</h3>
-            <p>
-              Call center, əməliyyat, müştəri xidmətləri və digər biznes rollarından
-              IT BA istiqamətinə keçmək istəyənlər üçün sıfırdan strukturlaşdırılmış baza.
-            </p>
-          </div>
-          <div class="card">
-            <h3 class="card-title">Junior / aspiring analitiklər</h3>
-            <p>
-              Artıq IT sahəsində işləyən, lakin requirement engineering, proses modelləşdirmə
-              və Agile mühitində IT BA rolunu dərinləşdirmək istəyənlər üçün.
-            </p>
-          </div>
-          <div class="card">
-            <h3 class="card-title">Product / Project komandaları</h3>
-            <p>
-              Product Owner, Project Manager və digər üzvlər üçün
-              requirement-lərin keyfiyyətini və komanda ünsiyyətini artıran modullar.
-            </p>
-          </div>
-          <div class="card">
-            <h3 class="card-title">Bank və fintech şirkətləri</h3>
-            <p>
-              Daxili sistemlər, mobil bank, kartlar, ödənişlər və digər domenlər üzrə
-              IT BA kompetensiyasını sistemli şəkildə formalaşdırmaq istəyən təşkilatlar üçün.
-            </p>
-          </div>
-        </div>
-      </div>
     </section>
 
-    <!-- Services -->
+    <!-- Services Section -->
     <section id="services">
-      <div class="container">
-        <div class="section-header">
-          <div class="section-eyebrow">Xidmətlər</div>
-          <h2 class="section-title">itba.az nə təklif edir?</h2>
-          <p class="section-subtitle">
-            Fərdi iştirakçılar üçün əsas IT BA proqramı, şirkətlər üçün isə korporativ
-            akademiya, daxili inkişaf xəritələri və mentorluk paketləri.
-          </p>
+        <div class="container">
+            <h3 class="section-title">What does itba.az offer?</h3>
+            <div class="cards-grid">
+                <div class="card">
+                    <span class="card-label">Core Program</span>
+                    <h3>IT Business Analyst Core Training Program</h3>
+                    <p>6-module program: business processes, requirements, Agile, APIs, data, final project. At the end, participant builds a full project documentation package for their portfolio.</p>
+                    <div class="card-info">Format: Online / Hybrid • Duration: approx. 3–4 months</div>
+                </div>
+                <div class="card">
+                    <span class="card-label">Corporate</span>
+                    <h3>Corporate IT BA Academy</h3>
+                    <p>Internal IT BA academy for banks and enterprises; customized training plan using real internal cases, with KPIs and assessment.</p>
+                    <div class="card-info">Program is tailored to the organization's domain and systems.</div>
+                </div>
+                <div class="card">
+                    <span class="card-label">Mentoring</span>
+                    <h3>Career and Competency Mentoring</h3>
+                    <p>CV & LinkedIn review, portfolio guidance, interview preparation, and personal development planning using an IT BA competency map.</p>
+                    <div class="card-info">One-on-one personalized sessions</div>
+                </div>
+            </div>
         </div>
-
-        <div class="grid-3">
-          <div class="card" id="core-program">
-            <div class="chip">
-              <span class="chip-dot"></span>
-              <span>Core Program</span>
-            </div>
-            <h3 class="card-title">IT Business Analyst Təlim Proqramı</h3>
-            <p>
-              6 moduldan ibarət əsas proqram: biznes proseslər, requirement-lər, Agile,
-              API, data və final layihə. Proqram sonunda iştirakçı öz portfolio-su üçün
-              tam bir layihənin sənədlər paketini formalaşdırır.
-            </p>
-            <p style="margin-top:8px; font-size:12px; color:var(--muted);">
-              Format: Online / Hibrid • Müddət: 3–4 ay
-            </p>
-          </div>
-
-          <div class="card" id="corporate">
-            <div class="chip">
-              <span class="chip-dot"></span>
-              <span>Korporativ</span>
-            </div>
-            <h3 class="card-title">Korporativ IT BA Akademiyası</h3>
-            <p>
-              Bank və böyük şirkətlər üçün daxili IT Business Analysis akademiyası:
-              mövcud işçilərdən analitiklər yetişdirmək üçün xüsusi tədris planı,
-              real daxili кейs-lərlə tapşırıqlar və KPI əsaslı nəticə ölçümü.
-            </p>
-            <p style="margin-top:8px; font-size:12px; color:var(--muted);">
-              Proqram şirkətin domeninə və sistemlərinə uyğunlaşdırılır.
-            </p>
-          </div>
-
-          <div class="card">
-            <div class="chip">
-              <span class="chip-dot"></span>
-              <span>Mentorluq</span>
-            </div>
-            <h3 class="card-title">Karyera və kompetensiya mentorluğu</h3>
-            <p>
-              CV, LinkedIn, portfolio hazırlığı, müsahibə ssenariləri və real кейs-lər
-              üzərindən praktiki feedback. Həmçinin IT BA kompetensiya matrisi üzrə
-              şəxsi inkişaf xəritəsinin qurulması.
-            </p>
-          </div>
-        </div>
-      </div>
     </section>
 
-    <!-- Benefits -->
+    <!-- Benefits Section -->
     <section>
-      <div class="container">
-        <div class="section-header">
-          <div class="section-eyebrow">Nəticələr</div>
-          <h2 class="section-title">İştirakçılar nə qazanır?</h2>
-          <p class="section-subtitle">
-            Hər modul və tapşırıq konkret nəticələrə xidmət edir ki, proqram sonunda
-            həm bilik, həm də görünən portfolio dəyəri formalaşsın.
-          </p>
+        <div class="container">
+            <h3 class="section-title">What do participants gain?</h3>
+            <div class="benefits-grid">
+                <div class="benefit-tile">
+                    <h4>Portfolio</h4>
+                    <p>A complete project documentation package (process models, BRDs, user stories, acceptance criteria).</p>
+                </div>
+                <div class="benefit-tile">
+                    <h4>Competency map</h4>
+                    <p>Structured self-assessment and development plan for core IT BA skills.</p>
+                </div>
+                <div class="benefit-tile">
+                    <h4>Real practice</h4>
+                    <p>Assignments based on real business cases from banking and other domains.</p>
+                </div>
+                <div class="benefit-tile">
+                    <h4>Business mindset</h4>
+                    <p>Ability to connect requirements with business goals and value.</p>
+                </div>
+                <div class="benefit-tile">
+                    <h4>Agile collaboration</h4>
+                    <p>Better collaboration with product owners, developers, and testers in Agile environments.</p>
+                </div>
+                <div class="benefit-tile">
+                    <h4>Interview readiness</h4>
+                    <p>Exposure to typical IT BA interview questions and scenarios.</p>
+                </div>
+            </div>
         </div>
-
-        <div class="benefits-grid">
-          <div class="benefit">
-            <div class="benefit-label">Portfolio</div>
-            <div class="benefit-value">Tam bir layihə üzrə proses modelləri və BR sənədləri</div>
-            <p>
-              İstifadəçi hekayələri, acceptance kriteriyalar və BPMN diaqramları ilə birlikdə
-              iş müsahibələrində təqdim edilə bilən paket.
-            </p>
-          </div>
-
-          <div class="benefit">
-            <div class="benefit-label">Kompetensiya</div>
-            <div class="benefit-value">IT BA kompetensiya xəritəsi</div>
-            <p>
-              Domain bilikləri, requirement engineering, analitik düşüncə və texniki
-              əsaslar üzrə strukturlaşdırılmış özünü qiymətləndirmə və inkişaf planı.
-            </p>
-          </div>
-
-          <div class="benefit">
-            <div class="benefit-label">Praktika</div>
-            <div class="benefit-value">Real кейs-lər əsasında tapşırıqlar</div>
-            <p>
-              Bank və digər biznes domenlərindən seçilmiş real ssenarilər üzərində komanda işi
-              və qrup təqdimatları.
-            </p>
-          </div>
-
-          <div class="benefit">
-            <div class="benefit-label">Biznes</div>
-            <div class="benefit-value">Biznes dəyər yönümlü düşüncə</div>
-            <p>
-              Requirement-lərin yalnız texniki deyil, biznes məqsədlərə verdiyi töhfə əsasında formalaşdırılması.
-            </p>
-          </div>
-
-          <div class="benefit">
-            <div class="benefit-label">Agile</div>
-            <div class="benefit-value">Komanda ilə effektiv əməkdaşlıq</div>
-            <p>
-              Product owner, developer, tester və digər tərəflərlə
-              Agile mühitində effektiv kommunikasiya nümunələri.
-            </p>
-          </div>
-
-          <div class="benefit">
-            <div class="benefit-label">Karyera</div>
-            <div class="benefit-value">Müsahibəyə hazırlıq</div>
-            <p>
-              IT BA rolu üçün tipik müsahibə sualları, case-lər və onlara yanaşma ssenariləri.
-            </p>
-          </div>
-        </div>
-      </div>
     </section>
 
-    <!-- Program -->
+    <!-- Program Section -->
     <section id="program">
-      <div class="container">
-        <div class="section-header">
-          <div class="section-eyebrow">Proqram</div>
-          <h2 class="section-title">IT BA Core Proqram – modul strukturu</h2>
-          <p class="section-subtitle">
-            Proqram modul yanaşması ilə qurulub ki, hər iştirakçı foundation-dan başlayaraq
-            addım-addım daha mürəkkəb bacarıqlara keçid etsin.
-          </p>
+        <div class="container">
+            <h3 class="section-title">IT BA Core Program – Module Structure</h3>
+            <div class="modules-grid">
+                <div class="module-card">
+                    <h4>Module 1 – IT Business Analysis Foundations</h4>
+                    <ul>
+                        <li>Role and responsibilities of IT BA</li>
+                        <li>Stakeholder analysis</li>
+                        <li>Types and levels of requirements</li>
+                    </ul>
+                </div>
+                <div class="module-card">
+                    <h4>Module 2 – Business Processes & BPMN</h4>
+                    <ul>
+                        <li>Identifying business processes</li>
+                        <li>BPMN basics</li>
+                        <li>Sample case from banking</li>
+                    </ul>
+                </div>
+                <div class="module-card">
+                    <h4>Module 3 – Requirements Engineering & Documentation</h4>
+                    <ul>
+                        <li>BRD, user stories, use cases</li>
+                        <li>Defining acceptance criteria</li>
+                        <li>Managing change requests</li>
+                    </ul>
+                </div>
+                <div class="module-card">
+                    <h4>Module 4 – IT BA in an Agile Environment</h4>
+                    <ul>
+                        <li>Product backlog, sprint planning, review</li>
+                        <li>IT BA activities inside the sprint</li>
+                        <li>Breaking down and prioritizing user stories</li>
+                    </ul>
+                </div>
+                <div class="module-card">
+                    <h4>Module 5 – Technical Basics: APIs, Data, SQL</h4>
+                    <ul>
+                        <li>What is an API (REST, SOAP)</li>
+                        <li>Data modeling concepts</li>
+                        <li>Simple SQL queries</li>
+                    </ul>
+                </div>
+                <div class="module-card">
+                    <h4>Module 6 – Final Project & Portfolio</h4>
+                    <ul>
+                        <li>Selecting a real business scenario</li>
+                        <li>Building the end-to-end documentation package</li>
+                        <li>Final demo and feedback</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-
-        <div class="program-grid">
-          <div class="program-module">
-            <div class="program-module-title">Modul 1 – IT Business Analysis Foundations</div>
-            <div class="program-module-tag">Rol, kontekst və əsas anlayışlar</div>
-            <ul>
-              <li>IT BA rolunun məqsədi və məsuliyyətləri</li>
-              <li>Stakeholder analizi və xəritələndirilməsi</li>
-              <li>Requirement növləri və səviyyələri</li>
-            </ul>
-          </div>
-
-          <div class="program-module">
-            <div class="program-module-title">Modul 2 – Biznes proseslər və BPMN</div>
-            <div class="program-module-tag">As-is / to-be və proses modelləşdirmə</div>
-            <ul>
-              <li>Biznes proseslərin identifikasiyası</li>
-              <li>BPMN notasiya əsasları</li>
-              <li>Bank кейs-i üzərindən proses modeli</li>
-            </ul>
-          </div>
-
-          <div class="program-module">
-            <div class="program-module-title">Modul 3 – Requirement Engineering & Sənədləşmə</div>
-            <div class="program-module-tag">Sənədlər və dəyişikliklər</div>
-            <ul>
-              <li>BRD, User Story, Use Case struktur və nümunələri</li>
-              <li>Acceptance kriteriyaların formalaşdırılması</li>
-              <li>Change request-lərin idarə edilməsi</li>
-            </ul>
-          </div>
-
-          <div class="program-module">
-            <div class="program-module-title">Modul 4 – Agile mühitində IT BA</div>
-            <div class="program-module-tag">Scrum və komanda işi</div>
-            <ul>
-              <li>Product backlog, sprint planning, review</li>
-              <li>IT BA rolunun sprint dövründə fəaliyyəti</li>
-              <li>User story-lərin parçalanması və prioritetləndirmə</li>
-            </ul>
-          </div>
-
-          <div class="program-module">
-            <div class="program-module-title">Modul 5 – Texniki əsaslar: API, Data, SQL</div>
-            <div class="program-module-tag">İnteqrasiya və məlumat</div>
-            <ul>
-              <li>API nədir, REST və SOAP anlayışları</li>
-              <li>Məlumat modelləşdirmə və əsas anlayışlar</li>
-              <li>Sadə SQL sorğuları ilə praktika</li>
-            </ul>
-          </div>
-
-          <div class="program-module">
-            <div class="program-module-title">Modul 6 – Final Project & Portfolio</div>
-            <div class="program-module-tag">Real кейs və təqdimat</div>
-            <ul>
-              <li>Real biznes ssenarisinin seçilməsi</li>
-              <li>Proses, requirement və sənədlər paketinin hazırlanması</li>
-              <li>Demo təqdimat və strukturlaşdırılmış feedback</li>
-            </ul>
-          </div>
-        </div>
-      </div>
     </section>
 
-    <!-- FAQ -->
+    <!-- FAQ Section -->
     <section id="faq">
-      <div class="container">
-        <div class="section-header">
-          <div class="section-eyebrow">FAQ</div>
-          <h2 class="section-title">Tez-tez verilən suallar</h2>
-          <p class="section-subtitle">
-            Qərar verməzdən əvvəl ən çox verilən sualları bir yerə topladıq. Əlavə
-            sualın olarsa, formda qeyd edə bilərsən.
-          </p>
+        <div class="container">
+            <h3 class="section-title">Frequently Asked Questions</h3>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Are the classes online or offline?</h4>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Mainly online/hybrid format to provide maximum flexibility. Offline groups in Baku are organized if there is sufficient demand.
+                                                    Mainly online/hybrid format to provide maximum flexibility. Offline groups in Baku are organized if there is sufficient demand.
+                        </div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>I have no IT background. Is this program suitable for me?</h4>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Yes, the program is specifically designed for people coming from the business side into IT BA. We start with foundations and build up systematically.
+                        </div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Do you guarantee a job after the course?</h4>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            We do not provide job guarantees, but we support you with portfolio building, CV/LinkedIn optimization, and interview preparation to maximize your chances.
+                        </div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>What are the payment options?</h4>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Payment can be made in one-time or in installments. Detailed pricing and payment plans are shared after you submit the application form.
+                        </div>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Do you design separate programs for corporate clients?</h4>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Yes, corporate programs are fully customizable. We tailor the curriculum and use real internal cases from your organization to ensure maximum relevance and impact.
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="faq-list">
-          <details>
-            <summary>Dərslər online olacaq, yoxsa offline?</summary>
-            <p>
-              Proqramın əsas formatı online və hibriddir. Tələbat olduqda Baku üçün
-              offline qruplar da formalaşdırıla bilər.
-            </p>
-          </details>
-
-          <details>
-            <summary>IT sahəsində təcrübəm yoxdur, kurs mənə uyğundur?</summary>
-            <p>
-              Bəli. Proqram belə qurulub ki, biznes tərəfdən gələn və IT-yə keçid
-              edən iştirakçılar üçün foundation-dan başlayaraq addım-addım irəliləsin.
-            </p>
-          </details>
-
-          <details>
-            <summary>Kurs bitəndən sonra iş tapmağa zəmanət verilir?</summary>
-            <p>
-              İşə zəmanət verilmir, lakin portfolio, CV/LinkedIn dəstəyi və
-              müsahibə hazırlığı ilə karyera prosesində real dəstək göstərilir.
-            </p>
-          </details>
-
-          <details>
-            <summary>Ödəniş şərtləri necədir?</summary>
-            <p>
-              Birdəfəlik və hissə-hissə ödəniş imkanları mümkündür. Konret məbləğ
-              və şərtlər barədə məlumatı qeydiyyat formasını doldurduqdan sonra təqdim edirik.
-            </p>
-          </details>
-
-          <details>
-            <summary>Korporativ təlim üçün ayrıca proqram hazırlanır?</summary>
-            <p>
-              Bəli. Şirkətin domeninə, daxili sistemlərinə və ehtiyaclarına görə
-              modul seçimi, кейs-lər və assessment modeli ayrıca dizayn edilə bilər.
-            </p>
-          </details>
-
-          <details>
-            <summary>İngilis dili və digər dillər tələb olunur?</summary>
-            <p>
-              Proqramın əsas dili Azərbaycan dilidir. Lakin istifadə olunan terminlərin
-              böyük hissəsi ingiliscə olduğundan, minimum texniki terminləri anlamaq
-              üçün baza bilik faydalıdır.
-            </p>
-          </details>
-        </div>
-      </div>
     </section>
 
-    <!-- Apply -->
+    <!-- Apply Section -->
     <section id="apply" class="apply-section">
-      <div class="container">
-        <div class="section-header">
-          <div class="section-eyebrow">Qeydiyyat</div>
-          <h2 class="section-title">IT Business Analysis karyerana bu gündən başla</h2>
-          <p class="section-subtitle">
-            Formu doldur, səviyyənə və məqsədinə uyğun proqram variantını birlikdə
-            seçək. Qısa müddətdə əlaqə saxlanılacaq.
-          </p>
-        </div>
-
-        <div class="apply-inner">
-          <div class="apply-card">
-            <form action="#" method="post">
-              <div class="form-grid">
-                <div class="form-field">
-                  <label for="name">Ad, Soyad *</label>
-                  <input type="text" id="name" name="name" class="form-input" required />
+        <div class="container">
+            <h3 class="section-title">Start your IT Business Analysis journey today</h3>
+            <p class="section-subtitle">Fill out the form below and we'll contact you soon to discuss your goals and how itba.az can help you achieve them.</p>
+            <div class="apply-content">
+                <div>
+                    <form id="applyForm">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" required placeholder="Your full name">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone / WhatsApp *</label>
+                            <input type="tel" required placeholder="+994 XX XXX XX XX">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" placeholder="your.email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Current role / field</label>
+                            <input type="text" placeholder="e.g., Banking operations, Customer service">
+                        </div>
+                        <div class="form-group">
+                            <label>Goal *</label>
+                            <select required>
+                                <option value="">Select your goal...</option>
+                                <option value="start">Start an IT BA career</option>
+                                <option value="develop">Develop as an existing IT BA</option>
+                                <option value="corporate">Corporate training / team development</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Message / Notes</label>
+                            <textarea placeholder="I currently work in banking operations and want to move into IT BA..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">Submit Application</button>
+                        <p class="consent-note">By submitting the form, you agree to the processing of your contact information for communication purposes.</p>
+                    </form>
                 </div>
-                <div class="form-field">
-                  <label for="phone">Telefon (WhatsApp) *</label>
-                  <input type="tel" id="phone" name="phone" class="form-input" required />
+                <div>
+                    <div class="apply-info">
+                        <h4>What you'll get</h4>
+                        <div class="info-section">
+                            <h5>Individual Participants</h5>
+                            <ul>
+                                <li>Foundation in IT BA fundamentals</li>
+                                <li>Practical skills and real case studies</li>
+                                <li>Portfolio-ready project documentation</li>
+                                <li>Personal development plan</li>
+                                <li>Career support and mentoring</li>
+                            </ul>
+                        </div>
+                        <div class="info-section">
+                            <h5>Corporate Clients</h5>
+                            <ul>
+                                <li>Customized IT BA academy setup</li>
+                                <li>Competency assessment framework</li>
+                                <li>Training using internal cases</li>
+                                <li>KPI tracking and reporting</li>
+                                <li>Ongoing team development</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="form-field">
-                  <label for="email">Email</label>
-                  <input type="email" id="email" name="email" class="form-input" />
-                </div>
-                <div class="form-field">
-                  <label for="role">Hazırkı vəzifə / sahə</label>
-                  <input type="text" id="role" name="role" class="form-input" />
-                </div>
-
-                <div class="form-field form-full">
-                  <label for="goal">Məqsədin *</label>
-                  <select id="goal" name="goal" class="form-select" required>
-                    <option value="">Seç...</option>
-                    <option value="career-change">IT BA kimi karyeraya başlamaq</option>
-                    <option value="level-up">Mövcud IT BA kimi inkişaf</option>
-                    <option value="corporate">Korporativ təlim / komanda inkişafı</option>
-                    <option value="other">Digər (mesajda izah edəcəm)</option>
-                  </select>
-                </div>
-
-                <div class="form-field form-full">
-                  <label for="message">Qısa mesaj (mövcud səviyyən, gözləntin, sualın və s.)</label>
-                  <textarea id="message" name="message" class="form-textarea" placeholder="Məsələn: hazırda bankda əməliyyat üzrə işləyirəm və IT BA-ya keçmək istəyirəm."></textarea>
-                </div>
-              </div>
-
-              <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-                <button type="submit" class="btn btn-primary">
-                  Məlumat üçün müraciət et
-                </button>
-                <span style="font-size:11px; color:var(--muted);">
-                  Formu göndərməklə əlaqə üçün məlumatlarınızın emalına razılıq vermiş olursunuz.
-                </span>
-              </div>
-            </form>
-          </div>
-
-          <aside class="apply-aside">
-            <div class="apply-aside-box">
-              <div class="apply-aside-title">Fərdi iştirakçılar üçün</div>
-              <ul class="apply-aside-list">
-                <li>IT BA foundation və praktiki tapşırıqlar</li>
-                <li>Portfolio üçün final layihə və sənədlər paketi</li>
-                <li>Kompetensiya xəritəsi və şəxsi inkişaf planı</li>
-              </ul>
             </div>
-
-            <div class="apply-aside-box">
-              <div class="apply-aside-title">Korporativ müştərilər üçün</div>
-              <ul class="apply-aside-list">
-                <li>IT BA akademiyası və daxili təlim xəritəsi</li>
-                <li>Komanda üçün assessment və maturity modeli</li>
-                <li>Domenə uyğunlaşdırılmış кейs-lər və tapşırıqlar</li>
-              </ul>
-            </div>
-
-            <p>
-              İstər fərdi olaraq yeni karyeraya başlamaq, istərsə də mövcud komandanda
-              IT Business Analysis mədəniyyətini gücləndirmək istəyirsənsə,
-              uyğun formatı birlikdə müəyyənləşdirmək üçün formu doldurmağın kifayətdir.
-            </p>
-          </aside>
         </div>
-      </div>
     </section>
-  </main>
 
-  <footer>
-    <div class="container">
-      <div class="footer-inner">
-        <div>© <span id="year"></span> itba.az – IT Business Analysis Akademiyası</div>
-        <div class="footer-links">
-          <a href="#about">Haqqımızda</a>
-          <a href="#apply">Qeydiyyat</a>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2025 itba.az – IT Business Analysis Academy</p>
+            <div style="margin-top: 10px;">
+                <a href="#about">About</a>
+                <a href="#apply">Apply</a>
+            </div>
         </div>
-      </div>
-    </div>
+    </footer>
+
     <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
+        // Particle Network Animation
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        const particles = [];
+        const particleCount = 80;
+        const connectionDistance = 150;
+        const mouse = { x: null, y: null, radius: 150 };
+        
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                
+                // Mouse interaction
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < mouse.radius && mouse.x != null) {
+                    const force = (mouse.radius - distance) / mouse.radius;
+                    const angle = Math.atan2(dy, dx);
+                    this.vx -= Math.cos(angle) * force * 0.2;
+                    this.vy -= Math.sin(angle) * force * 0.2;
+                }
+                
+                // Limit velocity
+                const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                if (speed > 2) {
+                    this.vx = (this.vx / speed) * 2;
+                    this.vy = (this.vy / speed) * 2;
+                }
+            }
+            
+            draw() {
+                ctx.fillStyle = 'rgba(255, 107, 53, 0.6)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Create particles
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+        
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < connectionDistance) {
+                        const opacity = (1 - distance / connectionDistance) * 0.3;
+                        ctx.strokeStyle = `rgba(255, 107, 53, ${opacity})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            
+            connectParticles();
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const item = this.parentElement;
+                const answer = item.querySelector('.faq-answer');
+                const isActive = item.classList.contains('active');
+                
+                // Close all FAQ items
+                document.querySelectorAll('.faq-item').forEach(faq => {
+                    faq.classList.remove('active');
+                    faq.querySelector('.faq-answer').style.maxHeight = null;
+                });
+                
+                // Open clicked item if it wasn't active
+                if (!isActive) {
+                    item.classList.add('active');
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('applyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your application! We will contact you soon.');
+            this.reset();
+        });
     </script>
-  </footer>
 </body>
 </html>
