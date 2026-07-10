@@ -454,7 +454,7 @@ const SB_EMAILS_TABLE=SUPABASE_URL+"/rest/v1/exam_emails";
 const SB_HEADERS={"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
 
 let EXTRA_EMAILS=[];
-function allowedEmails(){ return EMAILS.concat(EXTRA_EMAILS); }
+function allowedEmails(){ return [...new Set(EMAILS.concat(EXTRA_EMAILS))]; }
 async function loadExtraEmails(){
   try{
     const res=await fetch(SB_EMAILS_TABLE+"?select=email",{cache:"no-store",headers:SB_HEADERS});
