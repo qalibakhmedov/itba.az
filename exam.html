@@ -178,6 +178,14 @@
     <label for="questionSelect">Sual seçin</label>
     <select id="questionSelect"></select>
   </div>
+  <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px;max-width:520px">
+    <div style="flex:1;min-width:220px">
+      <label for="newEmailInput">Yeni tələbə email-i əlavə et</label>
+      <input type="email" id="newEmailInput" placeholder="telebe@gmail.com">
+    </div>
+    <button class="btn ghost" id="addEmailBtn" style="width:auto;margin:0;padding:11px 20px">Əlavə et</button>
+  </div>
+  <div class="err" id="newEmailErr" style="margin-bottom:16px"></div>
   <div id="adminContent">Yüklənir…</div>
 </div>
 
@@ -417,7 +425,18 @@ function checkRows(qi,n){return djb2("Q"+(qi+1)+"|"+n+"|ORAX26")===HASHES[qi];}
 const SUPABASE_URL="https://ndsdnsntpqbyktjrcjtq.supabase.co";
 const SUPABASE_KEY="sb_publishable_5Hv23JPUmQEIZXHyygkkUg_tWU7SuET";
 const SB_TABLE=SUPABASE_URL+"/rest/v1/exam_progress";
+const SB_EMAILS_TABLE=SUPABASE_URL+"/rest/v1/exam_emails";
 const SB_HEADERS={"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
+
+let EXTRA_EMAILS=[];
+function allowedEmails(){ return EMAILS.concat(EXTRA_EMAILS); }
+async function loadExtraEmails(){
+  try{
+    const res=await fetch(SB_EMAILS_TABLE+"?select=email",{cache:"no-store",headers:SB_HEADERS});
+    if(!res.ok) throw new Error("email siyahısı yüklənmədi: "+res.status);
+    EXTRA_EMAILS=(await res.json()).map(r=>r.email);
+  }catch(e){ /* şəbəkə problemi olarsa mövcud (kеşlənmiş) siyahı ilə davam et */ }
+}
 
 let state=null, cooldownUntil=0;
 const memStore={}; let storageOk=true;
@@ -468,11 +487,12 @@ function show(v){["viewLogin","viewExam","viewDone","viewAdmin"].forEach(x=>$(x)
 $("adminLink").onclick=()=>$("adminBox").classList.toggle("hidden");
 $("loginBtn").onclick=login;
 $("emailInput").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
-$("adminBtn").onclick=()=>{
+$("adminBtn").onclick=async()=>{
   if($("adminCode").value.trim()===ADMIN_CODE){
     $("whoami").textContent="MÜƏLLİM";
     adminView="students";adminQFilter=0;
     initQuestionSelect();updateAdminTabs();
+    await loadExtraEmails();
     show("viewAdmin");renderAdmin();startAdminAutoRefresh();
   }
   else $("loginErr").textContent="Müəllim kodu yanlışdır.";
@@ -480,7 +500,8 @@ $("adminBtn").onclick=()=>{
 async function login(){
   const email=$("emailInput").value.trim().toLowerCase();
   $("loginErr").textContent="";
-  if(!EMAILS.includes(email)){$("loginErr").textContent="Bu email imtahan siyahısında yoxdur.";return;}
+  await loadExtraEmails();
+  if(!allowedEmails().includes(email)){$("loginErr").textContent="Bu email imtahan siyahısında yoxdur.";return;}
   if(!engineReady){$("loginErr").textContent="SQL mühərriki hələ yüklənir — bir neçə saniyə gözləyin.";return;}
   $("loginBtn").disabled=true;$("loginBtn").textContent="Yüklənir…";
   const saved=await loadState(email);
@@ -611,6 +632,26 @@ function renderDone(){
 /* ---------- müəllim paneli ---------- */
 let adminView="students", adminQFilter=0, adminTimer=null;
 $("refreshBtn").onclick=renderAdmin;
+$("addEmailBtn").onclick=addStudentEmail;
+$("newEmailInput").addEventListener("keydown",e=>{if(e.key==="Enter")addStudentEmail();});
+async function addStudentEmail(){
+  const input=$("newEmailInput"), errEl=$("newEmailErr"), btn=$("addEmailBtn");
+  errEl.textContent="";
+  const email=input.value.trim().toLowerCase();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent="Düzgün email daxil edin.";return;}
+  if(allowedEmails().includes(email)){errEl.textContent="Bu email artıq siyahıdadır.";return;}
+  btn.disabled=true;btn.textContent="Əlavə edilir…";
+  try{
+    const res=await fetch(SB_EMAILS_TABLE,{method:"POST",cache:"no-store",headers:Object.assign({},SB_HEADERS,{"Prefer":"resolution=merge-duplicates,return=minimal"}),body:JSON.stringify([{email}])});
+    if(!res.ok) throw new Error("Supabase insert xətası: "+res.status);
+    EXTRA_EMAILS.push(email);
+    input.value="";
+    renderAdmin();
+  }catch(e){
+    errEl.textContent="Əlavə etmək mümkün olmadı — internet bağlantısını yoxlayıb yenidən cəhd edin.";
+  }
+  btn.disabled=false;btn.textContent="Əlavə et";
+}
 $("tabStudents").onclick=()=>{adminView="students";updateAdminTabs();renderAdmin();};
 $("tabQuestions").onclick=()=>{adminView="questions";initQuestionSelect();updateAdminTabs();renderAdmin();};
 $("questionSelect").onchange=()=>{adminQFilter=+$("questionSelect").value;renderAdmin();};
@@ -640,7 +681,7 @@ async function renderAdmin(){
 function adminStudentView(rows){
   let html='<table class="adm"><tr><th>#</th><th>Email</th><th>Bal</th><th>Sual</th><th>Status</th><th>Cavablar</th></tr>';
   let n=0;
-  for(const em of EMAILS){
+  for(const em of allowedEmails()){
     n++;
     const r=rows.find(x=>x.email===em);
     if(!r){html+=`<tr><td>${n}</td><td>${em}</td><td>—</td><td>—</td><td class="mini">başlamayıb</td><td>—</td></tr>`;continue;}
@@ -660,7 +701,7 @@ function adminQuestionView(rows){
   let html=`<div class="mini" style="margin-bottom:12px;line-height:1.6">SUAL ${qi+1}: ${esc(QUESTIONS[qi])}</div>`;
   html+='<table class="adm"><tr><th>#</th><th>Email</th><th>Cəhd</th><th>Nəticə</th><th>Status</th><th>Sorğu</th></tr>';
   let n=0;
-  for(const em of EMAILS){
+  for(const em of allowedEmails()){
     n++;
     const r=rows.find(x=>x.email===em);
     const a=r&&r.answers[qi];
