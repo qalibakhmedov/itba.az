@@ -420,6 +420,31 @@ const QUESTIONS=["Locations cədvəlindən location_id-si 1700, 1800, 1900, 2100
 const HASHES=[3676437936,57375790,1202459409,2323106434,37263125,2244956416,1753086691,3368241581,922328173,4156269142,3915432802,1257323141,1380236933,1376881936,2368255665,2755168925,1775259827,21565176,2925053034,4230397587,1349250356,987470612,1584886305,2122364806,4087231622];
 function djb2(s){let x=5381;for(const c of s){x=((x*33)^c.charCodeAt(0))>>>0;}return x;}
 function checkRows(qi,n){return djb2("Q"+(qi+1)+"|"+n+"|ORAX26")===HASHES[qi];}
+function mulberry32(seed){
+  return function(){
+    seed|=0; seed=(seed+0x6D2B79F5)|0;
+    let t=Math.imul(seed^(seed>>>15),1|seed);
+    t=(t+Math.imul(t^(t>>>7),61|t))^t;
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+function personalOrder(email){
+  const rnd=mulberry32(djb2(email+"|ORDER-SALT-2026"));
+  const arr=Array.from({length:25},(_,i)=>i);
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(rnd()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+function findNextUnanswered(fromPos){
+  for(let step=1;step<=25;step++){
+    const pos=(fromPos+step)%25;
+    const realQi=currentOrder[pos];
+    if(!(state.answers[realQi]&&state.answers[realQi].doneAt))return pos;
+  }
+  return null;
+}
 
 /* ---------- Supabase persistence (cross-browser, shared between tələbə & müəllim) ---------- */
 const SUPABASE_URL="https://ndsdnsntpqbyktjrcjtq.supabase.co";
@@ -438,7 +463,7 @@ async function loadExtraEmails(){
   }catch(e){ /* şəbəkə problemi olarsa mövcud (kеşlənmiş) siyahı ilə davam et */ }
 }
 
-let state=null, cooldownUntil=0;
+let state=null, cooldownUntil=0, currentOrder=null;
 const memStore={}; let storageOk=true;
 
 function rowToState(row){
@@ -506,6 +531,7 @@ async function login(){
   $("loginBtn").disabled=true;$("loginBtn").textContent="Yüklənir…";
   const saved=await loadState(email);
   state=saved||{email,startedAt:Date.now(),current:0,score:0,answers:{},finishedAt:null};
+  currentOrder=personalOrder(email);
   if(!saved)await saveState();
   $("loginBtn").disabled=false;$("loginBtn").textContent="Daxil ol";
   $("whoami").textContent=email;
@@ -551,20 +577,29 @@ function updateTimerDisplay(remain){
 function renderRail(){
   const rail=$("rail");rail.innerHTML="";
   for(let i=0;i<25;i++){
+    const realQi=currentOrder[i];
     const c=document.createElement("div");c.className="cell";c.textContent=String(i+1).padStart(2,"0");
-    if(state.answers[i]&&state.answers[i].doneAt)c.classList.add("done");
+    if(state.answers[realQi]&&state.answers[realQi].doneAt)c.classList.add("done");
     else if(i===state.current)c.classList.add("now");
+    c.style.cursor="pointer";
+    c.onclick=()=>goToPosition(i);
     rail.appendChild(c);
   }
 }
+async function goToPosition(pos){
+  if(pos===state.current)return;
+  state.current=pos;
+  await saveState();
+  renderQuestion();
+}
 function renderQuestion(){
-  const i=state.current;
+  const i=state.current, realQi=currentOrder[i];
   $("qNum").textContent=String(i+1).padStart(2,"0");
-  $("qText").textContent=QUESTIONS[i];
-  $("sqlInput").value=(state.answers[i]&&state.answers[i].sql)||"";
+  $("qText").textContent=QUESTIONS[realQi];
+  $("sqlInput").value=(state.answers[realQi]&&state.answers[realQi].sql)||"";
   const fb=$("feedback");fb.className="feedback";fb.textContent="";
   $("resultWrap").classList.add("hidden");
-  const at=(state.answers[i]&&state.answers[i].attempts)||0;
+  const at=(state.answers[realQi]&&state.answers[realQi].attempts)||0;
   $("attemptsInfo").textContent=at?("Təsdiq cəhdi: "+at):"";
   $("scoreNow").textContent=state.score;
   $("doneNow").textContent=Object.values(state.answers).filter(a=>a.doneAt).length;
@@ -593,23 +628,26 @@ $("runBtn").onclick=()=>{
   showResult(r);
 };
 $("submitBtn").onclick=async()=>{
-  const i=state.current, fb=$("feedback");
+  const pos=state.current, realQi=currentOrder[pos], fb=$("feedback");
   if(Date.now()<cooldownUntil){fb.className="feedback bad";fb.textContent="Bir az gözləyin ("+Math.ceil((cooldownUntil-Date.now())/1000)+" san) və yenidən cəhd edin.";return;}
   const sql=$("sqlInput").value.trim();
   const r=runQuery(sql);
   if(r.err){fb.className="feedback bad";fb.textContent=r.err;$("resultWrap").classList.add("hidden");return;}
   showResult(r);
-  const a=state.answers[i]||{attempts:0,sql:"",rows:null,doneAt:null};
+  const a=state.answers[realQi]||{attempts:0,sql:"",rows:null,doneAt:null};
   a.attempts++; a.sql=sql; a.rows=r.rows.length;
-  if(checkRows(i,r.rows.length)){
-    a.doneAt=Date.now(); state.answers[i]=a; state.score+=4;
-    if(i===24){state.finishedAt=Date.now();await saveState();stopExamTimer();renderDone();return;}
-    state.current=i+1; await saveState();
+  if(checkRows(realQi,r.rows.length)){
+    a.doneAt=Date.now(); state.answers[realQi]=a; state.score+=4;
+    const doneCount=Object.values(state.answers).filter(x=>x.doneAt).length;
+    if(doneCount===25){state.finishedAt=Date.now();await saveState();stopExamTimer();renderDone();return;}
+    const nextPos=findNextUnanswered(pos);
+    state.current=nextPos===null?pos:nextPos;
+    await saveState();
     fb.className="feedback good";fb.textContent="✓ Doğrudur! +4 bal. Növbəti suala keçirilir…";
     $("submitBtn").disabled=true;
     setTimeout(renderQuestion,1400);
   } else {
-    state.answers[i]=a; await saveState();
+    state.answers[realQi]=a; await saveState();
     cooldownUntil=Date.now()+8000;
     $("qcard").classList.remove("shake");void $("qcard").offsetWidth;$("qcard").classList.add("shake");
     fb.className="feedback bad";fb.textContent="✗ Nəticə gözləniləndən fərqlidir. Şərti yenidən oxuyub sorğunu düzəldin.";
@@ -678,10 +716,15 @@ async function renderAdmin(){
   }
   $("lastRefreshed").textContent="Son yenilənmə: "+new Date().toLocaleTimeString("az-AZ");
 }
+function rankedRoster(rows){
+  return allowedEmails()
+    .map(em=>({email:em,r:rows.find(x=>x.email===em)||null}))
+    .sort((a,b)=>(b.r?b.r.score:-1)-(a.r?a.r.score:-1));
+}
 function adminStudentView(rows){
   let html='<table class="adm"><tr><th>#</th><th>Email</th><th>Bal</th><th>Sual</th><th>Status</th><th>Cavablar</th></tr>';
   let n=0;
-  for(const em of allowedEmails()){
+  for(const {email:em} of rankedRoster(rows)){
     n++;
     const r=rows.find(x=>x.email===em);
     if(!r){html+=`<tr><td>${n}</td><td>${em}</td><td>—</td><td>—</td><td class="mini">başlamayıb</td><td>—</td></tr>`;continue;}
@@ -701,7 +744,7 @@ function adminQuestionView(rows){
   let html=`<div class="mini" style="margin-bottom:12px;line-height:1.6">SUAL ${qi+1}: ${esc(QUESTIONS[qi])}</div>`;
   html+='<table class="adm"><tr><th>#</th><th>Email</th><th>Cəhd</th><th>Nəticə</th><th>Status</th><th>Sorğu</th></tr>';
   let n=0;
-  for(const em of allowedEmails()){
+  for(const {email:em} of rankedRoster(rows)){
     n++;
     const r=rows.find(x=>x.email===em);
     const a=r&&r.answers[qi];
