@@ -27,7 +27,7 @@
   .login-card h1{font-size:26px;font-weight:700;margin-bottom:4px}
   .login-card .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
   label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-  input[type=email],input[type=text],input[type=password]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:14px;background:#FBFCFC;color:var(--ink)}
+  input[type=email],input[type=text],input[type=password],select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:14px;background:#FBFCFC;color:var(--ink)}
   input:focus,textarea:focus{outline:2px solid var(--red);outline-offset:1px;border-color:transparent}
   .btn{display:inline-block;width:100%;margin-top:16px;background:var(--red);color:#fff;border:none;border-radius:6px;padding:12px;font-family:var(--sans);font-weight:600;font-size:15px;cursor:pointer}
   .btn:hover{background:var(--red-dark)}
@@ -86,7 +86,8 @@
   .sqlbox{background:var(--console);color:var(--console-text);font-family:var(--mono);font-size:12px;padding:10px 12px;border-radius:6px;white-space:pre-wrap;margin:6px 0 10px}
   .mini{font-family:var(--mono);font-size:11px;color:var(--muted)}
   .linkbtn{background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;text-decoration:underline;padding:0}
-  .refresh{width:auto;padding:10px 20px;margin:0 0 16px}
+  .refresh{width:auto;padding:10px 20px;margin:0}
+  .tab-active{background:var(--ink)!important;color:#fff!important;border-color:var(--ink)!important}
   h2.admin-h{font-size:22px;margin-bottom:14px}
   #engineStatus{font-family:var(--mono);font-size:11px;margin-top:14px;color:var(--muted)}
 </style>
@@ -163,7 +164,18 @@
 
 <div id="viewAdmin" class="wrap hidden">
   <h2 class="admin-h">Müəllim paneli</h2>
-  <button class="btn refresh" id="refreshBtn">Yenilə</button>
+  <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
+    <button class="btn refresh" id="refreshBtn">Yenilə</button>
+    <span class="mini" id="lastRefreshed"></span>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <button class="btn ghost" id="tabStudents" style="width:auto;margin:0;padding:8px 16px">Tələbələr üzrə</button>
+    <button class="btn ghost" id="tabQuestions" style="width:auto;margin:0;padding:8px 16px">Suallar üzrə</button>
+  </div>
+  <div id="questionSelectBox" class="hidden" style="margin-bottom:16px;max-width:560px">
+    <label for="questionSelect">Sual seçin</label>
+    <select id="questionSelect"></select>
+  </div>
   <div id="adminContent">Yüklənir…</div>
 </div>
 
@@ -413,7 +425,12 @@ $("adminLink").onclick=()=>$("adminBox").classList.toggle("hidden");
 $("loginBtn").onclick=login;
 $("emailInput").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
 $("adminBtn").onclick=()=>{
-  if($("adminCode").value.trim()===ADMIN_CODE){$("whoami").textContent="MÜƏLLİM";show("viewAdmin");renderAdmin();}
+  if($("adminCode").value.trim()===ADMIN_CODE){
+    $("whoami").textContent="MÜƏLLİM";
+    adminView="students";adminQFilter=0;
+    initQuestionSelect();updateAdminTabs();
+    show("viewAdmin");renderAdmin();startAdminAutoRefresh();
+  }
   else $("loginErr").textContent="Müəllim kodu yanlışdır.";
 };
 async function login(){
@@ -429,7 +446,7 @@ async function login(){
   $("whoami").textContent=email;
   if(state.finishedAt)renderDone(); else {show("viewExam");renderQuestion();}
 }
-$("logoutBtn").onclick=()=>{state=null;$("whoami").textContent="";$("emailInput").value="";show("viewLogin");};
+$("logoutBtn").onclick=()=>{state=null;stopAdminAutoRefresh();$("whoami").textContent="";$("emailInput").value="";show("viewLogin");};
 
 function renderRail(){
   const rail=$("rail");rail.innerHTML="";
@@ -507,12 +524,37 @@ function renderDone(){
 }
 
 /* ---------- müəllim paneli ---------- */
+let adminView="students", adminQFilter=0, adminTimer=null;
 $("refreshBtn").onclick=renderAdmin;
+$("tabStudents").onclick=()=>{adminView="students";updateAdminTabs();renderAdmin();};
+$("tabQuestions").onclick=()=>{adminView="questions";initQuestionSelect();updateAdminTabs();renderAdmin();};
+$("questionSelect").onchange=()=>{adminQFilter=+$("questionSelect").value;renderAdmin();};
+
+function updateAdminTabs(){
+  $("tabStudents").classList.toggle("tab-active",adminView==="students");
+  $("tabQuestions").classList.toggle("tab-active",adminView==="questions");
+  $("questionSelectBox").classList.toggle("hidden",adminView!=="questions");
+}
+function initQuestionSelect(){
+  const sel=$("questionSelect");
+  if(sel.options.length)return;
+  sel.innerHTML=QUESTIONS.map((q,i)=>`<option value="${i}">Sual ${String(i+1).padStart(2,"0")} — ${esc(q.slice(0,60))}${q.length>60?"…":""}</option>`).join("");
+}
+function startAdminAutoRefresh(){stopAdminAutoRefresh();adminTimer=setInterval(renderAdmin,60000);}
+function stopAdminAutoRefresh(){if(adminTimer){clearInterval(adminTimer);adminTimer=null;}}
+
 async function renderAdmin(){
-  const box=$("adminContent");box.textContent="Yüklənir…";
+  const box=$("adminContent");
   const keys=await sList("exam:");
   const rows=[];
   for(const k of keys){const v=await sGet(k);if(v){try{rows.push(JSON.parse(v));}catch(e){}}}
+  box.innerHTML = adminView==="questions" ? adminQuestionView(rows) : adminStudentView(rows);
+  if(adminView==="students"){
+    box.querySelectorAll(".linkbtn").forEach(b=>b.onclick=()=>{const el=document.getElementById("exp-"+b.dataset.id);if(el)el.classList.toggle("hidden");});
+  }
+  $("lastRefreshed").textContent="Son yenilənmə: "+new Date().toLocaleTimeString("az-AZ");
+}
+function adminStudentView(rows){
   let html='<table class="adm"><tr><th>#</th><th>Email</th><th>Bal</th><th>Sual</th><th>Status</th><th>Cavablar</th></tr>';
   let n=0;
   for(const em of EMAILS){
@@ -528,8 +570,25 @@ async function renderAdmin(){
   }
   html+="</table>";
   if(!storageOk)html+='<p class="mini" style="margin-top:10px">Diqqət: yaddaş xidmətinə çatmaq mümkün olmadı — məlumat yalnız bu sessiyada görünür.</p>';
-  box.innerHTML=html;
-  box.querySelectorAll(".linkbtn").forEach(b=>b.onclick=()=>{const el=document.getElementById("exp-"+b.dataset.id);if(el)el.classList.toggle("hidden");});
+  return html;
+}
+function adminQuestionView(rows){
+  const qi=adminQFilter;
+  let html=`<div class="mini" style="margin-bottom:12px;line-height:1.6">SUAL ${qi+1}: ${esc(QUESTIONS[qi])}</div>`;
+  html+='<table class="adm"><tr><th>#</th><th>Email</th><th>Cəhd</th><th>Nəticə</th><th>Status</th><th>Sorğu</th></tr>';
+  let n=0;
+  for(const em of EMAILS){
+    n++;
+    const r=rows.find(x=>x.email===em);
+    const a=r&&r.answers[qi];
+    if(!a){html+=`<tr><td>${n}</td><td>${em}</td><td>—</td><td>—</td><td class="mini">cavab yoxdur</td><td>—</td></tr>`;continue;}
+    const status=a.doneAt?"✔ doğru":"✗ doğru deyil";
+    html+=`<tr><td>${n}</td><td>${em}</td><td>${a.attempts}</td><td>${a.rows??"—"}</td><td>${status}</td>
+      <td><div class="sqlbox" style="margin:0">${esc(a.sql||"")}</div></td></tr>`;
+  }
+  html+="</table>";
+  if(!storageOk)html+='<p class="mini" style="margin-top:10px">Diqqət: yaddaş xidmətinə çatmaq mümkün olmadı — məlumat yalnız bu sessiyada görünür.</p>';
+  return html;
 }
 function answersHtml(r){
   let h="";
