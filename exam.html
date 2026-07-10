@@ -410,13 +410,54 @@ const HASHES=[3676437936,57375790,1202459409,2323106434,37263125,2244956416,1753
 function djb2(s){let x=5381;for(const c of s){x=((x*33)^c.charCodeAt(0))>>>0;}return x;}
 function checkRows(qi,n){return djb2("Q"+(qi+1)+"|"+n+"|ORAX26")===HASHES[qi];}
 
+/* ---------- Supabase persistence (cross-browser, shared between tələbə & müəllim) ---------- */
+const SUPABASE_URL="https://ndsdnsntpqbyktjrcjtq.supabase.co";
+const SUPABASE_KEY="sb_publishable_5Hv23JPUmQEIZXHyygkkUg_tWU7SuET";
+const SB_TABLE=SUPABASE_URL+"/rest/v1/exam_progress";
+const SB_HEADERS={"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
+
 let state=null, cooldownUntil=0;
 const memStore={}; let storageOk=true;
-function skey(email){return "exam:"+email.replace(/[^a-z0-9@.\-_]/gi,"_");}
-async function sSet(k,v){ if(!storageOk){memStore[k]=v;return;} try{await window.storage.set(k,v,true);}catch(e){storageOk=false;memStore[k]=v;} }
-async function sGet(k){ if(!storageOk)return memStore[k]||null; try{const r=await window.storage.get(k,true);return r?r.value:null;}catch(e){return memStore[k]||null;} }
-async function sList(p){ if(!storageOk)return Object.keys(memStore).filter(k=>k.startsWith(p)); try{const r=await window.storage.list(p,true);return r?r.keys:[];}catch(e){return Object.keys(memStore).filter(k=>k.startsWith(p));} }
-async function saveState(){ if(state) await sSet(skey(state.email),JSON.stringify(state)); }
+
+function rowToState(row){
+  return {email:row.email,startedAt:row.started_at,current:row.current,score:row.score,answers:row.answers||{},finishedAt:row.finished_at};
+}
+async function sbUpsert(row){
+  const res=await fetch(SB_TABLE,{method:"POST",headers:Object.assign({},SB_HEADERS,{"Prefer":"resolution=merge-duplicates,return=minimal"}),body:JSON.stringify([row])});
+  if(!res.ok) throw new Error("Supabase upsert xətası: "+res.status);
+}
+async function sbGetOne(email){
+  const res=await fetch(SB_TABLE+"?email=eq."+encodeURIComponent(email)+"&select=*",{headers:SB_HEADERS});
+  if(!res.ok) throw new Error("Supabase select xətası: "+res.status);
+  const arr=await res.json();
+  return arr.length?rowToState(arr[0]):null;
+}
+async function sbGetAll(){
+  const res=await fetch(SB_TABLE+"?select=*",{headers:SB_HEADERS});
+  if(!res.ok) throw new Error("Supabase select-all xətası: "+res.status);
+  return (await res.json()).map(rowToState);
+}
+async function saveState(){
+  if(!state) return;
+  const row={email:state.email,started_at:state.startedAt,current:state.current,score:state.score,answers:state.answers,finished_at:state.finishedAt};
+  if(storageOk){
+    try{ await sbUpsert(row); return; }catch(e){ storageOk=false; }
+  }
+  memStore[state.email]=JSON.stringify(state);
+}
+async function loadState(email){
+  if(storageOk){
+    try{ return await sbGetOne(email); }catch(e){ storageOk=false; }
+  }
+  const raw=memStore[email];
+  return raw?JSON.parse(raw):null;
+}
+async function loadAllStates(){
+  if(storageOk){
+    try{ return await sbGetAll(); }catch(e){ storageOk=false; }
+  }
+  return Object.keys(memStore).map(k=>JSON.parse(memStore[k]));
+}
 
 const $=id=>document.getElementById(id);
 function show(v){["viewLogin","viewExam","viewDone","viewAdmin"].forEach(x=>$(x).classList.add("hidden"));$(v).classList.remove("hidden");$("logoutBtn").classList.toggle("hidden",v==="viewLogin");}
@@ -439,8 +480,8 @@ async function login(){
   if(!EMAILS.includes(email)){$("loginErr").textContent="Bu email imtahan siyahısında yoxdur.";return;}
   if(!engineReady){$("loginErr").textContent="SQL mühərriki hələ yüklənir — bir neçə saniyə gözləyin.";return;}
   $("loginBtn").disabled=true;$("loginBtn").textContent="Yüklənir…";
-  const saved=await sGet(skey(email));
-  state=saved?JSON.parse(saved):{email,startedAt:Date.now(),current:0,score:0,answers:{},finishedAt:null};
+  const saved=await loadState(email);
+  state=saved||{email,startedAt:Date.now(),current:0,score:0,answers:{},finishedAt:null};
   if(!saved)await saveState();
   $("loginBtn").disabled=false;$("loginBtn").textContent="Daxil ol";
   $("whoami").textContent=email;
@@ -545,9 +586,7 @@ function stopAdminAutoRefresh(){if(adminTimer){clearInterval(adminTimer);adminTi
 
 async function renderAdmin(){
   const box=$("adminContent");
-  const keys=await sList("exam:");
-  const rows=[];
-  for(const k of keys){const v=await sGet(k);if(v){try{rows.push(JSON.parse(v));}catch(e){}}}
+  const rows=await loadAllStates();
   box.innerHTML = adminView==="questions" ? adminQuestionView(rows) : adminStudentView(rows);
   if(adminView==="students"){
     box.querySelectorAll(".linkbtn").forEach(b=>b.onclick=()=>{const el=document.getElementById("exp-"+b.dataset.id);if(el)el.classList.toggle("hidden");});
