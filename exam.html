@@ -423,17 +423,17 @@ function rowToState(row){
   return {email:row.email,startedAt:row.started_at,current:row.current,score:row.score,answers:row.answers||{},finishedAt:row.finished_at};
 }
 async function sbUpsert(row){
-  const res=await fetch(SB_TABLE,{method:"POST",headers:Object.assign({},SB_HEADERS,{"Prefer":"resolution=merge-duplicates,return=minimal"}),body:JSON.stringify([row])});
+  const res=await fetch(SB_TABLE,{method:"POST",cache:"no-store",headers:Object.assign({},SB_HEADERS,{"Prefer":"resolution=merge-duplicates,return=minimal"}),body:JSON.stringify([row])});
   if(!res.ok) throw new Error("Supabase upsert xətası: "+res.status);
 }
 async function sbGetOne(email){
-  const res=await fetch(SB_TABLE+"?email=eq."+encodeURIComponent(email)+"&select=*",{headers:SB_HEADERS});
+  const res=await fetch(SB_TABLE+"?email=eq."+encodeURIComponent(email)+"&select=*",{cache:"no-store",headers:SB_HEADERS});
   if(!res.ok) throw new Error("Supabase select xətası: "+res.status);
   const arr=await res.json();
   return arr.length?rowToState(arr[0]):null;
 }
 async function sbGetAll(){
-  const res=await fetch(SB_TABLE+"?select=*",{headers:SB_HEADERS});
+  const res=await fetch(SB_TABLE+"?select=*",{cache:"no-store",headers:SB_HEADERS});
   if(!res.ok) throw new Error("Supabase select-all xətası: "+res.status);
   return (await res.json()).map(rowToState);
 }
