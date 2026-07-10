@@ -65,8 +65,9 @@
   .shake{animation:shake .35s}
   @keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
   @media(prefers-reduced-motion:reduce){.shake{animation:none}}
-  .scorebar{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:14px}
+  .scorebar{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:14px;flex-wrap:wrap;gap:8px}
   .scorebar b{color:var(--ink)}
+  #timerBox.time-warn b{color:var(--red)}
   .result-wrap{margin-top:18px}
   .result-meta{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px}
   .result-meta b{color:var(--ink)}
@@ -102,7 +103,7 @@
 <div id="viewLogin" class="wrap">
   <div class="login-card">
     <h1>İmtahana giriş</h1>
-    <div class="sub">25 sual · hər sual 4 bal · maksimum 100 bal</div>
+    <div class="sub">25 sual · hər sual 4 bal · maksimum 100 bal · 2 saat müddət</div>
     <label for="emailInput">Email ünvanınız</label>
     <input type="email" id="emailInput" placeholder="ad.soyad@gmail.com" autocomplete="email">
     <button class="btn" id="loginBtn">Daxil ol</button>
@@ -124,6 +125,7 @@
   <div class="scorebar">
     <span>BAL: <b id="scoreNow">0</b> / 100</span>
     <span>TAMAMLANDI: <b id="doneNow">0</b> / 25</span>
+    <span id="timerBox">QALAN VAXT: <b id="timeLeft">02:00:00</b></span>
   </div>
   <div class="exam-grid">
     <div class="rail" id="rail"></div>
@@ -155,10 +157,10 @@
 
 <div id="viewDone" class="wrap hidden">
   <div class="done-card">
-    <div class="mini" style="letter-spacing:.1em">İMTAHAN TAMAMLANDI</div>
+    <div class="mini" id="doneTitle" style="letter-spacing:.1em">İMTAHAN TAMAMLANDI</div>
     <div class="big" id="finalScore">100</div>
     <p>bal (25 sualdan <span id="finalCount">25</span>-i doğru)</p>
-    <p style="margin-top:16px">Nəticəniz yadda saxlanıldı. Səhifəni bağlaya bilərsiniz.</p>
+    <p style="margin-top:16px" id="doneNote">Nəticəniz yadda saxlanıldı. Səhifəni bağlaya bilərsiniz.</p>
   </div>
 </div>
 
@@ -405,6 +407,7 @@ function fmtCell(v){
 /* ================= İMTAHAN MƏNTİQİ ================= */
 const EMAILS=["ulviyyaasadli03@gmail.com","alieliyev07@gmail.com","huseyn.1995.aliyev@gmail.com","m.xalilzada1@gmail.com","rhimliislam8@gmail.com","aytn.axndva@gmail.com","aytenhaciyeva1508@gmail.com","saraxatunhacizade@gmail.com","camila.salimzade@gmail.com","qalib.akhmedov@gmail.com"];
 const ADMIN_CODE="ORACLE2026";
+const TIME_LIMIT_MS=2*60*60*1000;
 const QUESTIONS=["Locations cədvəlindən location_id-si 1700, 1800, 1900, 2100, 2400 olan sətirlər üzrə bütün sütunları çıxarın.","Jobs cədvəlinin job_title, min_salary, max_salary və average_salary (min_salary və max_salary əsasında hesablayın) sütunlarını çıxarın.","Employees cədvəlində hər bir işçinin employee_id, first_name, last_name və 12 aylıq maaşının komissiya çıxılmış hissəsini annual_income alias-ı ilə çıxarın.","Locations cədvəlindən location_id-si 1700, 1800, 1900, 2100, 2400 olmayan və ya yerləşdiyi regionun region_id-si 1, 3 olan sətirlər üzrə bütün sütunları çıxarın.","Countries cədvəlindən country_id-si CN, DE, DK, UK, US olan və region_id-si tək rəqəm olan country_name siyahısını çıxarın.","Employees cədvəlindən job_id-si IT ilə başlayan və ya işə qəbul ayı ilin ilk və ya son 3 ayı olan sətirlər üzrə bütün sütunları çıxarın.","Departments cədvəlindən manager_id-si boş olmayan department_name siyahısını çıxarın.","Locations, Countries, Regions cədvəllərindən region_name, street_address və city sütunlarını çıxarın.","Employees cədvəlindən salary-si 5500–10000 aralığında olan və ya çalışdığı departamentin location_id-si 1700 olan işçilərin məlumatlarını çıxarın.","Countries, Regions cədvəllərindən country_id-si US, UK, CA, BR olan və ya region_id-si cüt olan country_name, region_name sütunlarını çıxarın.","Countries cədvəlindən country_name sütunu A hərfi ilə başlayıb a hərfi ilə bitən və ya tərkibində a hərfi olmayan sətirləri çıxarın.","Jobs cədvəlindən job_title-ı Administration sözü ilə başlayan vəzifələrin job_title və orta maaş məlumatını çıxarın.","Locations, Countries cədvəllərindən city sütunu 'South' sözü ilə başlayan sətirlərin state_province, country_id, country_name sütunlarını çıxarın.","Employees, Departments cədvəllərindən commission_pct-si olmayan işçilərin aid olduğu departamentlərin təkrarlanmayan department_name siyahısını çıxarın.","Employees, Jobs cədvəllərindən last_name sütununda 'a' hərfi olan və ya salary-si 9000-dən böyük olan işçilərin employee_id, last_name, salary və job_title sütunlarını çıxarın.","Employees cədvəlindən employee_id-si tək olan və ya adının ikinci simvolu 'a' olan işçiləri çıxarın.","Locations cədvəlindən street_address sütununda ikinci rast gələn boşluğun mövqeyini çıxarın.","Departments cədvəlindən hər departamentin adını və adında neçə simvol olduğunu çıxarın. Siyahını simvol sayına görə artan sıra ilə sıralayın.","Employees cədvəlindən hər işçinin qarşısında onun işə girdiyi tarix ilə həmin ayın son tarixi arasında gün fərqini çıxarın.","Departments cədvəlindən hər department_name-in sağına department_name uzunluğu qədər '$' işarəsi artırıb çıxarın.","Employees, Departments və Locations cədvəllərindən istifadə etməklə country_id-si 'CA', 'IT', 'UK' olan və ya salary-si 6000-dən böyük olan hər bir işçinin adını, soyadını və çalışdığı şöbənin yerləşdiyi şəhərin adını çıxarın. (Qeyd: departamenti olmayan işçilər də nəzərə alınsın — LEFT JOIN.)","Employees, Departments və Locations cədvəllərindən istifadə etməklə Roma, Venice, Tokyo, Hiroshima şəhərlərində yerləşməyən department_name, city, street_address və həmin departament üzrə işçilərin orta, min və max salary məlumatını çıxarın.","Employees, Departments cədvəllərindən 20, 40, 60, 80 department_id-li işçilər üzrə department_id, department_name və həmin departament üzrə onların orta salary-sini çıxarın.","Employees, Departments, Countries, Locations, Regions cədvəllərindən istifadə etməklə hər region_name üzrə yerləşən country sayını, department sayını və işçi sayını çıxarın. (Bütün regionlar siyahıda görünməlidir.)","Soyadları təkrarlanan işçilər arasından ilk işə girənlərin bütün (ad, soyad, işə giriş tarixi) məlumatlarını çıxarın."];
 const HASHES=[3676437936,57375790,1202459409,2323106434,37263125,2244956416,1753086691,3368241581,922328173,4156269142,3915432802,1257323141,1380236933,1376881936,2368255665,2755168925,1775259827,21565176,2925053034,4230397587,1349250356,987470612,1584886305,2122364806,4087231622];
 function djb2(s){let x=5381;for(const c of s){x=((x*33)^c.charCodeAt(0))>>>0;}return x;}
@@ -485,9 +488,44 @@ async function login(){
   if(!saved)await saveState();
   $("loginBtn").disabled=false;$("loginBtn").textContent="Daxil ol";
   $("whoami").textContent=email;
-  if(state.finishedAt)renderDone(); else {show("viewExam");renderQuestion();}
+  if(!state.finishedAt) await forceTimeoutIfNeeded();
+  if(state.finishedAt){ renderDone(); }
+  else { show("viewExam"); renderQuestion(); startExamTimer(); }
 }
-$("logoutBtn").onclick=()=>{state=null;stopAdminAutoRefresh();$("whoami").textContent="";$("emailInput").value="";show("viewLogin");};
+$("logoutBtn").onclick=()=>{state=null;stopAdminAutoRefresh();stopExamTimer();$("whoami").textContent="";$("emailInput").value="";show("viewLogin");};
+
+/* ---------- 2 saatlıq imtahan vaxtı ---------- */
+let examTimer=null;
+function startExamTimer(){ stopExamTimer(); tickTimer(); examTimer=setInterval(tickTimer,1000); }
+function stopExamTimer(){ if(examTimer){clearInterval(examTimer);examTimer=null;} }
+async function forceTimeoutIfNeeded(){
+  if(state && !state.finishedAt && Date.now()-state.startedAt>=TIME_LIMIT_MS){
+    state.finishedAt=state.startedAt+TIME_LIMIT_MS;
+    await saveState();
+    return true;
+  }
+  return false;
+}
+async function tickTimer(){
+  if(!state) return;
+  const remain=TIME_LIMIT_MS-(Date.now()-state.startedAt);
+  if(remain<=0){
+    updateTimerDisplay(0);
+    stopExamTimer();
+    await forceTimeoutIfNeeded();
+    renderDone();
+    return;
+  }
+  updateTimerDisplay(remain);
+}
+function updateTimerDisplay(remain){
+  const totalSec=Math.max(0,Math.floor(remain/1000));
+  const hh=String(Math.floor(totalSec/3600)).padStart(2,"0");
+  const mm=String(Math.floor((totalSec%3600)/60)).padStart(2,"0");
+  const ss=String(totalSec%60).padStart(2,"0");
+  const el=$("timeLeft"); if(el) el.textContent=hh+":"+mm+":"+ss;
+  const box=$("timerBox"); if(box) box.classList.toggle("time-warn",totalSec<=300);
+}
 
 function renderRail(){
   const rail=$("rail");rail.innerHTML="";
@@ -544,7 +582,7 @@ $("submitBtn").onclick=async()=>{
   a.attempts++; a.sql=sql; a.rows=r.rows.length;
   if(checkRows(i,r.rows.length)){
     a.doneAt=Date.now(); state.answers[i]=a; state.score+=4;
-    if(i===24){state.finishedAt=Date.now();await saveState();renderDone();return;}
+    if(i===24){state.finishedAt=Date.now();await saveState();stopExamTimer();renderDone();return;}
     state.current=i+1; await saveState();
     fb.className="feedback good";fb.textContent="✓ Doğrudur! +4 bal. Növbəti suala keçirilir…";
     $("submitBtn").disabled=true;
@@ -560,7 +598,13 @@ $("submitBtn").onclick=async()=>{
 };
 function renderDone(){
   $("finalScore").textContent=state.score;
-  $("finalCount").textContent=Object.values(state.answers).filter(a=>a.doneAt).length;
+  const doneCount=Object.values(state.answers).filter(a=>a.doneAt).length;
+  $("finalCount").textContent=doneCount;
+  const timedOut=doneCount<25;
+  $("doneTitle").textContent=timedOut?"VAXT BİTDİ":"İMTAHAN TAMAMLANDI";
+  $("doneNote").textContent=timedOut
+    ?"2 saatlıq imtahan vaxtı başa çatdı. Nəticəniz yadda saxlanıldı."
+    :"Nəticəniz yadda saxlanıldı. Səhifəni bağlaya bilərsiniz.";
   show("viewDone");
 }
 
