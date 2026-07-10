@@ -51,7 +51,7 @@
   .qhead .num{font-family:var(--mono);font-size:13px;letter-spacing:.06em}
   .qhead .num b{color:var(--red)}
   .chip{font-family:var(--mono);font-size:11px;background:var(--ink);color:#fff;border-radius:20px;padding:4px 12px}
-  .qtext{padding:22px 22px 6px;font-size:16.5px;line-height:1.65}
+  .qtext{padding:22px 22px 6px;font-size:16.5px;line-height:1.65;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}
   .qbody{padding:16px 22px 24px}
   textarea{width:100%;min-height:160px;background:var(--console);color:var(--console-text);border:1px solid #26313B;border-radius:8px;font-family:var(--mono);font-size:13.5px;line-height:1.6;padding:14px;resize:vertical;caret-color:#F0A196}
   textarea::placeholder{color:#57666F}
@@ -619,6 +619,11 @@ function showResult(r){
   tb.innerHTML=h;
 }
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+
+$("qText").addEventListener("copy",e=>e.preventDefault());
+$("qText").addEventListener("contextmenu",e=>e.preventDefault());
+$("sqlInput").addEventListener("paste",e=>e.preventDefault());
+$("sqlInput").addEventListener("drop",e=>e.preventDefault());
 
 $("runBtn").onclick=()=>{
   const fb=$("feedback");
