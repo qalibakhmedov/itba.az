@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oracle SQL İmtahanı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDF1F0; --card:#FFFFFF; --ink:#17222D; --muted:#5D6E7A;
+    --line:#D6DEE1; --red:#C74634; --red-dark:#A93A2B; --green:#177A4C;
+    --console:#101820; --console-text:#D7E4DC;
+    --sans:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);min-height:100vh}
+  .hidden{display:none!important}
+  header{background:var(--ink);color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  header .brand{font-family:var(--mono);font-size:14px;letter-spacing:.08em}
+  header .brand b{color:#F0A196}
+  header .who{font-family:var(--mono);font-size:12px;color:#B9C6CE;display:flex;align-items:center;gap:14px}
+  header button{background:transparent;border:1px solid #3A4956;color:#C9D4DA;font-family:var(--mono);font-size:12px;padding:5px 12px;border-radius:4px;cursor:pointer}
+  header button:hover{border-color:#F0A196;color:#fff}
+  .wrap{max-width:940px;margin:0 auto;padding:28px 18px 60px}
+  .login-card{max-width:460px;margin:6vh auto 0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:34px 32px;box-shadow:0 10px 30px rgba(23,34,45,.07)}
+  .login-card h1{font-size:26px;font-weight:700;margin-bottom:4px}
+  .login-card .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
+  label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  input[type=email],input[type=text],input[type=password]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:14px;background:#FBFCFC;color:var(--ink)}
+  input:focus,textarea:focus{outline:2px solid var(--red);outline-offset:1px;border-color:transparent}
+  .btn{display:inline-block;width:100%;margin-top:16px;background:var(--red);color:#fff;border:none;border-radius:6px;padding:12px;font-family:var(--sans);font-weight:600;font-size:15px;cursor:pointer}
+  .btn:hover{background:var(--red-dark)}
+  .btn:disabled{background:#B9C2C7;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--red);border:1px solid var(--red)}
+  .btn.ghost:hover{background:#FBEFEC}
+  .btn.dark{background:var(--ink)}
+  .btn.dark:hover{background:#0E1620}
+  .login-note{margin-top:18px;font-size:12.5px;color:var(--muted);line-height:1.55;border-top:1px dashed var(--line);padding-top:14px}
+  .admin-link{margin-top:14px;text-align:center;font-size:12px}
+  .admin-link a{color:var(--muted);cursor:pointer;text-decoration:underline}
+  .err{margin-top:12px;font-size:13px;color:var(--red);font-weight:500}
+  .exam-grid{display:grid;grid-template-columns:56px 1fr;gap:22px}
+  @media(max-width:680px){.exam-grid{grid-template-columns:1fr}.rail{display:flex!important;flex-direction:row!important;flex-wrap:wrap;width:100%!important}}
+  .rail{display:flex;flex-direction:column;gap:5px;width:56px}
+  .cell{height:20px;border:1px solid var(--line);border-radius:3px;background:#fff;font-family:var(--mono);font-size:10px;color:#9AA8B1;display:flex;align-items:center;justify-content:center;min-width:34px}
+  .cell.done{background:var(--green);border-color:var(--green);color:#fff}
+  .cell.now{border-color:var(--red);color:var(--red);font-weight:600;box-shadow:0 0 0 2px rgba(199,70,52,.18)}
+  .qcard{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .qhead{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);background:#F7F9F8}
+  .qhead .num{font-family:var(--mono);font-size:13px;letter-spacing:.06em}
+  .qhead .num b{color:var(--red)}
+  .chip{font-family:var(--mono);font-size:11px;background:var(--ink);color:#fff;border-radius:20px;padding:4px 12px}
+  .qtext{padding:22px 22px 6px;font-size:16.5px;line-height:1.65}
+  .qbody{padding:16px 22px 24px}
+  textarea{width:100%;min-height:160px;background:var(--console);color:var(--console-text);border:1px solid #26313B;border-radius:8px;font-family:var(--mono);font-size:13.5px;line-height:1.6;padding:14px;resize:vertical;caret-color:#F0A196}
+  textarea::placeholder{color:#57666F}
+  .btnrow{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+  .btnrow .btn{width:auto;flex:1;min-width:160px;margin-top:0;padding:12px 20px}
+  .feedback{margin-top:16px;padding:12px 16px;border-radius:8px;font-size:14px;font-weight:500;display:none;white-space:pre-wrap}
+  .feedback.bad{display:block;background:#FBEDEA;color:var(--red-dark);border:1px solid #EFC4BC}
+  .feedback.good{display:block;background:#E9F5EF;color:var(--green);border:1px solid #BBDECB}
+  .feedback.info{display:block;background:#EFF3F6;color:#37505F;border:1px solid #CFDAE1}
+  .attempts{margin-top:10px;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .shake{animation:shake .35s}
+  @keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+  @media(prefers-reduced-motion:reduce){.shake{animation:none}}
+  .scorebar{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:14px}
+  .scorebar b{color:var(--ink)}
+  .result-wrap{margin-top:18px}
+  .result-meta{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px}
+  .result-meta b{color:var(--ink)}
+  .tblbox{overflow:auto;max-height:340px;border:1px solid var(--line);border-radius:8px}
+  table.res{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;white-space:nowrap}
+  table.res th{position:sticky;top:0;background:var(--ink);color:#fff;padding:7px 10px;text-align:left;font-weight:500}
+  table.res td{padding:6px 10px;border-top:1px solid #EAEFF0}
+  table.res tr:nth-child(even) td{background:#F7F9F8}
+  table.res td.null{color:#A5B2BA;font-style:italic}
+  .done-card{max-width:520px;margin:8vh auto 0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:40px;text-align:center}
+  .done-card .big{font-family:var(--mono);font-size:52px;font-weight:600;color:var(--green)}
+  .done-card p{color:var(--muted);margin-top:8px}
+  table.adm{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;font-size:13.5px}
+  table.adm th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.07em;text-align:left;background:var(--ink);color:#fff;padding:10px 12px}
+  table.adm td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+  tr.exp-row td{background:#F7F9F8}
+  .sqlbox{background:var(--console);color:var(--console-text);font-family:var(--mono);font-size:12px;padding:10px 12px;border-radius:6px;white-space:pre-wrap;margin:6px 0 10px}
+  .mini{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .linkbtn{background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;text-decoration:underline;padding:0}
+  .refresh{width:auto;padding:10px 20px;margin:0 0 16px}
+  h2.admin-h{font-size:22px;margin-bottom:14px}
+  #engineStatus{font-family:var(--mono);font-size:11px;margin-top:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">ORACLE&nbsp;<b>SQL</b>&nbsp;İMTAHANI · HR SXEMİ</div>
+  <div class="who"><span id="whoami"></span><button id="logoutBtn" class="hidden">Çıxış</button></div>
+</header>
+
+<div id="viewLogin" class="wrap">
+  <div class="login-card">
+    <h1>İmtahana giriş</h1>
+    <div class="sub">25 sual · hər sual 4 bal · maksimum 100 bal</div>
+    <label for="emailInput">Email ünvanınız</label>
+    <input type="email" id="emailInput" placeholder="ad.soyad@gmail.com" autocomplete="email">
+    <button class="btn" id="loginBtn">Daxil ol</button>
+    <div class="err" id="loginErr"></div>
+    <div class="login-note">
+      <b>Qaydalar:</b> Sorğunu birbaşa burada yazın və icra edin — sistem HR sxemi üzərində işlədib nəticəni göstərəcək. "Yoxla və təsdiq et" düyməsi cavabınızı qiymətləndirir: doğru olmayana qədər növbəti suala keçmək mümkün deyil. Yazdığınız sorğular müəllim tərəfindən görünür.
+    </div>
+    <div id="engineStatus">SQL mühərriki yüklənir…</div>
+    <div class="admin-link"><a id="adminLink">Müəllim girişi</a></div>
+    <div id="adminBox" class="hidden" style="margin-top:12px">
+      <label for="adminCode">Müəllim kodu</label>
+      <input type="password" id="adminCode" placeholder="kod">
+      <button class="btn ghost" id="adminBtn">Panelə keç</button>
+    </div>
+  </div>
+</div>
+
+<div id="viewExam" class="wrap hidden">
+  <div class="scorebar">
+    <span>BAL: <b id="scoreNow">0</b> / 100</span>
+    <span>TAMAMLANDI: <b id="doneNow">0</b> / 25</span>
+  </div>
+  <div class="exam-grid">
+    <div class="rail" id="rail"></div>
+    <div>
+      <div class="qcard" id="qcard">
+        <div class="qhead">
+          <div class="num">SUAL <b id="qNum">01</b> / 25</div>
+          <div class="chip">4 BAL</div>
+        </div>
+        <div class="qtext" id="qText"></div>
+        <div class="qbody">
+          <label for="sqlInput">SQL sorğunuz (Oracle sintaksisi)</label>
+          <textarea id="sqlInput" spellcheck="false" placeholder="SELECT ..."></textarea>
+          <div class="btnrow">
+            <button class="btn dark" id="runBtn">▷ İcra et (sınaq)</button>
+            <button class="btn" id="submitBtn">Yoxla və təsdiq et</button>
+          </div>
+          <div class="feedback" id="feedback"></div>
+          <div class="attempts" id="attemptsInfo"></div>
+          <div class="result-wrap hidden" id="resultWrap">
+            <div class="result-meta">NƏTİCƏ: <b id="rowCount">0</b> sətir <span id="rowNote"></span></div>
+            <div class="tblbox"><table class="res" id="resTable"></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="viewDone" class="wrap hidden">
+  <div class="done-card">
+    <div class="mini" style="letter-spacing:.1em">İMTAHAN TAMAMLANDI</div>
+    <div class="big" id="finalScore">100</div>
+    <p>bal (25 sualdan <span id="finalCount">25</span>-i doğru)</p>
+    <p style="margin-top:16px">Nəticəniz yadda saxlanıldı. Səhifəni bağlaya bilərsiniz.</p>
+  </div>
+</div>
+
+<div id="viewAdmin" class="wrap hidden">
+  <h2 class="admin-h">Müəllim paneli</h2>
+  <button class="btn refresh" id="refreshBtn">Yenilə</button>
+  <div id="adminContent">Yüklənir…</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.min.js"></script>
+<script>
+/* ================= ORACLE FUNKSİYA PAKETİ ================= */
+/* ============ ORACLE UYĞUNLUQ PAKETİ ============ */
+function jToDate(j){ return new Date((j-2440587.5)*86400000); }
+function dateToJ(dt){ return dt.getTime()/86400000 + 2440587.5; }
+var ORA_MONS=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+var ORA_MONTHS=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+var ORA_DAYS=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+function isJul(v){ return typeof v==='number' && v>2300000 && v<2600000; }
+function fmtDate(j,fmt){
+  var d=jToDate(j);
+  var Y=d.getUTCFullYear(),MO=d.getUTCMonth(),DD=d.getUTCDate(),DW=d.getUTCDay();
+  var HH=d.getUTCHours(),MI=d.getUTCMinutes(),SS=d.getUTCSeconds();
+  var p2=function(n){return String(n).padStart(2,'0');};
+  var toks=[
+    ['YYYY',function(){return String(Y);}],['RRRR',function(){return String(Y);}],
+    ['MONTH',function(){return ORA_MONTHS[MO];}],['MON',function(){return ORA_MONS[MO];}],
+    ['YY',function(){return p2(Y%100);}],['RR',function(){return p2(Y%100);}],
+    ['MM',function(){return p2(MO+1);}],
+    ['DAY',function(){return ORA_DAYS[DW];}],['DY',function(){return ORA_DAYS[DW].slice(0,3);}],
+    ['DD',function(){return p2(DD);}],
+    ['HH24',function(){return p2(HH);}],['HH12',function(){return p2(HH%12||12);}],['HH',function(){return p2(HH%12||12);}],
+    ['MI',function(){return p2(MI);}],['SS',function(){return p2(SS);}]
+  ];
+  var out='',i=0,f=String(fmt);
+  while(i<f.length){
+    var hit=false;
+    for(var t=0;t<toks.length;t++){
+      var tk=toks[t][0], seg=f.substr(i,tk.length);
+      if(seg.toUpperCase()===tk){
+        var s=toks[t][1]();
+        if(seg===seg.toLowerCase()) s=s.toLowerCase();
+        else if(tk.length>2 && seg[0]===seg[0].toUpperCase() && seg.slice(1)===seg.slice(1).toLowerCase()) s=s[0]+s.slice(1).toLowerCase();
+        out+=s; i+=tk.length; hit=true; break;
+      }
+    }
+    if(!hit){ out+=f[i]; i++; }
+  }
+  return out;
+}
+function oraParseDate(s){
+  s=String(s).trim(); var m;
+  if((m=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/))){
+    var y=+m[3]; if(y<100) y+= y<50?2000:1900;
+    return Date.UTC(y,+m[2]-1,+m[1])/86400000+2440587.5;
+  }
+  if((m=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/)))
+    return Date.UTC(+m[1],+m[2]-1,+m[3])/86400000+2440587.5;
+  if((m=s.match(/^(\d{1,2})[-\s]([A-Za-z]{3,9})[-\s](\d{2,4})$/))){
+    var y2=+m[3]; if(y2<100) y2+= y2<50?2000:1900;
+    var mo=ORA_MONS.indexOf(m[2].slice(0,3).toUpperCase());
+    if(mo<0) return null;
+    return Date.UTC(y2,mo,+m[1])/86400000+2440587.5;
+  }
+  return null;
+}
+function pad(side,s,n,p){
+  if(s==null) return null;
+  s=String(s); p=(p==null||p==='')?' ':String(p); n=Math.trunc(n);
+  if(!(n>0)) return '';
+  if(s.length>=n) return s.slice(0,n);
+  var fill=''; while(fill.length<n-s.length) fill+=p;
+  fill=fill.slice(0,n-s.length);
+  return side==='L' ? fill+s : s+fill;
+}
+function registerOra(db){
+  var cf=function(n,f){ db.create_function(n,f); };
+  cf('NVL',function(a,b){return a==null?b:a;});
+  cf('NVL2',function(a,b,c){return a!=null?b:c;});
+  cf('MOD',function(a,b){return (a==null||b==null)?null:a-Math.floor(a/b)*b;});
+  cf('INITCAP',function(s){return s==null?null:String(s).replace(/[A-Za-z0-9]+/g,function(w){return w[0].toUpperCase()+w.slice(1).toLowerCase();});});
+  cf('CONCAT',function(a,b){return (a==null?'':String(a))+(b==null?'':String(b));});
+  cf('INSTR_2',function(s,sub){return (s==null||sub==null)?null:String(s).indexOf(String(sub))+1;});
+  cf('INSTR_3',function(s,sub,st){ if(s==null||sub==null)return null; s=String(s);sub=String(sub);st=st||1;
+     if(st<0){var i=s.slice(0,s.length+st+sub.length).lastIndexOf(sub);return i+1;}
+     return s.indexOf(sub,st-1)+1; });
+  cf('INSTR_4',function(s,sub,st,occ){ if(s==null||sub==null)return null; s=String(s);sub=String(sub);st=st||1;occ=occ||1;
+     var pos=st-1;
+     for(var k=0;k<occ;k++){ pos=s.indexOf(sub,pos); if(pos<0)return 0; pos+=1; }
+     return pos; });
+  cf('LPAD_2',function(s,n){return pad('L',s,n,' ');});
+  cf('LPAD_3',function(s,n,p){return pad('L',s,n,p);});
+  cf('RPAD_2',function(s,n){return pad('R',s,n,' ');});
+  cf('RPAD_3',function(s,n,p){return pad('R',s,n,p);});
+  cf('LAST_DAY',function(j){ if(j==null)return null; var d=jToDate(j);
+     var last=Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,0)/86400000+2440587.5;
+     return last + (j - (Math.floor(j-0.5)+0.5)); });
+  cf('ADD_MONTHS',function(j,n){ if(j==null)return null; var d=jToDate(j);
+     return dateToJ(new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+Math.trunc(n),d.getUTCDate()))); });
+  cf('MONTHS_BETWEEN',function(a,b){ if(a==null||b==null)return null; var d1=jToDate(a),d2=jToDate(b);
+     return (d1.getUTCFullYear()-d2.getUTCFullYear())*12+(d1.getUTCMonth()-d2.getUTCMonth())+(d1.getUTCDate()-d2.getUTCDate())/31; });
+  cf('ORA_SYSDATE',function(){return Date.now()/86400000+2440587.5;});
+  cf('ORA_EXTRACT',function(part,j){ if(j==null)return null; var d=jToDate(j); part=String(part).toUpperCase();
+     if(part==='YEAR')return d.getUTCFullYear(); if(part==='MONTH')return d.getUTCMonth()+1; if(part==='DAY')return d.getUTCDate(); return null; });
+  cf('TO_CHAR_1',function(v){ if(v==null)return null; if(isJul(v))return fmtDate(v,'DD-MON-YY'); return String(v); });
+  cf('TO_CHAR_2',function(v,fmt){ if(v==null)return null; if(isJul(v))return fmtDate(v,fmt); return String(v); });
+  cf('TO_DATE_1',function(s){return s==null?null:oraParseDate(s);});
+  cf('TO_DATE_2',function(s,f){return s==null?null:oraParseDate(s);});
+  cf('TO_NUMBER',function(s){return s==null?null:Number(s);});
+  cf('CEIL',function(v){return v==null?null:Math.ceil(v);});
+  cf('FLOOR',function(v){return v==null?null:Math.floor(v);});
+  cf('POWER',function(a,b){return Math.pow(a,b);});
+  cf('SQRT',function(a){return Math.sqrt(a);});
+  cf('TRUNC_1',function(v){ if(v==null)return null; if(isJul(v))return Math.floor(v-0.5)+0.5; return Math.trunc(v); });
+  cf('TRUNC_2',function(v,d){ if(v==null)return null; var f=Math.pow(10,Math.trunc(d)); return Math.trunc(v*f)/f; });
+  cf('GREATEST_2',function(a,b){return (a==null||b==null)?null:(a>b?a:b);});
+  cf('GREATEST_3',function(a,b,c){return Math.max(a,b,c);});
+  cf('LEAST_2',function(a,b){return (a==null||b==null)?null:(a<b?a:b);});
+  cf('LEAST_3',function(a,b,c){return Math.min(a,b,c);});
+  var mkDecode=function(n){
+    var args=[]; for(var i=0;i<n;i++)args.push('a'+i);
+    return new Function(args.join(','),
+      'var a=[].slice.call(arguments); var expr=a[0]; var i=1;'+
+      'while(i+1<a.length){ if(expr==a[i]||(expr==null&&a[i]==null)) return a[i+1]; i+=2; }'+
+      'return (a.length%2)===0 ? a[a.length-1] : null;');
+  };
+  for(var n=3;n<=9;n++) cf('DECODE_'+n, mkDecode(n));
+}
+/* çoxarqumentli funksiyaların adını arqument sayına görə dəyişir: RPAD( → RPAD_3( */
+var ARITY_FNS=['INSTR','LPAD','RPAD','TO_CHAR','TO_DATE','TRUNC','DECODE','GREATEST','LEAST'];
+function rewriteArity(sql){
+  var up=sql.toUpperCase();
+  for(var f=0;f<ARITY_FNS.length;f++){
+    var name=ARITY_FNS[f];
+    var out='', i=0;
+    while(i<sql.length){
+      var idx=up.indexOf(name,i);
+      if(idx<0){ out+=sql.slice(i); i=sql.length; break; }
+      var before=idx>0?up[idx-1]:' ';
+      var afterIdx=idx+name.length;
+      var after=up.slice(afterIdx).match(/^\s*\(/);
+      if(/[A-Z0-9_]/.test(before) || !after){ out+=sql.slice(i,afterIdx); i=afterIdx; continue; }
+      var p=afterIdx+after[0].length, depth=1, commas=0, inq=false, empty=true;
+      var j=p;
+      for(; j<sql.length && depth>0; j++){
+        var ch=sql[j];
+        if(inq){ if(ch==="'"){ if(sql[j+1]==="'")j++; else inq=false; } continue; }
+        if(ch==="'"){inq=true; empty=false; continue;}
+        if(ch==='('){depth++; empty=false; continue;}
+        if(ch===')'){depth--; continue;}
+        if(ch===','&&depth===1){commas++; continue;}
+        if(!/\s/.test(ch)) empty=false;
+      }
+      var argc=empty?0:commas+1;
+      out+=sql.slice(i,idx)+name+'_'+argc+sql.slice(afterIdx,afterIdx+after[0].length);
+      i=afterIdx+after[0].length;
+    }
+    sql=out; up=sql.toUpperCase();
+  }
+  return sql;
+}
+function preprocess(sql){
+  var q=String(sql).replace(/--[^\n]*/g,' ').replace(/\/\*[\s\S]*?\*\//g,' ').replace(/;\s*$/,'').trim();
+  q=q.replace(/\bSYSDATE\b/gi,'ORA_SYSDATE()');
+  q=q.replace(/\bCURRENT_DATE\b/gi,'ORA_SYSDATE()');
+  q=q.replace(/EXTRACT\s*\(\s*(YEAR|MONTH|DAY)\s+FROM/gi,"ORA_EXTRACT('$1',");
+  q=q.replace(/\bMINUS\b/gi,'EXCEPT');
+  q=rewriteArity(q);
+  return q;
+}
+
+
+/* ================= HR DATASI ================= */
+const HR = {"regions":[[1,"Europe"],[2,"Americas"],[3,"Asia"],[4,"Middle East and Africa"]],"countries":[["IT","Italy",1],["JP","Japan",3],["US","United States of America",2],["CA","Canada",2],["CN","China",3],["IN","India",3],["AU","Australia",3],["ZW","Zimbabwe",4],["SG","Singapore",3],["UK","United Kingdom",1],["FR","France",1],["DE","Germany",1],["ZM","Zambia",4],["EG","Egypt",4],["BR","Brazil",2],["CH","Switzerland",1],["NL","Netherlands",1],["MX","Mexico",2],["KW","Kuwait",4],["IL","Israel",4],["DK","Denmark",1],["ML","Malaysia",3],["NG","Nigeria",4],["AR","Argentina",2],["BE","Belgium",1]],"locations":[[1000,"1297 Via Cola di Rie","00989","Roma",null,"IT"],[1100,"93091 Calle della Testa","10934","Venice",null,"IT"],[1200,"2017 Shinjuku-ku","1689","Tokyo","Tokyo Prefecture","JP"],[1300,"9450 Kamiya-cho","6823","Hiroshima",null,"JP"],[1400,"2014 Jabberwocky Rd","26192","Southlake","Texas","US"],[1500,"2011 Interiors Blvd","99236","South San Francisco","California","US"],[1600,"2007 Zagora St","50090","South Brunswick","New Jersey","US"],[1700,"2004 Charade Rd","98199","Seattle","Washington","US"],[1800,"147 Spadina Ave","M5V 2L7","Toronto","Ontario","CA"],[1900,"6092 Boxwood St","YSW 9T2","Whitehorse","Yukon","CA"],[2000,"40-5-12 Laogianggen","190518","Beijing",null,"CN"],[2100,"1298 Vileparle (E)","490231","Bombay","Maharashtra","IN"],[2200,"12-98 Victoria Street","2901","Sydney","New South Wales","AU"],[2300,"198 Clementi North","540198","Singapore",null,"SG"],[2400,"8204 Arthur St",null,"London",null,"UK"],[2500,"Magdalen Centre, The Oxford Science Park","OX9 9ZB","Oxford","Oxford","UK"],[2600,"9702 Chester Road","09629850293","Stretford","Manchester","UK"],[2700,"Schwanthalerstr. 7031","80925","Munich","Bavaria","DE"],[2800,"Rua Frei Caneca 1360 ","01307-002","Sao Paulo","Sao Paulo","BR"],[2900,"20 Rue des Corps-Saints","1730","Geneva","Geneve","CH"],[3000,"Murtenstrasse 921","3095","Bern","BE","CH"],[3100,"Pieter Breughelstraat 837","3029SK","Utrecht","Utrecht","NL"],[3200,"Mariano Escobedo 9991","11932","Mexico City","Distrito Federal,","MX"]],"departments":[[10,"Administration",200,1700],[20,"Marketing",201,1800],[30,"Purchasing",114,1700],[40,"Human Resources",203,2400],[50,"Shipping",121,1500],[60,"IT",103,1400],[70,"Public Relations",204,2700],[80,"Sales",145,2500],[90,"Executive",100,1700],[100,"Finance",108,1700],[110,"Accounting",205,1700],[120,"Treasury",null,1700],[130,"Corporate Tax",null,1700],[140,"Control And Credit",null,1700],[150,"Shareholder Services",null,1700],[160,"Benefits",null,1700],[170,"Manufacturing",null,1700],[180,"Construction",null,1700],[190,"Contracting",null,1700],[200,"Operations",null,1700],[210,"IT Support",null,1700],[220,"NOC",null,1700],[230,"IT Helpdesk",null,1700],[240,"Government Sales",null,1700],[250,"Retail Sales",null,1700],[260,"Recruiting",null,1700],[270,"Payroll",null,1700]],"jobs":[["AD_PRES","President",20080,40000],["AD_VP","Administration Vice President",15000,30000],["AD_ASST","Administration Assistant",3000,6000],["FI_MGR","Finance Manager",8200,16000],["FI_ACCOUNT","Accountant",4200,9000],["AC_MGR","Accounting Manager",8200,16000],["AC_ACCOUNT","Public Accountant",4200,9000],["SA_MAN","Sales Manager",10000,20080],["SA_REP","Sales Representative",6000,12008],["PU_MAN","Purchasing Manager",8000,15000],["PU_CLERK","Purchasing Clerk",2500,5500],["ST_MAN","Stock Manager",5500,8500],["ST_CLERK","Stock Clerk",2008,5000],["SH_CLERK","Shipping Clerk",2500,5500],["IT_PROG","Programmer",4000,10000],["MK_MAN","Marketing Manager",9000,15000],["MK_REP","Marketing Representative",4000,9000],["HR_REP","Human Resources Representative",4000,9000],["PR_REP","Public Relations Representative",4500,10500]],"employees":[[100,"Steven","King","SKING","515.123.4567",2452807.5,"AD_PRES",24000,null,null,90],[101,"Neena","Kochhar","NKOCHHAR","515.123.4568",2453634.5,"AD_VP",17000,null,100,90],[102,"Lex","De Haan","LDEHAAN","515.123.4569",2451922.5,"AD_VP",17000,null,100,90],[103,"Alexander","Hunold","AHUNOLD","590.423.4567",2453738.5,"IT_PROG",9000,null,102,60],[104,"Bruce","Ernst","BERNST","590.423.4568",2454241.5,"IT_PROG",6000,null,103,60],[105,"David","Austin","DAUSTIN","590.423.4569",2453546.5,"IT_PROG",4800,null,103,60],[106,"Valli","Pataballa","VPATABAL","590.423.4560",2453771.5,"IT_PROG",4800,null,103,60],[107,"Diana","Lorentz","DLORENTZ","590.423.5567",2454138.5,"IT_PROG",4200,null,103,60],[108,"Nancy","Greenberg","NGREENBE","515.124.4569",2452503.5,"FI_MGR",12008,null,101,100],[109,"Daniel","Faviet","DFAVIET","515.124.4169",2452502.5,"FI_ACCOUNT",9000,null,108,100],[110,"John","Chen","JCHEN","515.124.4269",2453641.5,"FI_ACCOUNT",8200,null,108,100],[111,"Ismael","Sciarra","ISCIARRA","515.124.4369",2453643.5,"FI_ACCOUNT",7700,null,108,100],[112,"Jose Manuel","Urman","JMURMAN","515.124.4469",2453801.5,"FI_ACCOUNT",7800,null,108,100],[113,"Luis","Popp","LPOPP","515.124.4567",2454441.5,"FI_ACCOUNT",6900,null,108,100],[114,"Den","Raphaely","DRAPHEAL","515.127.4561",2452615.5,"PU_MAN",11000,null,100,30],[115,"Alexander","Khoo","AKHOO","515.127.4562",2452777.5,"PU_CLERK",3100,null,114,30],[116,"Shelli","Baida","SBAIDA","515.127.4563",2453728.5,"PU_CLERK",2900,null,114,30],[117,"Sigal","Tobias","STOBIAS","515.127.4564",2453575.5,"PU_CLERK",2800,null,114,30],[118,"Guy","Himuro","GHIMURO","515.127.4565",2454054.5,"PU_CLERK",2600,null,114,30],[119,"Karen","Colmenares","KCOLMENA","515.127.4566",2454322.5,"PU_CLERK",2500,null,114,30],[120,"Matthew","Weiss","MWEISS","650.123.1234",2453204.5,"ST_MAN",8000,null,100,50],[121,"Adam","Fripp","AFRIPP","650.123.2234",2453470.5,"ST_MAN",8200,null,100,50],[122,"Payam","Kaufling","PKAUFLIN","650.123.3234",2452760.5,"ST_MAN",7900,null,100,50],[123,"Shanta","Vollman","SVOLLMAN","650.123.4234",2453653.5,"ST_MAN",6500,null,100,50],[124,"Kevin","Mourgos","KMOURGOS","650.123.5234",2454420.5,"ST_MAN",5800,null,100,50],[125,"Julia","Nayer","JNAYER","650.124.1214",2453567.5,"ST_CLERK",3200,null,120,50],[126,"Irene","Mikkilineni","IMIKKILI","650.124.1224",2454006.5,"ST_CLERK",2700,null,120,50],[127,"James","Landry","JLANDRY","650.124.1334",2454114.5,"ST_CLERK",2400,null,120,50],[128,"Steven","Markle","SMARKLE","650.124.1434",2454533.5,"ST_CLERK",2200,null,120,50],[129,"Laura","Bissot","LBISSOT","650.124.5234",2453602.5,"ST_CLERK",3300,null,121,50],[130,"Mozhe","Atkinson","MATKINSO","650.124.6234",2453673.5,"ST_CLERK",2800,null,121,50],[131,"James","Marlow","JAMRLOW","650.124.7234",2453417.5,"ST_CLERK",2500,null,121,50],[132,"TJ","Olson","TJOLSON","650.124.8234",2454200.5,"ST_CLERK",2100,null,121,50],[133,"Jason","Mallin","JMALLIN","650.127.1934",2453170.5,"ST_CLERK",3300,null,122,50],[134,"Michael","Rogers","MROGERS","650.127.1834",2453973.5,"ST_CLERK",2900,null,122,50],[135,"Ki","Gee","KGEE","650.127.1734",2454446.5,"ST_CLERK",2400,null,122,50],[136,"Hazel","Philtanker","HPHILTAN","650.127.1634",2454502.5,"ST_CLERK",2200,null,122,50],[137,"Renske","Ladwig","RLADWIG","650.121.1234",2452834.5,"ST_CLERK",3600,null,123,50],[138,"Stephen","Stiles","SSTILES","650.121.2034",2453669.5,"ST_CLERK",3200,null,123,50],[139,"John","Seo","JSEO","650.121.2019",2453778.5,"ST_CLERK",2700,null,123,50],[140,"Joshua","Patel","JPATEL","650.121.1834",2453831.5,"ST_CLERK",2500,null,123,50],[141,"Trenna","Rajs","TRAJS","650.121.8009",2452929.5,"ST_CLERK",3500,null,124,50],[142,"Curtis","Davies","CDAVIES","650.121.2994",2453399.5,"ST_CLERK",3100,null,124,50],[143,"Randall","Matos","RMATOS","650.121.2874",2453809.5,"ST_CLERK",2600,null,124,50],[144,"Peter","Vargas","PVARGAS","650.121.2004",2453925.5,"ST_CLERK",2500,null,124,50],[145,"John","Russell","JRUSSEL","011.44.1344.429268",2453279.5,"SA_MAN",14000,0.4,100,80],[146,"Karen","Partners","KPARTNER","011.44.1344.467268",2453375.5,"SA_MAN",13500,0.3,100,80],[147,"Alberto","Errazuriz","AERRAZUR","011.44.1344.429278",2453439.5,"SA_MAN",12000,0.3,100,80],[148,"Gerald","Cambrault","GCAMBRAU","011.44.1344.619268",2454388.5,"SA_MAN",11000,0.3,100,80],[149,"Eleni","Zlotkey","EZLOTKEY","011.44.1344.429018",2454494.5,"SA_MAN",10500,0.2,100,80],[150,"Peter","Tucker","PTUCKER","011.44.1344.129268",2453400.5,"SA_REP",10000,0.3,145,80],[151,"David","Bernstein","DBERNSTE","011.44.1344.345268",2453453.5,"SA_REP",9500,0.25,145,80],[152,"Peter","Hall","PHALL","011.44.1344.478968",2453602.5,"SA_REP",9000,0.25,145,80],[153,"Christopher","Olsen","COLSEN","011.44.1344.498718",2453824.5,"SA_REP",8000,0.2,145,80],[154,"Nanette","Cambrault","NCAMBRAU","011.44.1344.987668",2454078.5,"SA_REP",7500,0.2,145,80],[155,"Oliver","Tuvault","OTUVAULT","011.44.1344.486508",2454427.5,"SA_REP",7000,0.15,145,80],[156,"Janette","King","JKING","011.44.1345.429268",2453034.5,"SA_REP",10000,0.35,146,80],[157,"Patrick","Sully","PSULLY","011.44.1345.929268",2453068.5,"SA_REP",9500,0.35,146,80],[158,"Allan","McEwen","AMCEWEN","011.44.1345.829268",2453218.5,"SA_REP",9000,0.35,146,80],[159,"Lindsey","Smith","LSMITH","011.44.1345.729268",2453439.5,"SA_REP",8000,0.3,146,80],[160,"Louise","Doran","LDORAN","011.44.1345.629268",2453719.5,"SA_REP",7500,0.3,146,80],[161,"Sarath","Sewall","SSEWALL","011.44.1345.529268",2454042.5,"SA_REP",7000,0.25,146,80],[162,"Clara","Vishney","CVISHNEY","011.44.1346.129268",2453685.5,"SA_REP",10500,0.25,147,80],[163,"Danielle","Greene","DGREENE","011.44.1346.229268",2454178.5,"SA_REP",9500,0.15,147,80],[164,"Mattea","Marvins","MMARVINS","011.44.1346.329268",2454489.5,"SA_REP",7200,0.1,147,80],[165,"David","Lee","DLEE","011.44.1346.529268",2454519.5,"SA_REP",6800,0.1,147,80],[166,"Sundar","Ande","SANDE","011.44.1346.629268",2454549.5,"SA_REP",6400,0.1,147,80],[167,"Amit","Banda","ABANDA","011.44.1346.729268",2454577.5,"SA_REP",6200,0.1,147,80],[168,"Lisa","Ozer","LOZER","011.44.1343.929268",2453440.5,"SA_REP",11500,0.25,148,80],[169,"Harrison","Bloom","HBLOOM","011.44.1343.829268",2453817.5,"SA_REP",10000,0.2,148,80],[170,"Tayler","Fox","TFOX","011.44.1343.729268",2453759.5,"SA_REP",9600,0.2,148,80],[171,"William","Smith","WSMITH","011.44.1343.629268",2454154.5,"SA_REP",7400,0.15,148,80],[172,"Elizabeth","Bates","EBATES","011.44.1343.529268",2454183.5,"SA_REP",7300,0.15,148,80],[173,"Sundita","Kumar","SKUMAR","011.44.1343.329268",2454577.5,"SA_REP",6100,0.1,148,80],[174,"Ellen","Abel","EABEL","011.44.1644.429267",2453136.5,"SA_REP",11000,0.3,149,80],[175,"Alyssa","Hutton","AHUTTON","011.44.1644.429266",2453448.5,"SA_REP",8800,0.25,149,80],[176,"Jonathon","Taylor","JTAYLOR","011.44.1644.429265",2453818.5,"SA_REP",8600,0.2,149,80],[177,"Jack","Livingston","JLIVINGS","011.44.1644.429264",2453848.5,"SA_REP",8400,0.2,149,80],[178,"Kimberely","Grant","KGRANT","011.44.1644.429263",2454244.5,"SA_REP",7000,0.15,149,null],[179,"Charles","Johnson","CJOHNSON","011.44.1644.429262",2454469.5,"SA_REP",6200,0.1,149,80],[180,"Winston","Taylor","WTAYLOR","650.507.9876",2453759.5,"SH_CLERK",3200,null,120,50],[181,"Jean","Fleaur","JFLEAUR","650.507.9877",2453789.5,"SH_CLERK",3100,null,120,50],[182,"Martha","Sullivan","MSULLIVA","650.507.9878",2454272.5,"SH_CLERK",2500,null,120,50],[183,"Girard","Geoni","GGEONI","650.507.9879",2454499.5,"SH_CLERK",2800,null,120,50],[184,"Nandita","Sarchand","NSARCHAN","650.509.1876",2453031.5,"SH_CLERK",4200,null,121,50],[185,"Alexis","Bull","ABULL","650.509.2876",2453421.5,"SH_CLERK",4100,null,121,50],[186,"Julia","Dellinger","JDELLING","650.509.3876",2453910.5,"SH_CLERK",3400,null,121,50],[187,"Anthony","Cabrio","ACABRIO","650.509.4876",2454138.5,"SH_CLERK",3000,null,121,50],[188,"Kelly","Chung","KCHUNG","650.505.1876",2453535.5,"SH_CLERK",3800,null,122,50],[189,"Jennifer","Dilly","JDILLY","650.505.2876",2453595.5,"SH_CLERK",3600,null,122,50],[190,"Timothy","Gates","TGATES","650.505.3876",2453927.5,"SH_CLERK",2900,null,122,50],[191,"Randall","Perkins","RPERKINS","650.505.4876",2454453.5,"SH_CLERK",2500,null,122,50],[192,"Sarah","Bell","SBELL","650.501.1876",2453039.5,"SH_CLERK",4000,null,123,50],[193,"Britney","Everett","BEVERETT","650.501.2876",2453432.5,"SH_CLERK",3900,null,123,50],[194,"Samuel","McCain","SMCCAIN","650.501.3876",2453917.5,"SH_CLERK",3200,null,123,50],[195,"Vance","Jones","VJONES","650.501.4876",2454176.5,"SH_CLERK",2800,null,123,50],[196,"Alana","Walsh","AWALSH","650.507.9811",2453849.5,"SH_CLERK",3100,null,124,50],[197,"Kevin","Feeney","KFEENEY","650.507.9822",2453878.5,"SH_CLERK",3000,null,124,50],[198,"Donald","OConnell","DOCONNEL","650.507.9833",2454272.5,"SH_CLERK",2600,null,124,50],[199,"Douglas","Grant","DGRANT","650.507.9844",2454478.5,"SH_CLERK",2600,null,124,50],[200,"Jennifer","Whalen","JWHALEN","515.123.4444",2452899.5,"AD_ASST",4400,null,101,10],[201,"Michael","Hartstein","MHARTSTE","515.123.5555",2453052.5,"MK_MAN",13000,null,100,20],[202,"Pat","Fay","PFAY","603.123.6666",2453599.5,"MK_REP",6000,null,201,20],[203,"Susan","Mavris","SMAVRIS","515.123.7777",2452432.5,"HR_REP",6500,null,101,40],[204,"Hermann","Baer","HBAER","515.123.8888",2452432.5,"PR_REP",10000,null,101,70],[205,"Shelley","Higgins","SHIGGINS","515.123.8080",2452432.5,"AC_MGR",12008,null,101,110],[206,"William","Gietz","WGIETZ","515.123.8181",2452432.5,"AC_ACCOUNT",8300,null,205,110]]};
+const SCHEMA = `
+CREATE TABLE regions (region_id INTEGER, region_name TEXT);
+CREATE TABLE countries (country_id TEXT, country_name TEXT, region_id INTEGER);
+CREATE TABLE locations (location_id INTEGER, street_address TEXT, postal_code TEXT, city TEXT, state_province TEXT, country_id TEXT);
+CREATE TABLE departments (department_id INTEGER, department_name TEXT, manager_id INTEGER, location_id INTEGER);
+CREATE TABLE jobs (job_id TEXT, job_title TEXT, min_salary REAL, max_salary REAL);
+CREATE TABLE employees (employee_id INTEGER, first_name TEXT, last_name TEXT, email TEXT, phone_number TEXT, hire_date REAL, job_id TEXT, salary REAL, commission_pct REAL, manager_id INTEGER, department_id INTEGER);
+CREATE TABLE dual (dummy TEXT);
+INSERT INTO dual VALUES ('X');`;
+
+let db=null, engineReady=false;
+initSqlJs({locateFile:f=>"https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/"+f}).then(SQL=>{
+  db=new SQL.Database();
+  db.run("PRAGMA case_sensitive_like=ON;");
+  db.run(SCHEMA);
+  for(const t of ["regions","countries","locations","departments","jobs","employees"]){
+    const rows=HR[t]; const ph="("+rows[0].map(()=>"?").join(",")+")";
+    const st=db.prepare("INSERT INTO "+t+" VALUES "+ph);
+    rows.forEach(r=>st.run(r)); st.free();
+  }
+  registerOra(db);
+  engineReady=true;
+  document.getElementById("engineStatus").textContent="✓ SQL mühərriki hazırdır (HR: 107 işçi, 27 departament, 23 lokasiya)";
+}).catch(e=>{
+  document.getElementById("engineStatus").textContent="✗ Mühərrik yüklənmədi — internet bağlantısını yoxlayıb səhifəni yeniləyin.";
+});
+
+/* ================= SORĞU İCRASI ================= */
+function runQuery(sql){
+  const raw=sql.trim();
+  if(!raw) return {err:"Sorğu boşdur."};
+  if(raw.includes("(+)")) return {err:"Oracle-ın köhnə (+) join sintaksisi burada dəstəklənmir — ANSI JOIN (LEFT JOIN / RIGHT JOIN) istifadə edin."};
+  const q=preprocess(raw);
+  if(!/^\s*(SELECT|WITH)\b/i.test(q)) return {err:"Yalnız SELECT (və ya WITH ... SELECT) sorğularına icazə verilir."};
+  if(/;\s*\S/.test(q)) return {err:"Eyni anda yalnız bir sorğu icra edilə bilər."};
+  try{
+    const res=db.exec(q);
+    if(!res.length) return {cols:[],rows:[]};
+    return {cols:res[0].columns, rows:res[0].values};
+  }catch(e){
+    let msg=String(e.message||e);
+    if(/no such function: (\w+)_(\d+)/.test(msg)){
+      const mm=msg.match(/no such function: (\w+)_(\d+)/);
+      msg=mm[1]+" funksiyası "+mm[2]+" arqumentlə çağırıla bilməz — arqument sayını yoxlayın.";
+    }
+    return {err:"Oracle xətası: "+msg};
+  }
+}
+function fmtCell(v){
+  if(v==null) return null;
+  if(typeof v==="number"){
+    if(isJul(v) && Math.abs((v-0.5)-Math.floor(v-0.5))<1e-9) return fmtDate(v,"DD-MON-YYYY");
+    if(Number.isInteger(v)) return String(v);
+    return String(Math.round(v*10000)/10000);
+  }
+  return String(v);
+}
+
+/* ================= İMTAHAN MƏNTİQİ ================= */
+const EMAILS=["ulviyyaasadli03@gmail.com","alieliyev07@gmail.com","huseyn.1995.aliyev@gmail.com","m.xalilzada1@gmail.com","rhimliislam8@gmail.com","aytn.axndva@gmail.com","aytenhaciyeva1508@gmail.com","saraxatunhacizade@gmail.com","camila.salimzade@gmail.com","qalib.akhmedov@gmail.com"];
+const ADMIN_CODE="ORACLE2026";
+const QUESTIONS=["Locations cədvəlindən location_id-si 1700, 1800, 1900, 2100, 2400 olan sətirlər üzrə bütün sütunları çıxarın.","Jobs cədvəlinin job_title, min_salary, max_salary və average_salary (min_salary və max_salary əsasında hesablayın) sütunlarını çıxarın.","Employees cədvəlində hər bir işçinin employee_id, first_name, last_name və 12 aylıq maaşının komissiya çıxılmış hissəsini annual_income alias-ı ilə çıxarın.","Locations cədvəlindən location_id-si 1700, 1800, 1900, 2100, 2400 olmayan və ya yerləşdiyi regionun region_id-si 1, 3 olan sətirlər üzrə bütün sütunları çıxarın.","Countries cədvəlindən country_id-si CN, DE, DK, UK, US olan və region_id-si tək rəqəm olan country_name siyahısını çıxarın.","Employees cədvəlindən job_id-si IT ilə başlayan və ya işə qəbul ayı ilin ilk və ya son 3 ayı olan sətirlər üzrə bütün sütunları çıxarın.","Departments cədvəlindən manager_id-si boş olmayan department_name siyahısını çıxarın.","Locations, Countries, Regions cədvəllərindən region_name, street_address və city sütunlarını çıxarın.","Employees cədvəlindən salary-si 5500–10000 aralığında olan və ya çalışdığı departamentin location_id-si 1700 olan işçilərin məlumatlarını çıxarın.","Countries, Regions cədvəllərindən country_id-si US, UK, CA, BR olan və ya region_id-si cüt olan country_name, region_name sütunlarını çıxarın.","Countries cədvəlindən country_name sütunu A hərfi ilə başlayıb a hərfi ilə bitən və ya tərkibində a hərfi olmayan sətirləri çıxarın.","Jobs cədvəlindən job_title-ı Administration sözü ilə başlayan vəzifələrin job_title və orta maaş məlumatını çıxarın.","Locations, Countries cədvəllərindən city sütunu 'South' sözü ilə başlayan sətirlərin state_province, country_id, country_name sütunlarını çıxarın.","Employees, Departments cədvəllərindən commission_pct-si olmayan işçilərin aid olduğu departamentlərin təkrarlanmayan department_name siyahısını çıxarın.","Employees, Jobs cədvəllərindən last_name sütununda 'a' hərfi olan və ya salary-si 9000-dən böyük olan işçilərin employee_id, last_name, salary və job_title sütunlarını çıxarın.","Employees cədvəlindən employee_id-si tək olan və ya adının ikinci simvolu 'a' olan işçiləri çıxarın.","Locations cədvəlindən street_address sütununda ikinci rast gələn boşluğun mövqeyini çıxarın.","Departments cədvəlindən hər departamentin adını və adında neçə simvol olduğunu çıxarın. Siyahını simvol sayına görə artan sıra ilə sıralayın.","Employees cədvəlindən hər işçinin qarşısında onun işə girdiyi tarix ilə həmin ayın son tarixi arasında gün fərqini çıxarın.","Departments cədvəlindən hər department_name-in sağına department_name uzunluğu qədər '$' işarəsi artırıb çıxarın.","Employees, Departments və Locations cədvəllərindən istifadə etməklə country_id-si 'CA', 'IT', 'UK' olan və ya salary-si 6000-dən böyük olan hər bir işçinin adını, soyadını və çalışdığı şöbənin yerləşdiyi şəhərin adını çıxarın. (Qeyd: departamenti olmayan işçilər də nəzərə alınsın — LEFT JOIN.)","Employees, Departments və Locations cədvəllərindən istifadə etməklə Roma, Venice, Tokyo, Hiroshima şəhərlərində yerləşməyən department_name, city, street_address və həmin departament üzrə işçilərin orta, min və max salary məlumatını çıxarın.","Employees, Departments cədvəllərindən 20, 40, 60, 80 department_id-li işçilər üzrə department_id, department_name və həmin departament üzrə onların orta salary-sini çıxarın.","Employees, Departments, Countries, Locations, Regions cədvəllərindən istifadə etməklə hər region_name üzrə yerləşən country sayını, department sayını və işçi sayını çıxarın. (Bütün regionlar siyahıda görünməlidir.)","Soyadları təkrarlanan işçilər arasından ilk işə girənlərin bütün (ad, soyad, işə giriş tarixi) məlumatlarını çıxarın."];
+const HASHES=[3676437936,57375790,1202459409,2323106434,37263125,2244956416,1753086691,3368241581,922328173,4156269142,3915432802,1257323141,1380236933,1376881936,2368255665,2755168925,1775259827,21565176,2925053034,4230397587,1349250356,987470612,1584886305,2122364806,4087231622];
+function djb2(s){let x=5381;for(const c of s){x=((x*33)^c.charCodeAt(0))>>>0;}return x;}
+function checkRows(qi,n){return djb2("Q"+(qi+1)+"|"+n+"|ORAX26")===HASHES[qi];}
+
+let state=null, cooldownUntil=0;
+const memStore={}; let storageOk=true;
+function skey(email){return "exam:"+email.replace(/[^a-z0-9@.\-_]/gi,"_");}
+async function sSet(k,v){ if(!storageOk){memStore[k]=v;return;} try{await window.storage.set(k,v,true);}catch(e){storageOk=false;memStore[k]=v;} }
+async function sGet(k){ if(!storageOk)return memStore[k]||null; try{const r=await window.storage.get(k,true);return r?r.value:null;}catch(e){return memStore[k]||null;} }
+async function sList(p){ if(!storageOk)return Object.keys(memStore).filter(k=>k.startsWith(p)); try{const r=await window.storage.list(p,true);return r?r.keys:[];}catch(e){return Object.keys(memStore).filter(k=>k.startsWith(p));} }
+async function saveState(){ if(state) await sSet(skey(state.email),JSON.stringify(state)); }
+
+const $=id=>document.getElementById(id);
+function show(v){["viewLogin","viewExam","viewDone","viewAdmin"].forEach(x=>$(x).classList.add("hidden"));$(v).classList.remove("hidden");$("logoutBtn").classList.toggle("hidden",v==="viewLogin");}
+
+$("adminLink").onclick=()=>$("adminBox").classList.toggle("hidden");
+$("loginBtn").onclick=login;
+$("emailInput").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
+$("adminBtn").onclick=()=>{
+  if($("adminCode").value.trim()===ADMIN_CODE){$("whoami").textContent="MÜƏLLİM";show("viewAdmin");renderAdmin();}
+  else $("loginErr").textContent="Müəllim kodu yanlışdır.";
+};
+async function login(){
+  const email=$("emailInput").value.trim().toLowerCase();
+  $("loginErr").textContent="";
+  if(!EMAILS.includes(email)){$("loginErr").textContent="Bu email imtahan siyahısında yoxdur.";return;}
+  if(!engineReady){$("loginErr").textContent="SQL mühərriki hələ yüklənir — bir neçə saniyə gözləyin.";return;}
+  $("loginBtn").disabled=true;$("loginBtn").textContent="Yüklənir…";
+  const saved=await sGet(skey(email));
+  state=saved?JSON.parse(saved):{email,startedAt:Date.now(),current:0,score:0,answers:{},finishedAt:null};
+  if(!saved)await saveState();
+  $("loginBtn").disabled=false;$("loginBtn").textContent="Daxil ol";
+  $("whoami").textContent=email;
+  if(state.finishedAt)renderDone(); else {show("viewExam");renderQuestion();}
+}
+$("logoutBtn").onclick=()=>{state=null;$("whoami").textContent="";$("emailInput").value="";show("viewLogin");};
+
+function renderRail(){
+  const rail=$("rail");rail.innerHTML="";
+  for(let i=0;i<25;i++){
+    const c=document.createElement("div");c.className="cell";c.textContent=String(i+1).padStart(2,"0");
+    if(state.answers[i]&&state.answers[i].doneAt)c.classList.add("done");
+    else if(i===state.current)c.classList.add("now");
+    rail.appendChild(c);
+  }
+}
+function renderQuestion(){
+  const i=state.current;
+  $("qNum").textContent=String(i+1).padStart(2,"0");
+  $("qText").textContent=QUESTIONS[i];
+  $("sqlInput").value=(state.answers[i]&&state.answers[i].sql)||"";
+  const fb=$("feedback");fb.className="feedback";fb.textContent="";
+  $("resultWrap").classList.add("hidden");
+  const at=(state.answers[i]&&state.answers[i].attempts)||0;
+  $("attemptsInfo").textContent=at?("Təsdiq cəhdi: "+at):"";
+  $("scoreNow").textContent=state.score;
+  $("doneNow").textContent=Object.values(state.answers).filter(a=>a.doneAt).length;
+  $("submitBtn").disabled=false;
+  renderRail();
+}
+function showResult(r){
+  const w=$("resultWrap"),tb=$("resTable");
+  w.classList.remove("hidden");
+  $("rowCount").textContent=r.rows.length;
+  const CAP=100;
+  $("rowNote").textContent=r.rows.length>CAP?("(ilk "+CAP+" sətir göstərilir)"):"";
+  let h="<tr>"+r.cols.map(c=>"<th>"+esc(c.toUpperCase())+"</th>").join("")+"</tr>";
+  r.rows.slice(0,CAP).forEach(row=>{
+    h+="<tr>"+row.map(v=>{const f=fmtCell(v);return f==null?'<td class="null">(null)</td>':"<td>"+esc(f)+"</td>";}).join("")+"</tr>";
+  });
+  tb.innerHTML=h;
+}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+
+$("runBtn").onclick=()=>{
+  const fb=$("feedback");
+  const r=runQuery($("sqlInput").value);
+  if(r.err){fb.className="feedback bad";fb.textContent=r.err;$("resultWrap").classList.add("hidden");return;}
+  fb.className="feedback info";fb.textContent="Sorğu icra olundu — nəticəni yoxlayın, hazır olduqda təsdiq edin.";
+  showResult(r);
+};
+$("submitBtn").onclick=async()=>{
+  const i=state.current, fb=$("feedback");
+  if(Date.now()<cooldownUntil){fb.className="feedback bad";fb.textContent="Bir az gözləyin ("+Math.ceil((cooldownUntil-Date.now())/1000)+" san) və yenidən cəhd edin.";return;}
+  const sql=$("sqlInput").value.trim();
+  const r=runQuery(sql);
+  if(r.err){fb.className="feedback bad";fb.textContent=r.err;$("resultWrap").classList.add("hidden");return;}
+  showResult(r);
+  const a=state.answers[i]||{attempts:0,sql:"",rows:null,doneAt:null};
+  a.attempts++; a.sql=sql; a.rows=r.rows.length;
+  if(checkRows(i,r.rows.length)){
+    a.doneAt=Date.now(); state.answers[i]=a; state.score+=4;
+    if(i===24){state.finishedAt=Date.now();await saveState();renderDone();return;}
+    state.current=i+1; await saveState();
+    fb.className="feedback good";fb.textContent="✓ Doğrudur! +4 bal. Növbəti suala keçirilir…";
+    $("submitBtn").disabled=true;
+    setTimeout(renderQuestion,1400);
+  } else {
+    state.answers[i]=a; await saveState();
+    cooldownUntil=Date.now()+8000;
+    $("qcard").classList.remove("shake");void $("qcard").offsetWidth;$("qcard").classList.add("shake");
+    fb.className="feedback bad";fb.textContent="✗ Nəticə gözləniləndən fərqlidir. Şərti yenidən oxuyub sorğunu düzəldin.";
+    $("attemptsInfo").textContent="Təsdiq cəhdi: "+a.attempts;
+    renderRail();
+  }
+};
+function renderDone(){
+  $("finalScore").textContent=state.score;
+  $("finalCount").textContent=Object.values(state.answers).filter(a=>a.doneAt).length;
+  show("viewDone");
+}
+
+/* ---------- müəllim paneli ---------- */
+$("refreshBtn").onclick=renderAdmin;
+async function renderAdmin(){
+  const box=$("adminContent");box.textContent="Yüklənir…";
+  const keys=await sList("exam:");
+  const rows=[];
+  for(const k of keys){const v=await sGet(k);if(v){try{rows.push(JSON.parse(v));}catch(e){}}}
+  let html='<table class="adm"><tr><th>#</th><th>Email</th><th>Bal</th><th>Sual</th><th>Status</th><th>Cavablar</th></tr>';
+  let n=0;
+  for(const em of EMAILS){
+    n++;
+    const r=rows.find(x=>x.email===em);
+    if(!r){html+=`<tr><td>${n}</td><td>${em}</td><td>—</td><td>—</td><td class="mini">başlamayıb</td><td>—</td></tr>`;continue;}
+    const doneCnt=Object.values(r.answers).filter(a=>a.doneAt).length;
+    const status=r.finishedAt?"✔ bitirib":"davam edir";
+    const id=em.replace(/[^a-z0-9]/gi,"");
+    html+=`<tr><td>${n}</td><td>${em}</td><td><b>${r.score}</b>/100</td><td>${doneCnt}/25</td><td>${status}</td>
+      <td><button class="linkbtn" data-id="${id}">göstər</button></td></tr>
+      <tr class="exp-row hidden" id="exp-${id}"><td colspan="6">${answersHtml(r)}</td></tr>`;
+  }
+  html+="</table>";
+  if(!storageOk)html+='<p class="mini" style="margin-top:10px">Diqqət: yaddaş xidmətinə çatmaq mümkün olmadı — məlumat yalnız bu sessiyada görünür.</p>';
+  box.innerHTML=html;
+  box.querySelectorAll(".linkbtn").forEach(b=>b.onclick=()=>{const el=document.getElementById("exp-"+b.dataset.id);if(el)el.classList.toggle("hidden");});
+}
+function answersHtml(r){
+  let h="";
+  for(let i=0;i<25;i++){
+    const a=r.answers[i];if(!a)continue;
+    h+=`<div class="mini" style="margin-top:8px">SUAL ${i+1} · cəhd: ${a.attempts} · nəticə: ${a.rows??"—"} sətir · ${a.doneAt?"✔ doğru":"✗ hələ doğru deyil"}</div>
+        <div class="sqlbox">${esc(a.sql||"")}</div>`;
+  }
+  return h||'<span class="mini">Hələ cavab yoxdur.</span>';
+}
+</script>
+</body>
+</html>
