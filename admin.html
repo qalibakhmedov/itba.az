@@ -96,6 +96,7 @@
   <div class="navtabs">
     <button class="btn ghost" id="navMonitoringBtn">Monitorinq</button>
     <button class="btn ghost" id="navWordingBtn">Mətnlər</button>
+    <button class="btn ghost" id="navModerationBtn">Moderasiya</button>
   </div>
 
   <div id="viewMonitoring">
@@ -152,11 +153,30 @@
       <div class="ok" id="wordingOk"></div>
     </div>
   </div>
+
+  <div id="viewModeration" class="hidden">
+    <div class="toprow">
+      <div>
+        <h2 class="admin-h">Məqalə moderasiyası</h2>
+        <div class="mini">Yalnız təsdiqlədiyiniz məqalələr saytda dərc olunur (statik səhifələr növbəti planlanmış build zamanı yaranır).</div>
+      </div>
+      <select id="modFilter" style="max-width:220px">
+        <option value="pending_review">Gözləyən</option>
+        <option value="published">Dərc edilmiş</option>
+        <option value="rejected">Rədd edilmiş</option>
+        <option value="all">Hamısı</option>
+      </select>
+    </div>
+    <div class="panel">
+      <div id="moderationBox">Yüklənir…</div>
+    </div>
+  </div>
 </div>
 
 <div id="chartTooltip" class="chart-tooltip"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
 <script src="js/site-common.js"></script>
 <script>
 const ADMIN_EMAIL="qalib.akhmedov@gmail.com";
@@ -274,11 +294,72 @@ function show(v){["viewLogin","viewApp"].forEach(x=>$(x).classList.add("hidden")
 function showTab(t){
   $("viewMonitoring").classList.toggle("hidden",t!=="monitoring");
   $("viewWording").classList.toggle("hidden",t!=="wording");
+  $("viewModeration").classList.toggle("hidden",t!=="moderation");
   $("navMonitoringBtn").classList.toggle("tab-active",t==="monitoring");
   $("navWordingBtn").classList.toggle("tab-active",t==="wording");
+  $("navModerationBtn").classList.toggle("tab-active",t==="moderation");
 }
 $("navMonitoringBtn").onclick=()=>showTab("monitoring");
 $("navWordingBtn").onclick=async()=>{await loadWordings();renderWordingForm();showTab("wording");};
+$("navModerationBtn").onclick=async()=>{await loadModeration();showTab("moderation");};
+$("modFilter").onchange=loadModeration;
+
+/* ================= məqalə moderasiyası ================= */
+const CATEGORY_LABEL={ai:"AI",tools:"IT BA Alətləri",case_studies:"Praktik Keys / Real Hadisələr",news:"Sənaye Xəbərləri"};
+const MOD_STATUS_LABEL={draft:"Qaralama",pending_review:"Gözləyir",published:"Dərc edilib",rejected:"Rədd edilib"};
+
+async function loadModeration(){
+  const box=$("moderationBox");
+  box.textContent="Yüklənir…";
+  const status=$("modFilter").value;
+  // sbAuth.from() (not raw fetch) — same reason as sbFetch() above: this
+  // carries the logged-in admin's session token, which is what is_admin()
+  // (supabase/schema-rbac.sql) checks. Raw fetch with the plain anon key
+  // would have no auth.uid() and silently see nothing.
+  let q=sbAuth.from("articles").select("*,author:profiles(full_name,email)").order("updated_at",{ascending:false});
+  if(status!=="all") q=q.eq("status",status);
+  const{data:articles,error}=await q;
+  if(error){box.textContent="Yüklənmədi.";return;}
+  if(!articles.length){box.innerHTML='<p class="mini">Bu filtrdə məqalə yoxdur.</p>';return;}
+  box.innerHTML=articles.map(a=>{
+    const authorName=(a.author&&(a.author.full_name||a.author.email))||"—";
+    const safeBody=DOMPurify.sanitize(a.body_html||"");
+    const rejectRow=a.status==="pending_review"?(
+      '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">'+
+        '<button class="btn" style="width:auto" data-approve="'+a.id+'">Təsdiqlə</button>'+
+        '<input type="text" placeholder="Rədd səbəbi" id="reject-note-'+a.id+'" style="flex:1;min-width:180px">'+
+        '<button class="btn ghost" style="width:auto" data-reject="'+a.id+'">Rədd et</button>'+
+      '</div>'
+    ):"";
+    return '<div class="panel" style="margin-bottom:14px">'+
+      '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">'+
+        '<div>'+
+          '<b>'+esc(a.title)+'</b>'+
+          '<div class="mini">'+esc(authorName)+' • '+esc(CATEGORY_LABEL[a.category]||a.category)+' • '+MOD_STATUS_LABEL[a.status]+'</div>'+
+        '</div>'+
+        '<button class="linkbtn" data-toggle="'+a.id+'">məzmuna bax</button>'+
+      '</div>'+
+      (a.status==="rejected"&&a.rejection_note?'<div class="mini" style="margin-top:6px">Səbəb: '+esc(a.rejection_note)+'</div>':"")+
+      '<div class="hidden article-body" id="mod-body-'+a.id+'" style="margin-top:10px;border-top:1px solid var(--line);padding-top:10px">'+safeBody+'</div>'+
+      rejectRow+
+    '</div>';
+  }).join("");
+
+  box.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>{
+    $("mod-body-"+b.dataset.toggle).classList.toggle("hidden");
+  });
+  box.querySelectorAll("[data-approve]").forEach(b=>b.onclick=async()=>{
+    b.disabled=true;
+    await sbAuth.from("articles").update({status:"published"}).eq("id",b.dataset.approve);
+    loadModeration();
+  });
+  box.querySelectorAll("[data-reject]").forEach(b=>b.onclick=async()=>{
+    const note=$("reject-note-"+b.dataset.reject).value.trim();
+    b.disabled=true;
+    await sbAuth.from("articles").update({status:"rejected",rejection_note:note||null}).eq("id",b.dataset.reject);
+    loadModeration();
+  });
+}
 
 let refreshTimer=null;
 function stopAutoRefresh(){if(refreshTimer){clearInterval(refreshTimer);refreshTimer=null;}}

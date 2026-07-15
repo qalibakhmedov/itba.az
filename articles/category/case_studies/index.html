@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Praktik Keys / Real Hadisələr — itba.az Məqalələr</title>
+<meta name="description" content="itba.az icması tərəfindən yazılmış &quot;Praktik Keys / Real Hadisələr&quot; kateqoriyasında məqalələr.">
+<link rel="canonical" href="https://itba.az/articles/category/case_studies/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Praktik Keys / Real Hadisələr — itba.az Məqalələr">
+<meta property="og:description" content="itba.az icması tərəfindən yazılmış &quot;Praktik Keys / Real Hadisələr&quot; kateqoriyasında məqalələr.">
+<meta property="og:url" content="https://itba.az/articles/category/case_studies/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Praktik Keys / Real Hadisələr — itba.az Məqalələr">
+<meta name="twitter:description" content="itba.az icması tərəfindən yazılmış &quot;Praktik Keys / Real Hadisələr&quot; kateqoriyasında məqalələr.">
+<link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<div class="animated-bg"><canvas id="particle-bg" aria-hidden="true"></canvas></div>
+<header>
+  <div class="container">
+    <div class="header-content">
+      <a href="/" class="logo-link">
+        <div class="logo-section">
+          <div class="logo-mark">BA</div>
+          <div class="logo-text"><h1>itba.az</h1><p>Məqalələr</p></div>
+        </div>
+      </a>
+      <nav aria-label="Primary">
+        <a href="/articles/">Məqalələr</a>
+        <a href="/academy/">Akademiya</a>
+      </nav>
+      <div class="header-buttons">
+        <a href="/community/login.html" class="btn btn-ghost">Daxil ol</a>
+      </div>
+    </div>
+  </div>
+</header>
+<section class="content-page">
+  <div class="container">
+    <span class="badge">Məqalələr</span>
+    <h2 class="section-title" style="text-align:left;font-size:34px;margin-bottom:20px">Praktik Keys / Real Hadisələr</h2>
+    <div class="category-pills">
+      <a href="/articles/" class="cat-pill">Hamısı</a>
+      <a href="/articles/category/ai/" class="cat-pill">Süni İntellekt (AI)</a>
+      <a href="/articles/category/tools/" class="cat-pill">IT BA Alətləri</a>
+      <a href="/articles/category/case_studies/" class="cat-pill active">Praktik Keys / Real Hadisələr</a>
+      <a href="/articles/category/news/" class="cat-pill">Sənaye Xəbərləri</a>
+    </div>
+    <input type="search" id="articleSearch" class="article-search" placeholder="Məqalələr arasında axtar…" aria-label="Məqalələr arasında axtar">
+    <div class="article-grid" id="articleGrid">
+      <p class="subhead">Bu kateqoriyada hələ məqalə yoxdur.</p>
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  var input = document.getElementById("articleSearch");
+  var cards = Array.prototype.slice.call(document.querySelectorAll("#articleGrid .article-card"));
+  input.addEventListener("input", function () {
+    var q = input.value.trim().toLowerCase();
+    cards.forEach(function (card) {
+      var text = card.textContent.toLowerCase();
+      card.style.display = !q || text.indexOf(q) !== -1 ? "" : "none";
+    });
+  });
+})();
+</script>
+<footer>
+  <div class="container">
+    <p>© 2025 itba.az – IT Business Analysis Academy</p>
+    <div style="margin-top: 10px;">
+      <a href="/">Ana səhifə</a>
+      <a href="/articles/">Məqalələr</a>
+      <a href="/academy/">Akademiya</a>
+    </div>
+  </div>
+</footer>
+<script src="/js/particle-bg.js"></script>
+</body>
+</html>

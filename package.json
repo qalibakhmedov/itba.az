@@ -1,0 +1,11 @@
+{
+  "name": "itba-az-build",
+  "private": true,
+  "description": "Build-time-only tooling for itba.az's static article pages. Does not affect how the site is served — GitHub Pages still serves plain committed files with zero server-side computation at request time. See README.md.",
+  "scripts": {
+    "build:articles": "node scripts/build-articles.js"
+  },
+  "dependencies": {
+    "sanitize-html": "^2.13.0"
+  }
+}

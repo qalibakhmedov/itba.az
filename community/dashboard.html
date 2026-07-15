@@ -29,6 +29,11 @@
         <span class="pill-status" id="verifiedPill">—</span>
       </div>
 
+      <div class="dashboard-row" id="articlesRow" style="display:none">
+        <span style="font-size:14px">Articles</span>
+        <span id="articlesAction"></span>
+      </div>
+
       <div class="dashboard-row">
         <span style="font-size:14px">Career compatibility test</span>
         <span id="testStatus" style="font-size:14px;color:var(--faint)">Not taken yet</span>
@@ -77,6 +82,13 @@
     row.style.display = "flex";
     pill.textContent = profile.verified ? "Verified" : "Pending review";
     pill.classList.toggle("verified", !!profile.verified);
+
+    const articlesRow = document.getElementById("articlesRow");
+    const articlesAction = document.getElementById("articlesAction");
+    articlesRow.style.display = "flex";
+    articlesAction.innerHTML = profile.verified
+      ? '<a href="write-article.html" style="color:var(--accent)">Write an article</a> · <a href="my-articles.html" style="color:var(--accent)">My articles</a>'
+      : '<span style="font-size:13px;color:var(--faint)">Unlocks once verified</span>';
   }
 
   const testBtn = document.getElementById("testBtn");

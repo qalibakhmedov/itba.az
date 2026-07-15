@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Write an article — itba.az</title>
+<link rel="stylesheet" href="/css/community.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trix@2/dist/trix.css">
+</head>
+<body>
+<canvas id="particle-bg" aria-hidden="true"></canvas>
+<div class="page">
+  <div class="container-wide">
+    <a href="/index.html" class="site-brand">← itba.az</a>
+    <div class="card" id="loadingCard">
+      <p class="subhead" style="margin:0">Loading…</p>
+    </div>
+    <div class="card" id="notAllowedCard" style="display:none">
+      <h1 style="font-size:24px" id="notAllowedTitle"></h1>
+      <p class="subhead" id="notAllowedText" style="margin:0"></p>
+    </div>
+    <div class="card" id="formCard" style="display:none">
+      <h1 style="font-size:24px" id="formTitle">Write an article</h1>
+      <p class="subhead">Saved as a draft until you submit it — nothing you write here is public until an admin approves it.</p>
+      <form id="articleForm">
+        <div class="field">
+          <label for="title">Title</label>
+          <input id="title" type="text" required>
+        </div>
+        <div class="field">
+          <label for="dek">Short excerpt</label>
+          <textarea id="dek" placeholder="One or two sentences shown on the article list" style="min-height:60px"></textarea>
+        </div>
+        <div class="field">
+          <label for="category">Category</label>
+          <select id="category" required>
+            <option value="ai">AI</option>
+            <option value="tools">IT BA Tools</option>
+            <option value="case_studies">Practical Case Studies / Real Events</option>
+            <option value="news">Industry News</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="tags">Tags (comma-separated)</label>
+          <input id="tags" type="text" placeholder="e.g. requirements, agile, banking">
+        </div>
+        <div class="field">
+          <label for="coverImageUrl">Cover image URL (optional)</label>
+          <input id="coverImageUrl" type="url" placeholder="https://…">
+        </div>
+        <div class="field">
+          <label for="bodyInput">Content</label>
+          <input id="bodyInput" type="hidden">
+          <trix-editor input="bodyInput" aria-label="Article content"></trix-editor>
+        </div>
+        <div class="btn-row">
+          <button type="submit" class="btn btn-ghost" id="saveDraftBtn">Save draft</button>
+          <button type="button" class="btn btn-primary" id="submitReviewBtn">Submit for review</button>
+        </div>
+        <div class="err" id="errBox" style="display:none"></div>
+        <div class="notice" id="okBox" style="display:none"></div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/site-common.js"></script>
+<script src="/js/community-common.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/trix@2/dist/trix.umd.min.js"></script>
+<script>
+let articleId = null;
+let userId = null;
+
+function slugify(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80) || "article";
+}
+
+function computeReadingTime(html) {
+  const text = html.replace(/<[^>]*>/g, " ");
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+async function ensureUniqueSlug(base, excludeId) {
+  let slug = base;
+  let suffix = 2;
+  for (;;) {
+    let query = sbAuth.from("articles").select("id").eq("slug", slug).limit(1);
+    if (excludeId) query = query.neq("id", excludeId);
+    const { data } = await query;
+    if (!data || data.length === 0) return slug;
+    slug = base + "-" + suffix;
+    suffix++;
+  }
+}
+
+async function init() {
+  const session = await requireSession();
+  if (!session) return;
+  trackVisit("community-write-article");
+  userId = session.user.id;
+
+  const { data: profile } = await sbAuth
+    .from("profiles")
+    .select("role, verified")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (!profile || profile.role !== "ba_professional") {
+    document.getElementById("notAllowedTitle").textContent = "Not available for your account";
+    document.getElementById("notAllowedText").textContent = "Writing articles is limited to verified IT BA professional accounts.";
+    document.getElementById("loadingCard").style.display = "none";
+    document.getElementById("notAllowedCard").style.display = "block";
+    return;
+  }
+  if (!profile.verified) {
+    document.getElementById("notAllowedTitle").textContent = "Your account is pending verification";
+    document.getElementById("notAllowedText").textContent = "An admin needs to verify your professional profile before you can publish articles. You'll be able to write once that's done — check back soon.";
+    document.getElementById("loadingCard").style.display = "none";
+    document.getElementById("notAllowedCard").style.display = "block";
+    return;
+  }
+
+  const idParam = new URLSearchParams(location.search).get("id");
+  if (idParam) {
+    articleId = Number(idParam);
+    const { data: article, error } = await sbAuth
+      .from("articles")
+      .select("*")
+      .eq("id", articleId)
+      .maybeSingle();
+    if (error || !article) {
+      location.href = "my-articles.html";
+      return;
+    }
+    document.getElementById("formTitle").textContent = "Edit article";
+    document.getElementById("title").value = article.title;
+    document.getElementById("dek").value = article.dek || "";
+    document.getElementById("category").value = article.category;
+    document.getElementById("tags").value = (article.tags || []).join(", ");
+    document.getElementById("coverImageUrl").value = article.cover_image_url || "";
+    // Defense in depth: sanitize again before loading into the editor,
+    // in case this row was ever written by something other than this
+    // form (e.g. a direct API call) rather than trusting it's already clean.
+    document.getElementById("bodyInput").value = DOMPurify.sanitize(article.body_html || "");
+  }
+
+  document.getElementById("loadingCard").style.display = "none";
+  document.getElementById("formCard").style.display = "block";
+}
+
+async function saveArticle(status) {
+  const errBox = document.getElementById("errBox");
+  const okBox = document.getElementById("okBox");
+  errBox.style.display = "none";
+  okBox.style.display = "none";
+
+  const title = document.getElementById("title").value.trim();
+  const dek = document.getElementById("dek").value.trim();
+  const category = document.getElementById("category").value;
+  const tags = document.getElementById("tags").value.split(",").map((t) => t.trim()).filter(Boolean);
+  const coverImageUrl = document.getElementById("coverImageUrl").value.trim();
+  const bodyHtml = DOMPurify.sanitize(document.getElementById("bodyInput").value);
+
+  if (!title || !bodyHtml) {
+    errBox.textContent = "Title and content are required.";
+    errBox.style.display = "block";
+    return;
+  }
+
+  const readingTime = computeReadingTime(bodyHtml);
+  const payload = {
+    title,
+    dek,
+    category,
+    tags,
+    cover_image_url: coverImageUrl || null,
+    body_html: bodyHtml,
+    reading_time_minutes: readingTime,
+    status,
+  };
+
+  try {
+    if (articleId) {
+      const { error } = await sbAuth.from("articles").update(payload).eq("id", articleId);
+      if (error) throw error;
+    } else {
+      payload.author_id = userId;
+      payload.slug = await ensureUniqueSlug(slugify(title), null);
+      const { data, error } = await sbAuth.from("articles").insert(payload).select("id").single();
+      if (error) throw error;
+      articleId = data.id;
+    }
+    okBox.textContent = status === "draft" ? "Saved as draft." : "Submitted for admin review.";
+    okBox.style.display = "block";
+  } catch (err) {
+    errBox.textContent = (err && err.message) || "Couldn't save the article. Please try again.";
+    errBox.style.display = "block";
+  }
+}
+
+document.getElementById("articleForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  saveArticle("draft");
+});
+document.getElementById("submitReviewBtn").addEventListener("click", () => saveArticle("pending_review"));
+
+init();
+</script>
+<script src="/js/particle-bg.js"></script>
+</body>
+</html>

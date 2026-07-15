@@ -127,12 +127,21 @@
         </div>
     </section>
 
+    <section id="latestArticles" style="display:none">
+        <div class="container">
+            <h3 class="section-title">Son məqalələr</h3>
+            <div class="cards-grid" id="latestArticlesGrid"></div>
+            <p style="text-align:center;margin-top:30px"><a href="/articles/" class="btn btn-secondary">Bütün məqalələr</a></p>
+        </div>
+    </section>
+
     <footer>
         <div class="container">
             <p id="w-footerText">© 2025 itba.az – IT Business Analysis Academy</p>
             <div style="margin-top: 10px;">
                 <a href="/academy/">Akademiya</a>
                 <a href="community/register.html">Karyera Testi</a>
+                <a href="/articles/">Məqalələr</a>
                 <a href="exam.html">Oracle SQL Təcrübə İmtahanı</a>
             </div>
         </div>
@@ -159,6 +168,32 @@
                     if (Object.prototype.hasOwnProperty.call(wordings, key)) el.textContent = wordings[key];
                 });
             } catch (e) { /* keep the hardcoded copy */ }
+        })();
+
+        // Latest published articles teaser
+        const CATEGORY_LABEL = {
+            ai: "Süni İntellekt (AI)",
+            tools: "IT BA Alətləri",
+            case_studies: "Praktik Keys / Real Hadisələr",
+            news: "Sənaye Xəbərləri",
+        };
+        (async () => {
+            try {
+                const res = await fetch(SUPABASE_URL + "/rest/v1/articles?status=eq.published&select=slug,title,dek,category,reading_time_minutes&order=published_at.desc&limit=3", {
+                    cache: "no-store", headers: SB_HEADERS
+                });
+                if (!res.ok) return;
+                const articles = await res.json();
+                if (!articles.length) return;
+                document.getElementById("latestArticlesGrid").innerHTML = articles.map(a =>
+                    '<a href="/articles/' + a.slug + '/" class="card">' +
+                        '<span class="card-label">' + esc(CATEGORY_LABEL[a.category] || a.category) + '</span>' +
+                        '<h3>' + esc(a.title) + '</h3>' +
+                        '<p>' + esc(a.dek || "") + '</p>' +
+                    '</a>'
+                ).join("");
+                document.getElementById("latestArticles").style.display = "block";
+            } catch (e) { /* no teaser if this fails */ }
         })();
 
         // Mobile nav toggle

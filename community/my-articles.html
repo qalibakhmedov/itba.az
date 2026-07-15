@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>My articles — itba.az</title>
+<link rel="stylesheet" href="/css/community.css">
+</head>
+<body>
+<canvas id="particle-bg" aria-hidden="true"></canvas>
+<div class="page">
+  <div class="container-wide">
+    <a href="/index.html" class="site-brand">← itba.az</a>
+    <div class="card" id="loadingCard">
+      <p class="subhead" style="margin:0">Loading…</p>
+    </div>
+    <div class="card" id="mainCard" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <h1 style="font-size:24px;margin:0">My articles</h1>
+        <a href="write-article.html" class="btn btn-primary" style="width:auto">Write a new article</a>
+      </div>
+      <div class="article-list" id="articleList" style="margin-top:20px"></div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/site-common.js"></script>
+<script src="/js/community-common.js"></script>
+<script>
+const STATUS_LABEL = {
+  draft: "Draft",
+  pending_review: "Pending review",
+  published: "Published",
+  rejected: "Rejected",
+};
+
+(async () => {
+  const session = await requireSession();
+  if (!session) return;
+  trackVisit("community-my-articles");
+
+  const { data: articles, error } = await sbAuth
+    .from("articles")
+    .select("id, title, status, category, rejection_note, updated_at")
+    .eq("author_id", session.user.id)
+    .order("updated_at", { ascending: false });
+
+  const list = document.getElementById("articleList");
+  if (error) {
+    list.innerHTML = '<p class="subhead">Couldn\'t load your articles. Please try again.</p>';
+  } else if (!articles || articles.length === 0) {
+    list.innerHTML = '<p class="subhead" style="margin:0">You haven\'t written anything yet.</p>';
+  } else {
+    list.innerHTML = articles.map((a) => {
+      const date = new Date(a.updated_at).toLocaleDateString();
+      const note = a.status === "rejected" && a.rejection_note
+        ? '<div class="mini-link" style="margin:4px 0 0">Feedback: ' + esc(a.rejection_note) + '</div>'
+        : "";
+      return '<div class="article-row">' +
+        '<div>' +
+          '<h3>' + esc(a.title) + '</h3>' +
+          '<div class="mini-link" style="margin:0">Updated ' + date + note + '</div>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:10px">' +
+          '<span class="pill-status ' + a.status + '">' + STATUS_LABEL[a.status] + '</span>' +
+          '<a href="write-article.html?id=' + a.id + '" class="mini-link">Edit</a>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+  }
+
+  document.getElementById("loadingCard").style.display = "none";
+  document.getElementById("mainCard").style.display = "block";
+})();
+</script>
+<script src="/js/particle-bg.js"></script>
+</body>
+</html>

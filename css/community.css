@@ -400,9 +400,92 @@ textarea::placeholder {
   color: var(--muted);
 }
 
-.pill-status.verified {
+.pill-status.verified,
+.pill-status.published {
   background: rgba(34, 197, 94, 0.12);
   color: var(--good);
+}
+
+.pill-status.pending_review {
+  background: rgba(255, 107, 53, 0.12);
+  color: var(--accent);
+}
+
+.pill-status.rejected {
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+}
+
+.article-list {
+  display: grid;
+  gap: 4px;
+}
+
+.article-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+
+.article-row:first-child {
+  border-top: none;
+}
+
+.article-row h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: #fff;
+}
+
+.article-row .mini-link {
+  margin: 0;
+  text-align: left;
+}
+
+/* Trix editor — dark-theme override, its default styling is light */
+trix-toolbar {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 10px 10px 0 0;
+  padding: 8px;
+}
+
+trix-toolbar .trix-button-group {
+  border-color: var(--line) !important;
+  margin-bottom: 0;
+}
+
+trix-toolbar .trix-button {
+  background: transparent !important;
+  color: var(--ink) !important;
+  border-color: var(--line) !important;
+}
+
+trix-toolbar .trix-button.trix-active {
+  background: rgba(255, 107, 53, 0.25) !important;
+}
+
+trix-editor {
+  min-height: 260px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  color: var(--ink);
+  font-size: 14.5px;
+  padding: 14px 16px;
+}
+
+trix-editor:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+trix-editor a {
+  color: var(--accent);
 }
 
 canvas#particle-bg {
