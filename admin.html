@@ -164,17 +164,15 @@
 <div id="chartTooltip" class="chart-tooltip"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/site-common.js"></script>
 <script>
-const SUPABASE_URL="https://ndsdnsntpqbyktjrcjtq.supabase.co";
-const SUPABASE_KEY="sb_publishable_5Hv23JPUmQEIZXHyygkkUg_tWU7SuET";
-const SB_HEADERS={"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
 const ADMIN_EMAIL="qalib.akhmedov@gmail.com";
 const GOAL_LABELS={start:"Start an IT BA career",develop:"Develop as an existing IT BA",corporate:"Corporate training / team development",other:"Other"};
 
+// Named sbAuth (not `supabase`) to avoid shadowing the global the CDN script exposes.
 const sbAuth=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const $=id=>document.getElementById(id);
-function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
 
 /* ================= inkişaf tarixçəsi (dev log) ================= */
 const DEV_LOG=[
@@ -262,22 +260,19 @@ const WORDING_LABELS={
 let WORDINGS=Object.assign({},DEFAULT_WORDINGS);
 function W(key){return WORDINGS[key]??DEFAULT_WORDINGS[key]??key;}
 
-const SB_WORDINGS_ROW=SUPABASE_URL+"/rest/v1/admin_wordings?id=eq.1&select=wordings";
+/* Uses sbAuth.from() (not raw fetch) so the request carries the logged-in
+   admin's session token — required for the auth-scoped RLS policies on
+   admin_wordings to recognize the caller as the admin rather than anon. */
 async function loadWordings(){
   try{
-    const res=await fetch(SB_WORDINGS_ROW,{cache:"no-store",headers:SB_HEADERS});
-    if(!res.ok) throw new Error("wordings fetch failed: "+res.status);
-    const rows=await res.json();
-    if(rows.length&&rows[0].wordings) WORDINGS=Object.assign({},DEFAULT_WORDINGS,rows[0].wordings);
+    const{data,error}=await sbAuth.from("admin_wordings").select("wordings").eq("id",1).maybeSingle();
+    if(error) throw error;
+    if(data&&data.wordings) WORDINGS=Object.assign({},DEFAULT_WORDINGS,data.wordings);
   }catch(e){ /* saxlanmış mətnlərə çatmaq mümkün olmadı — standart mətnlərlə davam edilir */ }
 }
 async function saveWordings(newWordings){
-  const res=await fetch(SUPABASE_URL+"/rest/v1/admin_wordings",{
-    method:"POST",cache:"no-store",
-    headers:Object.assign({},SB_HEADERS,{"Prefer":"resolution=merge-duplicates,return=minimal"}),
-    body:JSON.stringify([{id:1,wordings:newWordings}])
-  });
-  if(!res.ok) throw new Error("wordings save failed: "+res.status);
+  const{error}=await sbAuth.from("admin_wordings").upsert({id:1,wordings:newWordings});
+  if(error) throw new Error("wordings save failed: "+error.message);
 }
 
 function applyStaticWordings(){
@@ -400,13 +395,17 @@ $("refreshBtn").onclick=loadAll;
 })();
 
 /* ================= data yüklənməsi ================= */
-async function sbFetch(path){
-  const res=await fetch(SUPABASE_URL+"/rest/v1/"+path,{cache:"no-store",headers:Object.assign({},SB_HEADERS,{"Prefer":"count=exact"})});
-  if(!res.ok) throw new Error("Supabase sorğu xətası: "+res.status);
-  const range=res.headers.get("content-range");
-  const total=range&&range.split("/")[1]!=="*"?parseInt(range.split("/")[1],10):null;
-  const rows=await res.json();
-  return {total,rows};
+/* Uses sbAuth.from() (not raw fetch) so the request carries the logged-in
+   admin's session token — required for the auth-scoped RLS policies on
+   applications/page_visits to recognize the caller as the admin rather
+   than anon. See supabase/schema.sql for the policies this depends on. */
+async function sbFetch(table,{select="*",orderColumn,limit}={}){
+  let q=sbAuth.from(table).select(select,{count:"exact"});
+  if(orderColumn) q=q.order(orderColumn,{ascending:false});
+  if(limit) q=q.limit(limit);
+  const{data,error,count}=await q;
+  if(error) throw new Error("Supabase sorğu xətası: "+error.message);
+  return {total:count,rows:data};
 }
 
 const LOAD_ERR='<p class="empty">Məlumat yüklənmədi — internet bağlantısını yoxlayın və ya Supabase cədvəlinin yaradıldığını təsdiq edin.</p>';
@@ -414,8 +413,8 @@ let lastVisits=null,lastVisitsTotal=null,lastApps=null,lastAppsTotal=null;
 
 async function loadAll(){
   const [visitsResult,appsResult]=await Promise.allSettled([
-    sbFetch("page_visits?select=page,visitor_id,visited_at,referrer&order=visited_at.desc&limit=3000"),
-    sbFetch("applications?select=*&order=submitted_at.desc&limit=1000")
+    sbFetch("page_visits",{select:"page,visitor_id,visited_at,referrer",orderColumn:"visited_at",limit:3000}),
+    sbFetch("applications",{orderColumn:"submitted_at",limit:1000})
   ]);
   const visits=visitsResult.status==="fulfilled"?visitsResult.value:null;
   const apps=appsResult.status==="fulfilled"?appsResult.value:null;
