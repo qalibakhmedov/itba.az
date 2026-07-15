@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirming — itba.az</title>
+<link rel="stylesheet" href="/css/community.css">
+</head>
+<body>
+<canvas id="particle-bg" aria-hidden="true"></canvas>
+<div class="page">
+  <div class="container">
+    <div class="card" style="text-align:center">
+      <h1 style="font-size:24px" id="statusTitle">Confirming your account…</h1>
+      <p class="subhead" style="margin:0 auto" id="statusText">One moment.</p>
+      <a href="login.html" class="btn btn-primary" id="loginLink" style="display:none">Go to login</a>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/site-common.js"></script>
+<script src="/js/community-common.js"></script>
+<script>
+/*
+ * Target of the email-confirmation link Supabase sends on signUp() (see
+ * emailRedirectTo in the register-*.html pages). Must be listed under
+ * Supabase → Authentication → URL Configuration → Redirect URLs — see
+ * README.
+ *
+ * No server-side code exchange needed here: this app's Supabase client
+ * uses the default "implicit" flow, so the confirmation redirect already
+ * carries the session tokens in the URL fragment, and supabase-js's
+ * default detectSessionInUrl automatically parses and stores them during
+ * client construction. We just wait for that to land.
+ */
+function goToDashboard() {
+  location.href = "dashboard.html";
+}
+
+sbAuth.auth.onAuthStateChange((event, session) => {
+  if (session) goToDashboard();
+});
+
+(async () => {
+  const { data: { session } } = await sbAuth.auth.getSession();
+  if (session) { goToDashboard(); return; }
+
+  // Give detectSessionInUrl a few seconds; if nothing shows up the link
+  // was likely already used or has expired.
+  setTimeout(async () => {
+    const { data: { session: retried } } = await sbAuth.auth.getSession();
+    if (retried) { goToDashboard(); return; }
+    document.getElementById("statusTitle").textContent = "Confirmation link expired";
+    document.getElementById("statusText").textContent = "Please log in, or register again if you haven't confirmed yet.";
+    document.getElementById("loginLink").style.display = "block";
+  }, 4000);
+})();
+</script>
+<script src="/js/particle-bg.js"></script>
+</body>
+</html>

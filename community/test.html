@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career test — itba.az</title>
+<link rel="stylesheet" href="/css/community.css">
+</head>
+<body>
+<canvas id="particle-bg" aria-hidden="true"></canvas>
+<div class="page">
+  <div class="container-wide">
+    <div style="text-align:center;margin-bottom:8px">
+      <span class="badge">Career compatibility test</span>
+      <h1>How well does IT Business Analysis fit you?</h1>
+      <p class="subhead" style="margin:0 auto 20px">Answer honestly — there are no wrong answers, only a clearer picture of where you stand today.</p>
+    </div>
+    <div class="card" id="loadingCard">
+      <p class="subhead" style="margin:0">Loading questions…</p>
+    </div>
+    <div class="card" id="quizCard" style="display:none">
+      <div class="progress" id="progressLine">0 of 0 answered</div>
+      <div id="questionsBox"></div>
+      <button class="btn btn-primary" id="submitBtn" disabled>Answer all questions to continue</button>
+      <div class="err" id="errBox" style="display:none"></div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/site-common.js"></script>
+<script src="/js/community-common.js"></script>
+<script>
+let attemptId = null;
+let questions = [];
+let answers = {};
+
+function escHtml(s) { return esc(s); }
+
+function render() {
+  const box = document.getElementById("questionsBox");
+  box.innerHTML = questions.map((q, qi) => {
+    const opts = q.options.map((opt, oi) => {
+      const checked = answers[q.id] === oi ? " selected" : "";
+      const isChecked = answers[q.id] === oi ? " checked" : "";
+      return '<label class="option' + checked + '">' +
+        '<input type="radio" name="q-' + q.id + '" value="' + oi + '"' + isChecked + '>' +
+        '<span>' + escHtml(opt.text) + '</span></label>';
+    }).join("");
+    return '<div style="margin-bottom:28px">' +
+      '<h2 style="font-size:16.5px">' + (qi + 1) + '. ' + escHtml(q.question_text) + '</h2>' +
+      '<div class="option-list" data-qid="' + q.id + '">' + opts + '</div>' +
+      '</div>';
+  }).join("");
+
+  box.querySelectorAll(".option-list").forEach((list) => {
+    const qid = Number(list.dataset.qid);
+    list.querySelectorAll('input[type="radio"]').forEach((input) => {
+      input.addEventListener("change", () => {
+        answers[qid] = Number(input.value);
+        render();
+        updateProgress();
+      });
+    });
+  });
+}
+
+function updateProgress() {
+  const answeredCount = Object.keys(answers).length;
+  document.getElementById("progressLine").textContent = answeredCount + " of " + questions.length + " answered";
+  const btn = document.getElementById("submitBtn");
+  const allAnswered = answeredCount === questions.length;
+  btn.disabled = !allAnswered;
+  btn.textContent = allAnswered ? "See my results" : "Answer all " + questions.length + " questions to continue";
+}
+
+async function init() {
+  const session = await requireSession();
+  if (!session) return;
+  trackVisit("community-test");
+  const userId = session.user.id;
+
+  const { data: qs, error: qErr } = await sbAuth
+    .from("test_questions")
+    .select("id, category, question_text, options, order_index")
+    .eq("active", true)
+    .order("order_index");
+
+  if (qErr || !qs || qs.length === 0) {
+    document.getElementById("loadingCard").innerHTML =
+      '<h1 style="font-size:24px">Test unavailable</h1>' +
+      '<p class="subhead">The career test couldn\'t be loaded right now. Please try again shortly.</p>';
+    return;
+  }
+  questions = qs;
+
+  const { data: existing } = await sbAuth
+    .from("test_attempts")
+    .select("id, answers")
+    .eq("user_id", userId)
+    .is("completed_at", null)
+    .order("started_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (existing) {
+    attemptId = existing.id;
+    answers = existing.answers || {};
+  } else {
+    const { data: created, error: createErr } = await sbAuth
+      .from("test_attempts")
+      .insert({ user_id: userId })
+      .select("id")
+      .single();
+    if (createErr || !created) {
+      document.getElementById("loadingCard").innerHTML =
+        '<h1 style="font-size:24px">Couldn\'t start the test</h1><p class="subhead">Please try again in a moment.</p>';
+      return;
+    }
+    attemptId = created.id;
+  }
+
+  document.getElementById("loadingCard").style.display = "none";
+  document.getElementById("quizCard").style.display = "block";
+  render();
+  updateProgress();
+}
+
+document.getElementById("submitBtn").addEventListener("click", async () => {
+  const btn = document.getElementById("submitBtn");
+  const errBox = document.getElementById("errBox");
+  errBox.style.display = "none";
+  btn.disabled = true; btn.textContent = "Scoring…";
+
+  const { error: updateError } = await sbAuth
+    .from("test_attempts")
+    .update({ answers })
+    .eq("id", attemptId);
+
+  if (updateError) {
+    btn.disabled = false; updateProgress();
+    errBox.textContent = "Couldn't save your answers. Please try again.";
+    errBox.style.display = "block";
+    return;
+  }
+
+  const { error: scoreError } = await sbAuth.rpc("score_test_attempt", { p_attempt_id: attemptId });
+
+  if (scoreError) {
+    btn.disabled = false; updateProgress();
+    errBox.textContent = "Couldn't score your test. Please try again.";
+    errBox.style.display = "block";
+    return;
+  }
+
+  location.href = "test-results.html?attempt=" + attemptId;
+});
+
+init();
+</script>
+<script src="/js/particle-bg.js"></script>
+</body>
+</html>

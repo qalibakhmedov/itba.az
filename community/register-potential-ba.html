@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — itba.az</title>
+<link rel="stylesheet" href="/css/community.css">
+</head>
+<body>
+<canvas id="particle-bg" aria-hidden="true"></canvas>
+<div class="page">
+  <div class="container">
+    <div class="card" id="formCard">
+      <span class="badge">Exploring a career change</span>
+      <h1 style="font-size:26px">Create your account</h1>
+      <p class="subhead">A few questions help us tailor the career test and what we show you next.</p>
+      <form id="regForm">
+        <div class="field">
+          <label for="fullName">Full name</label>
+          <input id="fullName" type="text" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" required minlength="8" autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label for="currentOccupation">Current occupation</label>
+          <input id="currentOccupation" type="text" placeholder="e.g. Customer support, Banking operations">
+        </div>
+        <div class="field">
+          <label for="motivation">Why IT Business Analysis?</label>
+          <textarea id="motivation" placeholder="What's drawing you toward this field?"></textarea>
+        </div>
+        <div class="field">
+          <label for="timeline">Timeline</label>
+          <select id="timeline">
+            <option value="exploring">Just exploring</option>
+            <option value="within_6_months">Within 6 months</option>
+            <option value="actively_looking">Actively looking now</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Create account</button>
+        <div class="err" id="errBox" style="display:none"></div>
+      </form>
+    </div>
+    <div class="card" id="doneCard" style="display:none;text-align:center">
+      <h1 style="font-size:24px">Check your email</h1>
+      <p class="subhead" style="margin:0 auto">We sent a confirmation link to <strong id="doneEmail"></strong>. Click it to activate your account, then log in.</p>
+      <a href="login.html" class="btn btn-primary" style="margin-top:8px">Go to login</a>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/site-common.js"></script>
+<script src="/js/community-common.js"></script>
+<script>
+trackVisit("community-register-potential-ba");
+
+document.getElementById("regForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errBox = document.getElementById("errBox");
+  const btn = document.getElementById("submitBtn");
+  errBox.style.display = "none";
+  btn.disabled = true; btn.textContent = "Creating account…";
+
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const password = document.getElementById("password").value;
+
+  const { error } = await sbAuth.auth.signUp({
+    email, password,
+    options: {
+      emailRedirectTo: location.origin + "/community/auth-callback.html",
+      data: {
+        role: "potential_ba",
+        full_name: document.getElementById("fullName").value.trim(),
+        current_occupation: document.getElementById("currentOccupation").value.trim(),
+        motivation: document.getElementById("motivation").value.trim(),
+        timeline: document.getElementById("timeline").value,
+      },
+    },
+  });
+
+  btn.disabled = false; btn.textContent = "Create account";
+  if (error) {
+    errBox.textContent = error.message || "Registration failed. Please try again.";
+    errBox.style.display = "block";
+    return;
+  }
+  document.getElementById("doneEmail").textContent = email;
+  document.getElementById("formCard").style.display = "none";
+  document.getElementById("doneCard").style.display = "block";
+});
+</script>
+<script src="/js/particle-bg.js"></script>
+</body>
+</html>

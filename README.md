@@ -12,7 +12,11 @@ this project's own.
 | `index.html` | Public marketing site — program info and the "Apply" lead form. |
 | `exam.html` | Browser-only Oracle SQL exam simulator over the standard HR schema, backed by [sql.js](https://sql.js.org/) (SQLite compiled to WebAssembly) with a thin Oracle-compatibility layer (`TO_CHAR`, `NVL`, `DECODE`, Julian-day dates, etc.). Includes a teacher panel (client-side passcode) for reviewing student answers. |
 | `admin.html` | Site admin dashboard (Supabase Auth email+password login): visit analytics, Apply-form submissions, a development log, and an in-panel wording editor. |
-| `js/site-common.js` | Supabase config and small helpers (`esc`, visitor-id tracking) shared by all three pages. |
+| `community/` | Phase 1 of the community platform: self-serve registration (career-changer / junior BA / working IT BA roles) and a gated career-compatibility test. Plain HTML/JS, same pattern as the rest of this repo — no framework, no build step (an earlier Next.js/Vercel version of this was built and abandoned in favor of keeping everything on GitHub Pages; see `git log` if curious). Entry point: `community/register.html`. |
+| `js/site-common.js` | Supabase config and small helpers (`esc`, visitor-id tracking) shared by every page. |
+| `js/community-common.js` | Supabase Auth client + `requireSession()` gate, shared by `community/*.html`. |
+| `js/particle-bg.js` | The particle-network background (ported from `index.html`), shared by `community/*.html`. |
+| `css/community.css` | Shared brand styling for `community/*.html` — the one deviation from this repo's per-file-inline-`<style>` convention, justified by page count (9 pages would mean 9x duplication otherwise, worse than the 3x that motivated `js/site-common.js`). |
 
 ## Local development
 
@@ -25,11 +29,24 @@ python3 -m http.server 8934
 
 ## Backend (Supabase)
 
-`supabase/schema.sql` is the source of truth for every table and RLS policy —
-run it top to bottom in the Supabase SQL Editor to provision a fresh project.
-It also documents, in comments, *why* each table's policies are shaped the
-way they are (which tables are intentionally public-write, which are
-admin-only-read, and why).
+`supabase/schema.sql` is the source of truth for the main site's tables
+(exam/admin) and RLS policies — run it top to bottom in the Supabase SQL
+Editor to provision a fresh project. It also documents, in comments, *why*
+each table's policies are shaped the way they are (which tables are
+intentionally public-write, which are admin-only-read, and why).
+
+`community/` (Phase 1 of the community platform) adds its own tables on
+top of that same project — run, in order:
+
+1. `supabase/schema-phase1.sql` — `profiles` + role-detail tables, the
+   `handle_new_user()` signup trigger (whitelists the client-supplied role
+   server-side — closes a privilege-escalation path a raw `signUp()` API
+   call could otherwise reach, not just the registration UI), the career
+   test tables, and `score_test_attempt()` (computes the score server-side
+   so a client can never write a fabricated one).
+2. `supabase/seed-test-questions.sql` — the 13 career-test questions
+   (draft v1 content, meant to be edited later directly in the database;
+   there's no question-editing UI in this phase).
 
 The Supabase URL and publishable (anon) key are intentionally committed in
 `js/site-common.js` — this is expected for a client-only app; real access
@@ -53,3 +70,12 @@ via the Auth REST API or the Supabase dashboard, not by editing this repo.
   the admin account could be created via the API). If it isn't needed for
   anything else, consider disabling it in Authentication → Settings as
   defense in depth.
+- `community/`'s `ba_professional` role has no admin-verification *UI* yet
+  — registration ships with `verified = false`, but nothing in Phase 1
+  actually checks that flag (there's no article-publishing feature yet to
+  gate). Flip it manually via the Table Editor once Phase 2 exists.
+- `test_attempts`' score columns have no column-level RLS lock (Postgres
+  RLS is row-level, not column-level) — the actual protection is that the
+  app's client code only ever writes `answers`; `score_test_attempt()` is
+  the only path that computes and writes the score, reading real answers
+  server-side. Acceptable for a self-assessment quiz with no real stakes.

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — itba.az</title>
+<link rel="stylesheet" href="/css/community.css">
+</head>
+<body>
+<canvas id="particle-bg" aria-hidden="true"></canvas>
+<div class="page">
+  <div class="container">
+    <div class="card" id="loadingCard">
+      <p class="subhead" style="margin:0">Loading…</p>
+    </div>
+    <div class="card" id="mainCard" style="display:none">
+      <h1 style="font-size:24px" id="welcomeTitle">Welcome</h1>
+      <p class="subhead" id="emailLine"></p>
+
+      <div class="dashboard-row">
+        <span style="font-size:14px">Role</span>
+        <span id="roleValue">—</span>
+      </div>
+
+      <div class="dashboard-row" id="verifiedRow" style="display:none">
+        <span style="font-size:14px">Verification</span>
+        <span class="pill-status" id="verifiedPill">—</span>
+      </div>
+
+      <div class="dashboard-row">
+        <span style="font-size:14px">Career compatibility test</span>
+        <span id="testStatus" style="font-size:14px;color:var(--faint)">Not taken yet</span>
+      </div>
+
+      <button class="btn btn-primary" id="testBtn" style="margin-top:22px">Take the career test</button>
+      <button class="btn btn-ghost" id="logoutBtn" style="margin-top:12px">Log out</button>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/site-common.js"></script>
+<script src="/js/community-common.js"></script>
+<script>
+(async () => {
+  const session = await requireSession();
+  if (!session) return;
+
+  trackVisit("community-dashboard");
+  const userId = session.user.id;
+
+  const { data: profile } = await sbAuth
+    .from("profiles")
+    .select("full_name, role, verified, email")
+    .eq("id", userId)
+    .maybeSingle();
+
+  const { data: lastAttempt } = await sbAuth
+    .from("test_attempts")
+    .select("id, overall_score, completed_at")
+    .eq("user_id", userId)
+    .not("completed_at", "is", null)
+    .order("completed_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  document.getElementById("welcomeTitle").textContent = profile && profile.full_name
+    ? "Welcome, " + profile.full_name
+    : "Welcome";
+  document.getElementById("emailLine").textContent = (profile && profile.email) || session.user.email;
+  document.getElementById("roleValue").textContent = profile ? (ROLE_LABEL[profile.role] || profile.role) : "—";
+
+  if (profile && profile.role === "ba_professional") {
+    const row = document.getElementById("verifiedRow");
+    const pill = document.getElementById("verifiedPill");
+    row.style.display = "flex";
+    pill.textContent = profile.verified ? "Verified" : "Pending review";
+    pill.classList.toggle("verified", !!profile.verified);
+  }
+
+  const testBtn = document.getElementById("testBtn");
+  if (lastAttempt) {
+    document.getElementById("testStatus").innerHTML =
+      '<a href="test-results.html?attempt=' + lastAttempt.id + '" style="color:var(--accent)">View last result (' + lastAttempt.overall_score + ')</a>';
+    testBtn.textContent = "Retake the test";
+  }
+  testBtn.addEventListener("click", () => { location.href = "test.html"; });
+
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    await sbAuth.auth.signOut();
+    location.href = "login.html";
+  });
+
+  document.getElementById("loadingCard").style.display = "none";
+  document.getElementById("mainCard").style.display = "block";
+})();
+</script>
+<script src="/js/particle-bg.js"></script>
+</body>
+</html>
