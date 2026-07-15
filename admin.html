@@ -25,8 +25,10 @@
   .login-card h1{font-size:24px;font-weight:700;margin-bottom:4px}
   .login-card .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
   label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-  input[type=password]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:14px;background:#FBFCFC;color:var(--ink)}
+  input[type=password],input[type=email],input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:14px;background:#FBFCFC;color:var(--ink)}
   input:focus{outline:2px solid var(--red);outline-offset:1px;border-color:transparent}
+  .field-gap{margin-top:14px}
+  .link-action{display:block;text-align:center;margin-top:14px;color:var(--muted);cursor:pointer;text-decoration:underline;font-size:12px}
   .btn{display:inline-block;width:100%;margin-top:16px;background:var(--red);color:#fff;border:none;border-radius:6px;padding:12px;font-family:var(--sans);font-weight:600;font-size:15px;cursor:pointer}
   .btn:hover{background:var(--red-dark)}
   .btn.ghost{background:transparent;color:var(--red);border:1px solid var(--red)}
@@ -67,10 +69,26 @@
   <div class="login-card">
     <h1>Admin girişi</h1>
     <div class="sub">Sayt statistikası və müraciətlər</div>
-    <label for="adminCode">Admin kodu</label>
-    <input type="password" id="adminCode" placeholder="kod">
+    <label for="loginEmail">Email</label>
+    <input type="email" id="loginEmail" placeholder="admin@itba.az" autocomplete="username">
+    <div class="field-gap">
+      <label for="loginPassword">Şifrə</label>
+      <input type="password" id="loginPassword" placeholder="şifrə" autocomplete="current-password">
+    </div>
     <button class="btn" id="loginBtn">Daxil ol</button>
     <div class="err" id="loginErr"></div>
+  </div>
+</div>
+
+<div id="viewOtp" class="wrap hidden">
+  <div class="login-card">
+    <h1>Təsdiq kodu</h1>
+    <div class="sub" id="otpEmailNote">Email-inizə göndərilən kodu daxil edin.</div>
+    <label for="otpCode">Kod</label>
+    <input type="text" id="otpCode" inputmode="numeric" placeholder="123456" maxlength="10" autocomplete="one-time-code">
+    <button class="btn" id="otpBtn">Təsdiq et</button>
+    <div class="err" id="otpErr"></div>
+    <a id="resendOtpBtn" class="link-action">Kodu yenidən göndər</a>
   </div>
 </div>
 
@@ -107,32 +125,92 @@
 
 <div id="chartTooltip" class="chart-tooltip"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 const SUPABASE_URL="https://ndsdnsntpqbyktjrcjtq.supabase.co";
 const SUPABASE_KEY="sb_publishable_5Hv23JPUmQEIZXHyygkkUg_tWU7SuET";
 const SB_HEADERS={"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
-const ADMIN_CODE="ITBA-SITE-2026";
+const ADMIN_EMAIL="qalib.akhmedov@gmail.com";
 const GOAL_LABELS={start:"Start an IT BA career",develop:"Develop as an existing IT BA",corporate:"Corporate training / team development",other:"Other"};
+
+const sbAuth=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let pendingEmail=null;
 
 const $=id=>document.getElementById(id);
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
-function show(v){["viewLogin","viewDash"].forEach(x=>$(x).classList.add("hidden"));$(v).classList.remove("hidden");$("logoutBtn").classList.toggle("hidden",v==="viewLogin");}
+function show(v){["viewLogin","viewOtp","viewDash"].forEach(x=>$(x).classList.add("hidden"));$(v).classList.remove("hidden");$("logoutBtn").classList.toggle("hidden",v!=="viewDash");}
 
 let refreshTimer=null;
-$("loginBtn").onclick=()=>{
-  if($("adminCode").value.trim()===ADMIN_CODE){
-    show("viewDash");
-    loadAll();
-    stopAutoRefresh();
-    refreshTimer=setInterval(loadAll,60000);
-  } else {
-    $("loginErr").textContent="Admin kodu yanlışdır.";
-  }
-};
-$("adminCode").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginBtn").click();});
-$("logoutBtn").onclick=()=>{stopAutoRefresh();$("adminCode").value="";show("viewLogin");};
-$("refreshBtn").onclick=loadAll;
 function stopAutoRefresh(){if(refreshTimer){clearInterval(refreshTimer);refreshTimer=null;}}
+function enterDashboard(){
+  show("viewDash");
+  loadAll();
+  stopAutoRefresh();
+  refreshTimer=setInterval(loadAll,60000);
+}
+
+$("loginBtn").onclick=async()=>{
+  $("loginErr").textContent="";
+  const email=$("loginEmail").value.trim().toLowerCase();
+  const password=$("loginPassword").value;
+  if(email!==ADMIN_EMAIL){$("loginErr").textContent="Bu email üçün icazə yoxdur.";return;}
+  if(!password){$("loginErr").textContent="Şifrəni daxil edin.";return;}
+  $("loginBtn").disabled=true;$("loginBtn").textContent="Yoxlanılır…";
+  const{error}=await sbAuth.auth.signInWithPassword({email,password});
+  if(error){
+    $("loginErr").textContent=error.code==="email_not_confirmed"
+      ?"Email hələ təsdiqlənməyib — qeydiyyat zamanı göndərilən təsdiq linkini emailinizdən açın, sonra yenidən cəhd edin."
+      :"Email və ya şifrə yanlışdır.";
+    $("loginBtn").disabled=false;$("loginBtn").textContent="Daxil ol";
+    return;
+  }
+  // Password alone must not grant access — drop this session and require an emailed OTP as the second factor.
+  await sbAuth.auth.signOut();
+  pendingEmail=email;
+  const otpRes=await sbAuth.auth.signInWithOtp({email,options:{shouldCreateUser:false}});
+  $("loginBtn").disabled=false;$("loginBtn").textContent="Daxil ol";
+  if(otpRes.error){
+    $("loginErr").textContent="Təsdiq kodu göndərilə bilmədi: "+otpRes.error.message;
+    return;
+  }
+  $("otpEmailNote").textContent="Kod göndərildi: "+email;
+  $("otpCode").value="";$("otpErr").textContent="";
+  show("viewOtp");
+};
+$("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginBtn").click();});
+
+$("otpBtn").onclick=async()=>{
+  $("otpErr").textContent="";
+  const token=$("otpCode").value.trim();
+  if(!token){$("otpErr").textContent="Kodu daxil edin.";return;}
+  $("otpBtn").disabled=true;$("otpBtn").textContent="Yoxlanılır…";
+  const{error}=await sbAuth.auth.verifyOtp({email:pendingEmail,token,type:"email"});
+  $("otpBtn").disabled=false;$("otpBtn").textContent="Təsdiq et";
+  if(error){$("otpErr").textContent="Kod yanlışdır və ya vaxtı bitib.";return;}
+  enterDashboard();
+};
+$("otpCode").addEventListener("keydown",e=>{if(e.key==="Enter")$("otpBtn").click();});
+$("resendOtpBtn").onclick=async()=>{
+  if(!pendingEmail)return;
+  $("otpErr").textContent="Göndərilir…";
+  const{error}=await sbAuth.auth.signInWithOtp({email:pendingEmail,options:{shouldCreateUser:false}});
+  $("otpErr").textContent=error?("Göndərilmədi: "+error.message):"Yeni kod göndərildi.";
+};
+
+$("logoutBtn").onclick=async()=>{
+  stopAutoRefresh();
+  await sbAuth.auth.signOut();
+  pendingEmail=null;
+  $("loginEmail").value="";$("loginPassword").value="";$("otpCode").value="";
+  show("viewLogin");
+};
+$("refreshBtn").onclick=loadAll;
+
+// stay logged in across reloads if a fully-verified session already exists
+(async()=>{
+  const{data:{session}}=await sbAuth.auth.getSession();
+  if(session&&session.user&&session.user.email===ADMIN_EMAIL) enterDashboard();
+})();
 
 async function sbFetch(path){
   const res=await fetch(SUPABASE_URL+"/rest/v1/"+path,{cache:"no-store",headers:Object.assign({},SB_HEADERS,{"Prefer":"count=exact"})});
