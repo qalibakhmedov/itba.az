@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
 <title>itba.az — Admin Panel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -137,8 +138,8 @@
   <div id="viewWording" class="hidden">
     <div class="toprow">
       <div>
-        <h2 class="admin-h">Ana səhifə mətnlərini redaktə et</h2>
-        <div class="mini">Bu mətnlər itba.az ana səhifəsində (index.html) göstərilir. Dəyişikliklər saxlandıqdan sonra saytda dərhal əks olunur.</div>
+        <h2 class="admin-h">Sayt mətnlərini redaktə et</h2>
+        <div class="mini">Bu mətnlər itba.az ana səhifəsində (index.html) və Akademiya səhifəsində (academy/index.html) göstərilir. Dəyişikliklər saxlandıqdan sonra hər iki səhifədə dərhal əks olunur.</div>
       </div>
     </div>
     <div class="panel">
@@ -166,17 +167,22 @@ const sbAuth=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const $=id=>document.getElementById(id);
 
-/* ================= ana səhifə (index.html) mətnləri ================= */
-/* Each entry: [key, group, kind, current default text from index.html]. kind
-   "text" -> <input>, "long" -> <textarea>. index.html reads the same keys
-   from admin_wordings and applies them to elements with id="w-<key>". */
+/* ================= sayt mətnləri (index.html + academy/index.html) ================= */
+/* Each entry: [key, group, kind, current default text]. kind "text" ->
+   <input>, "long" -> <textarea>. Both pages read the same keys from
+   admin_wordings and apply them to elements with id="w-<key>" — index.html
+   for the "Ana səhifə" group, academy/index.html for everything else. */
 const WORDING_FIELDS=[
-  ["heroBadge","Əsas bölmə (Hero)","text","Enrollment for new groups is open"],
-  ["heroTitle","Əsas bölmə (Hero)","text","Launch your IT Business Analysis career with a professional start"],
-  ["heroSubtitle","Əsas bölmə (Hero)","long","itba.az is a focused training platform for those who want to build a career in IT Business Analysis and for companies that want to grow strong internal BA teams."],
-  ["heroBtnPrimary","Əsas bölmə (Hero)","text","Join the IT BA Program"],
-  ["heroBtnSecondary","Əsas bölmə (Hero)","text","Request Corporate Training"],
-  ["heroCardTitle","Əsas bölmə (Hero)","text","IT Business Analysis Competency Path"],
+  ["homeHeroBadge","Ana səhifə (Hero)","text","Azərbaycanın IT Biznes Analitikləri Cəmiyyəti"],
+  ["homeHeroTitle","Ana səhifə (Hero)","text","IT Biznes Analitikləri üçün Azərbaycanın mərkəzi platforması"],
+  ["homeHeroSubtitle","Ana səhifə (Hero)","long","Karyera uyğunluq testini keçin, kurs və proqramları araşdırın, itba.az Akademiyası ilə peşəkar inkişafınızı davam etdirin."],
+
+  ["heroBadge","Akademiya — Əsas bölmə (Hero)","text","Enrollment for new groups is open"],
+  ["heroTitle","Akademiya — Əsas bölmə (Hero)","text","Launch your IT Business Analysis career with a professional start"],
+  ["heroSubtitle","Akademiya — Əsas bölmə (Hero)","long","itba.az is a focused training platform for those who want to build a career in IT Business Analysis and for companies that want to grow strong internal BA teams."],
+  ["heroBtnPrimary","Akademiya — Əsas bölmə (Hero)","text","Join the IT BA Program"],
+  ["heroBtnSecondary","Akademiya — Əsas bölmə (Hero)","text","Request Corporate Training"],
+  ["heroCardTitle","Akademiya — Əsas bölmə (Hero)","text","IT Business Analysis Competency Path"],
 
   ["aboutTitle","Why itba.az? bölməsi","text","Why itba.az?"],
   ["aboutSubtitle","Why itba.az? bölməsi","long","The academy focuses only on IT Business Analysis, with competency-based, practice-oriented training designed to prepare you for real-world projects in banking, fintech, and enterprise environments."],
