@@ -1,11 +1,13 @@
 {
   "name": "itba-az-build",
   "private": true,
-  "description": "Build-time-only tooling for itba.az's static article pages. Does not affect how the site is served — GitHub Pages still serves plain committed files with zero server-side computation at request time. See README.md.",
+  "description": "Build-time-only tooling for itba.az's static article pages, plus a local-only dev data seeder. Neither affects how the site is served — GitHub Pages still serves plain committed files with zero server-side computation at request time. See README.md.",
   "scripts": {
-    "build:articles": "node scripts/build-articles.js"
+    "build:articles": "node scripts/build-articles.js",
+    "seed:dev-data": "node scripts/seed-dev-data.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
     "sanitize-html": "^2.13.0"
   }
 }
