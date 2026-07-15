@@ -92,18 +92,19 @@ create policy "admin read" on applications for select
   using (auth.jwt() ->> 'email' = 'qalib.akhmedov@gmail.com');
 
 -- ============================================================
--- admin_wordings — editable UI copy for admin.html (single JSONB row)
+-- admin_wordings — editable copy for index.html, edited from admin.html
+-- (single JSONB row keyed by the wording's id, e.g. "heroTitle")
 -- ============================================================
--- Read and written only from the logged-in admin dashboard — no public
--- page ever needs this, so all three operations are admin-only.
+-- SELECT must stay public: index.html is a public page and reads this row
+-- on every load to apply any saved overrides. INSERT/UPDATE are admin-only
+-- — only the logged-in admin may change what the site says.
 create table if not exists admin_wordings (
   id int primary key default 1,
   wordings jsonb default '{}'::jsonb,
   updated_at timestamptz default now()
 );
 alter table admin_wordings enable row level security;
-create policy "admin read" on admin_wordings for select
-  using (auth.jwt() ->> 'email' = 'qalib.akhmedov@gmail.com');
+create policy "public read" on admin_wordings for select using (true);
 create policy "admin insert" on admin_wordings for insert
   with check (auth.jwt() ->> 'email' = 'qalib.akhmedov@gmail.com');
 create policy "admin update" on admin_wordings for update

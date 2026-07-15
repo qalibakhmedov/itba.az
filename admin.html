@@ -25,8 +25,9 @@
   .login-card h1{font-size:24px;font-weight:700;margin-bottom:4px}
   .login-card .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
   label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-  input[type=password],input[type=email],input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:14px;background:#FBFCFC;color:var(--ink)}
-  input:focus{outline:2px solid var(--red);outline-offset:1px;border-color:transparent}
+  input[type=password],input[type=email],input[type=text],textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:14px;background:#FBFCFC;color:var(--ink)}
+  textarea{min-height:70px;resize:vertical;line-height:1.5}
+  input:focus,textarea:focus{outline:2px solid var(--red);outline-offset:1px;border-color:transparent}
   .field-gap{margin-top:14px}
   .btn{display:inline-block;width:100%;margin-top:16px;background:var(--red);color:#fff;border:none;border-radius:6px;padding:12px;font-family:var(--sans);font-weight:600;font-size:15px;cursor:pointer}
   .btn:hover{background:var(--red-dark)}
@@ -60,13 +61,9 @@
   table.adm td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
   tr.exp-row td{background:#F7F9F8;font-size:13px;line-height:1.6}
   .empty{color:var(--muted);font-size:13px;padding:10px 0}
-  .devlog{list-style:none}
-  .devlog li{padding:12px 0;border-top:1px solid var(--line)}
-  .devlog li:first-child{border-top:none}
-  .devlog .dl-date{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.05em}
-  .devlog .dl-title{font-weight:600;margin:2px 0 3px}
-  .devlog .dl-desc{font-size:13px;color:var(--muted);line-height:1.5}
-  .wfield{margin-bottom:16px}
+  .wgroup{margin-bottom:22px}
+  .wgroup-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .wfield{margin-bottom:14px}
   .wfield .wf-label{font-size:12.5px;color:var(--muted);margin-bottom:5px}
   .wording-actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
   .wording-actions .btn{width:auto;margin:0;padding:11px 22px}
@@ -81,8 +78,8 @@
 
 <div id="viewLogin" class="wrap">
   <div class="login-card">
-    <h1 id="loginTitleEl">Admin girişi</h1>
-    <div class="sub" id="loginSubEl">Sayt statistikası və müraciətlər</div>
+    <h1>Admin girişi</h1>
+    <div class="sub">Sayt statistikası və müraciətlər</div>
     <label for="loginEmail">Email</label>
     <input type="email" id="loginEmail" placeholder="admin@itba.az" autocomplete="username">
     <div class="field-gap">
@@ -103,22 +100,17 @@
   <div id="viewMonitoring">
     <div class="toprow">
       <div>
-        <h2 class="admin-h" id="dashTitleEl">Sayt statistikası</h2>
+        <h2 class="admin-h">Sayt statistikası</h2>
         <div class="mini" id="lastRefreshed"></div>
       </div>
       <button class="btn ghost small" id="refreshBtn">Yenilə</button>
-    </div>
-
-    <div class="panel">
-      <h3><span id="devlogTitleEl">İnkişaf tarixçəsi</span></h3>
-      <ul class="devlog" id="devlogList"></ul>
     </div>
 
     <div class="tiles" id="tiles"></div>
 
     <div class="panel">
       <h3>
-        <span id="chartTitleEl">Son 14 gün — ziyarətlər</span>
+        <span>Son 14 gün — ziyarətlər</span>
         <div class="panel-actions">
           <button class="linkbtn" id="chartDownloadBtn">Ziyarətləri CSV kimi yüklə</button>
           <button class="linkbtn" id="toggleTableBtn">cədvəl kimi göstər</button>
@@ -130,14 +122,14 @@
 
     <div class="panel">
       <h3>
-        <span id="appsTitleEl">Müraciətlər (Apply formu)</span>
+        <span>Müraciətlər (Apply formu)</span>
         <button class="linkbtn" id="appsDownloadBtn">Müraciətləri CSV kimi yüklə</button>
       </h3>
       <div id="applicationsBox">Yüklənir…</div>
     </div>
 
     <div class="panel">
-      <h3><span id="activityTitleEl">Son fəaliyyət</span></h3>
+      <h3><span>Son fəaliyyət</span></h3>
       <div id="activityBox">Yüklənir…</div>
     </div>
   </div>
@@ -145,8 +137,8 @@
   <div id="viewWording" class="hidden">
     <div class="toprow">
       <div>
-        <h2 class="admin-h" id="wordingTitleEl">Panel mətnlərini redaktə et</h2>
-        <div class="mini" id="wordingSubEl">Aşağıdakı mətnləri dəyişib yadda saxlaya bilərsiniz. Dəyişikliklər dərhal panelə tətbiq olunur.</div>
+        <h2 class="admin-h">Ana səhifə mətnlərini redaktə et</h2>
+        <div class="mini">Bu mətnlər itba.az ana səhifəsində (index.html) göstərilir. Dəyişikliklər saxlandıqdan sonra saytda dərhal əks olunur.</div>
       </div>
     </div>
     <div class="panel">
@@ -174,95 +166,52 @@ const sbAuth=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const $=id=>document.getElementById(id);
 
-/* ================= inkişaf tarixçəsi (dev log) ================= */
-const DEV_LOG=[
-  {date:"2026-07-10",title:"Oracle SQL imtahan platforması",desc:"HR sxemi üzərində işləyən, brauzerdə çalışan Oracle SQL imtahan simulyatoru (exam.html) quruldu — 25 sual, sual başı 4 bal."},
-  {date:"2026-07-10",title:"Müəllim paneli: sual üzrə baxış və avtomatik yenilənmə",desc:"Müəllim hər tələbənin hər suala yazdığı sorğunu ayrıca görə bilir; panel hər 60 saniyədən bir özü yenilənir."},
-  {date:"2026-07-10",title:"Tələbə irəliləyişinin real bazada saxlanması",desc:"Tələbə cavabları brauzerlər arası paylaşılmırdı (yalnız yaddaşda qalırdı) — Supabase əsaslı ortaq yaddaşa keçirildi ki, müəllim panelində real vaxtda görünsün."},
-  {date:"2026-07-10",title:"2 saatlıq imtahan vaxtı və geri sayım",desc:"Tələbə pəncərəsinə 2 saatlıq geri sayan taymer əlavə olundu; vaxt bitdikdə imtahan avtomatik başa çatdırılır."},
-  {date:"2026-07-10",title:"Müəllim panelindən tələbə email-i əlavə etmək",desc:"Müəllim panelə yeni tələbə email-ləri əlavə edə bilir; siyahı Supabase-də saxlanılır."},
-  {date:"2026-07-10",title:"Bal üzrə sıralama və sərbəst sual naviqasiyası",desc:"Müəllim panelində iştirakçılar bala görə sıralanır; tələbələr üçün hər tələbədə fərqli sual sırası və sıralamaya klikləyərək istənilən suala keçid imkanı yaradıldı."},
-  {date:"2026-07-10",title:"Sual mətnini kopyalamağın və cavaba yapışdırmağın qarşısının alınması",desc:"Sual mətni seçilə/kopyalanabilməz edildi; SQL redaktoruna yapışdırma (paste) bloklandı."},
-  {date:"2026-07-15",title:"Sayt admin paneli: ziyarət izləməsi və müraciətlər lövhəsi",desc:"index.html-də Apply formu artıq Supabase-ə real məlumat yazır; sayt ziyarətləri izlənilir; yeni admin.html — statistika, qrafik, müraciətlər və fəaliyyət lenti."},
-  {date:"2026-07-15",title:"Admin girişi: email + şifrə (əvvəlcə OTP ilə, sonra sadələşdirildi)",desc:"Admin girişi ümumi koddan Supabase Auth əsaslı email+şifrə sisteminə keçirildi."},
-  {date:"2026-07-15",title:"Admin paneli iki hissəyə bölündü: Monitorinq və Mətnlər",desc:"Monitorinq bölməsinə inkişaf tarixçəsi və CSV yükləmə funksiyaları, ayrıca Mətnlər bölməsinə panel mətnlərini redaktə etmək imkanı əlavə olundu."}
-];
-function renderDevLog(){
-  $("devlogList").innerHTML=DEV_LOG.map(e=>`
-    <li>
-      <div class="dl-date">${esc(e.date)}</div>
-      <div class="dl-title">${esc(e.title)}</div>
-      <div class="dl-desc">${esc(e.desc)}</div>
-    </li>`).join("");
-}
+/* ================= ana səhifə (index.html) mətnləri ================= */
+/* Each entry: [key, group, kind, current default text from index.html]. kind
+   "text" -> <input>, "long" -> <textarea>. index.html reads the same keys
+   from admin_wordings and applies them to elements with id="w-<key>". */
+const WORDING_FIELDS=[
+  ["heroBadge","Əsas bölmə (Hero)","text","Enrollment for new groups is open"],
+  ["heroTitle","Əsas bölmə (Hero)","text","Launch your IT Business Analysis career with a professional start"],
+  ["heroSubtitle","Əsas bölmə (Hero)","long","itba.az is a focused training platform for those who want to build a career in IT Business Analysis and for companies that want to grow strong internal BA teams."],
+  ["heroBtnPrimary","Əsas bölmə (Hero)","text","Join the IT BA Program"],
+  ["heroBtnSecondary","Əsas bölmə (Hero)","text","Request Corporate Training"],
+  ["heroCardTitle","Əsas bölmə (Hero)","text","IT Business Analysis Competency Path"],
 
-/* ================= mətnlər (wording) sistemi ================= */
-const DEFAULT_WORDINGS={
-  loginTitle:"Admin girişi",
-  loginSub:"Sayt statistikası və müraciətlər",
-  loginBtn:"Daxil ol",
-  logoutBtn:"Çıxış",
-  navMonitoring:"Monitorinq",
-  navWording:"Mətnlər",
-  dashTitle:"Sayt statistikası",
-  refreshBtn:"Yenilə",
-  devlogTitle:"İnkişaf tarixçəsi",
-  tileTotalVisits:"Ümumi ziyarətlər",
-  tileUniqueVisitors:"Unikal ziyarətçilər",
-  tileToday:"Bu gün",
-  tileTotalApps:"Ümumi müraciətlər",
-  tileNewApps:"Yeni müraciətlər (7 gün)",
-  chartTitle:"Son 14 gün — ziyarətlər",
-  chartToggleTable:"cədvəl kimi göstər",
-  chartToggleChart:"qrafik kimi göstər",
-  chartDownloadBtn:"Ziyarətləri CSV kimi yüklə",
-  appsTitle:"Müraciətlər (Apply formu)",
-  appsEmpty:"Hələ müraciət yoxdur.",
-  appsExpand:"tam göstər",
-  appsDownloadBtn:"Müraciətləri CSV kimi yüklə",
-  activityTitle:"Son fəaliyyət",
-  activityEmpty:"Hələ ziyarət qeydə alınmayıb.",
-  wordingTitle:"Panel mətnlərini redaktə et",
-  wordingSub:"Aşağıdakı mətnləri dəyişib yadda saxlaya bilərsiniz. Dəyişikliklər dərhal panelə tətbiq olunur.",
-  wordingSaveBtn:"Yadda saxla",
-  wordingResetBtn:"Standart mətnlərə qaytar"
-};
-const WORDING_LABELS={
-  loginTitle:"Giriş səhifəsi başlığı",
-  loginSub:"Giriş səhifəsi alt mətni",
-  loginBtn:"Giriş düyməsi mətni",
-  logoutBtn:"Çıxış düyməsi mətni",
-  navMonitoring:"'Monitorinq' tab adı",
-  navWording:"'Mətnlər' tab adı",
-  dashTitle:"Monitorinq səhifəsinin başlığı",
-  refreshBtn:"Yenilə düyməsi mətni",
-  devlogTitle:"İnkişaf tarixçəsi bölməsinin başlığı",
-  tileTotalVisits:"'Ümumi ziyarətlər' plitəsinin adı",
-  tileUniqueVisitors:"'Unikal ziyarətçilər' plitəsinin adı",
-  tileToday:"'Bu gün' plitəsinin adı",
-  tileTotalApps:"'Ümumi müraciətlər' plitəsinin adı",
-  tileNewApps:"'Yeni müraciətlər' plitəsinin adı",
-  chartTitle:"Qrafik panelinin başlığı",
-  chartToggleTable:"Qrafikdən cədvələ keçid düyməsi",
-  chartToggleChart:"Cədvəldən qrafikə keçid düyməsi",
-  chartDownloadBtn:"Ziyarətləri yükləmə düyməsi",
-  appsTitle:"Müraciətlər panelinin başlığı",
-  appsEmpty:"Müraciət olmadıqda göstərilən mətn",
-  appsExpand:"Mesajı tam göstərmə düyməsi",
-  appsDownloadBtn:"Müraciətləri yükləmə düyməsi",
-  activityTitle:"Son fəaliyyət panelinin başlığı",
-  activityEmpty:"Fəaliyyət olmadıqda göstərilən mətn",
-  wordingTitle:"Mətnlər panelinin başlığı",
-  wordingSub:"Mətnlər panelinin izah mətni",
-  wordingSaveBtn:"Yadda saxla düyməsi",
-  wordingResetBtn:"Sıfırlama düyməsi"
-};
+  ["aboutTitle","Why itba.az? bölməsi","text","Why itba.az?"],
+  ["aboutSubtitle","Why itba.az? bölməsi","long","The academy focuses only on IT Business Analysis, with competency-based, practice-oriented training designed to prepare you for real-world projects in banking, fintech, and enterprise environments."],
+
+  ["whoTitle","Kimlər üçündür bölməsi","text","Who is this program for?"],
+  ["whoSubtitle","Kimlər üçündür bölməsi","long","This program is designed for career changers looking to enter IT Business Analysis, as well as corporate teams wanting to strengthen their internal BA capabilities."],
+
+  ["servicesTitle","Xidmətlər bölməsi","text","What does itba.az offer?"],
+  ["benefitsTitle","Faydalar bölməsi","text","What do participants gain?"],
+  ["programTitle","Proqram bölməsi","text","IT BA Core Program – Module Structure"],
+
+  ["faqTitle","FAQ bölməsi","text","Frequently Asked Questions"],
+  ["faqQ1","FAQ bölməsi","text","Are the classes online or offline?"],
+  ["faqA1","FAQ bölməsi","long","Mainly online/hybrid format to provide maximum flexibility. Offline groups in Baku are organized if there is sufficient demand."],
+  ["faqQ2","FAQ bölməsi","text","I have no IT background. Is this program suitable for me?"],
+  ["faqA2","FAQ bölməsi","long","Yes, the program is specifically designed for people coming from the business side into IT BA. We start with foundations and build up systematically."],
+  ["faqQ3","FAQ bölməsi","text","Do you guarantee a job after the course?"],
+  ["faqA3","FAQ bölməsi","long","We do not provide job guarantees, but we support you with portfolio building, CV/LinkedIn optimization, and interview preparation to maximize your chances."],
+  ["faqQ4","FAQ bölməsi","text","What are the payment options?"],
+  ["faqA4","FAQ bölməsi","long","Payment can be made in one-time or in installments. Detailed pricing and payment plans are shared after you submit the application form."],
+  ["faqQ5","FAQ bölməsi","text","Do you design separate programs for corporate clients?"],
+  ["faqA5","FAQ bölməsi","long","Yes, corporate programs are fully customizable. We tailor the curriculum and use real internal cases from your organization to ensure maximum relevance and impact."],
+
+  ["applyTitle","Müraciət bölməsi","text","Start your IT Business Analysis journey today"],
+  ["applySubtitle","Müraciət bölməsi","long","Fill out the form below and we'll contact you soon to discuss your goals and how itba.az can help you achieve them."],
+
+  ["footerText","Footer","text","© 2025 itba.az – IT Business Analysis Academy"]
+];
+const DEFAULT_WORDINGS=Object.fromEntries(WORDING_FIELDS.map(([key,,,def])=>[key,def]));
 let WORDINGS=Object.assign({},DEFAULT_WORDINGS);
-function W(key){return WORDINGS[key]??DEFAULT_WORDINGS[key]??key;}
 
 /* Uses sbAuth.from() (not raw fetch) so the request carries the logged-in
-   admin's session token — required for the auth-scoped RLS policies on
-   admin_wordings to recognize the caller as the admin rather than anon. */
+   admin's session token where relevant. SELECT on admin_wordings stays
+   public (index.html — a public page — must be able to read these), but
+   INSERT/UPDATE are admin-only; see supabase/schema.sql. */
 async function loadWordings(){
   try{
     const{data,error}=await sbAuth.from("admin_wordings").select("wordings").eq("id",1).maybeSingle();
@@ -275,51 +224,30 @@ async function saveWordings(newWordings){
   if(error) throw new Error("wordings save failed: "+error.message);
 }
 
-function applyStaticWordings(){
-  $("loginTitleEl").textContent=W("loginTitle");
-  $("loginSubEl").textContent=W("loginSub");
-  $("loginBtn").textContent=W("loginBtn");
-  $("logoutBtn").textContent=W("logoutBtn");
-  $("navMonitoringBtn").textContent=W("navMonitoring");
-  $("navWordingBtn").textContent=W("navWording");
-  $("dashTitleEl").textContent=W("dashTitle");
-  $("refreshBtn").textContent=W("refreshBtn");
-  $("devlogTitleEl").textContent=W("devlogTitle");
-  $("chartTitleEl").textContent=W("chartTitle");
-  $("chartDownloadBtn").textContent=W("chartDownloadBtn");
-  $("toggleTableBtn").textContent=$("chartTableBox").classList.contains("hidden")?W("chartToggleTable"):W("chartToggleChart");
-  $("appsTitleEl").textContent=W("appsTitle");
-  $("appsDownloadBtn").textContent=W("appsDownloadBtn");
-  $("activityTitleEl").textContent=W("activityTitle");
-  $("wordingTitleEl").textContent=W("wordingTitle");
-  $("wordingSubEl").textContent=W("wordingSub");
-  $("wordingSaveBtn").textContent=W("wordingSaveBtn");
-  $("wordingResetBtn").textContent=W("wordingResetBtn");
-}
-
 function renderWordingForm(){
-  $("wordingFields").innerHTML=Object.keys(DEFAULT_WORDINGS).map(k=>`
-    <div class="wfield">
-      <div class="wf-label">${esc(WORDING_LABELS[k]||k)}</div>
-      <input type="text" data-key="${k}" value="${esc(W(k))}">
-    </div>`).join("");
+  let html="", lastGroup=null;
+  for(const [key,group,kind] of WORDING_FIELDS){
+    if(group!==lastGroup){ html+=`<div class="wgroup-title">${esc(group)}</div>`; lastGroup=group; }
+    const value=esc(WORDINGS[key]??DEFAULT_WORDINGS[key]??"");
+    html+=kind==="long"
+      ?`<div class="wfield"><div class="wf-label">${esc(key)}</div><textarea data-key="${key}">${value}</textarea></div>`
+      :`<div class="wfield"><div class="wf-label">${esc(key)}</div><input type="text" data-key="${key}" value="${value}"></div>`;
+  }
+  $("wordingFields").innerHTML=html;
 }
 $("wordingSaveBtn").onclick=async()=>{
   $("wordingErr").textContent="";$("wordingOk").textContent="";
   const updated={};
-  $("wordingFields").querySelectorAll("input[data-key]").forEach(inp=>{updated[inp.dataset.key]=inp.value;});
+  $("wordingFields").querySelectorAll("[data-key]").forEach(el=>{updated[el.dataset.key]=el.value;});
   $("wordingSaveBtn").disabled=true;$("wordingSaveBtn").textContent="Saxlanılır…";
   try{
     await saveWordings(updated);
     WORDINGS=Object.assign({},DEFAULT_WORDINGS,updated);
-    applyStaticWordings();
-    renderWordingForm();
-    if(lastVisits&&lastApps){ renderTiles({rows:lastVisits,total:lastVisitsTotal},{rows:lastApps,total:lastAppsTotal}); renderChart(lastVisits); renderApplications(lastApps); renderActivity(lastVisits); }
-    $("wordingOk").textContent="Yadda saxlanıldı.";
+    $("wordingOk").textContent="Yadda saxlanıldı. Ana səhifədə dərhal əks olunacaq.";
   }catch(e){
     $("wordingErr").textContent="Yadda saxlanılmadı — internet bağlantısını yoxlayın və ya Supabase cədvəlinin yaradıldığını təsdiq edin.";
   }
-  $("wordingSaveBtn").disabled=false;$("wordingSaveBtn").textContent=W("wordingSaveBtn");
+  $("wordingSaveBtn").disabled=false;$("wordingSaveBtn").textContent="Yadda saxla";
 };
 $("wordingResetBtn").onclick=async()=>{
   $("wordingErr").textContent="";$("wordingOk").textContent="";
@@ -327,9 +255,7 @@ $("wordingResetBtn").onclick=async()=>{
   try{
     await saveWordings({});
     WORDINGS=Object.assign({},DEFAULT_WORDINGS);
-    applyStaticWordings();
     renderWordingForm();
-    if(lastVisits&&lastApps){ renderTiles({rows:lastVisits,total:lastVisitsTotal},{rows:lastApps,total:lastAppsTotal}); renderChart(lastVisits); renderApplications(lastApps); renderActivity(lastVisits); }
     $("wordingOk").textContent="Standart mətnlərə qaytarıldı.";
   }catch(e){
     $("wordingErr").textContent="Sıfırlanmadı — internet bağlantısını yoxlayın.";
@@ -346,14 +272,11 @@ function showTab(t){
   $("navWordingBtn").classList.toggle("tab-active",t==="wording");
 }
 $("navMonitoringBtn").onclick=()=>showTab("monitoring");
-$("navWordingBtn").onclick=()=>{renderWordingForm();showTab("wording");};
+$("navWordingBtn").onclick=async()=>{await loadWordings();renderWordingForm();showTab("wording");};
 
 let refreshTimer=null;
 function stopAutoRefresh(){if(refreshTimer){clearInterval(refreshTimer);refreshTimer=null;}}
-async function enterDashboard(){
-  await loadWordings();
-  applyStaticWordings();
-  renderDevLog();
+function enterDashboard(){
   show("viewApp");
   showTab("monitoring");
   loadAll();
@@ -369,7 +292,7 @@ $("loginBtn").onclick=async()=>{
   if(!password){$("loginErr").textContent="Şifrəni daxil edin.";return;}
   $("loginBtn").disabled=true;$("loginBtn").textContent="Yoxlanılır…";
   const{error}=await sbAuth.auth.signInWithPassword({email,password});
-  $("loginBtn").disabled=false;$("loginBtn").textContent=W("loginBtn");
+  $("loginBtn").disabled=false;$("loginBtn").textContent="Daxil ol";
   if(error){
     $("loginErr").textContent=error.code==="email_not_confirmed"
       ?"Email hələ təsdiqlənməyib — qeydiyyat zamanı göndərilən təsdiq linkini emailinizdən açın, sonra yenidən cəhd edin."
@@ -409,7 +332,7 @@ async function sbFetch(table,{select="*",orderColumn,limit}={}){
 }
 
 const LOAD_ERR='<p class="empty">Məlumat yüklənmədi — internet bağlantısını yoxlayın və ya Supabase cədvəlinin yaradıldığını təsdiq edin.</p>';
-let lastVisits=null,lastVisitsTotal=null,lastApps=null,lastAppsTotal=null;
+let lastVisits=null,lastApps=null;
 
 async function loadAll(){
   const [visitsResult,appsResult]=await Promise.allSettled([
@@ -419,7 +342,7 @@ async function loadAll(){
   const visits=visitsResult.status==="fulfilled"?visitsResult.value:null;
   const apps=appsResult.status==="fulfilled"?appsResult.value:null;
 
-  if(visits&&apps){ renderTiles(visits,apps); lastVisits=visits.rows;lastVisitsTotal=visits.total;lastApps=apps.rows;lastAppsTotal=apps.total; }
+  if(visits&&apps){ renderTiles(visits,apps); lastVisits=visits.rows;lastApps=apps.rows; }
   else{ $("tiles").innerHTML=LOAD_ERR; }
 
   if(visits){ renderChart(visits.rows); renderActivity(visits.rows); }
@@ -441,11 +364,11 @@ function renderTiles(visits,apps){
   const weekAgo=Date.now()-7*24*60*60*1000;
   const newApps=apps.rows.filter(r=>new Date(r.submitted_at).getTime()>=weekAgo).length;
   const tiles=[
-    [W("tileTotalVisits"),totalVisits],
-    [W("tileUniqueVisitors"),uniqueVisitors],
-    [W("tileToday"),visitsToday],
-    [W("tileTotalApps"),totalApps],
-    [W("tileNewApps"),newApps]
+    ["Ümumi ziyarətlər",totalVisits],
+    ["Unikal ziyarətçilər",uniqueVisitors],
+    ["Bu gün",visitsToday],
+    ["Ümumi müraciətlər",totalApps],
+    ["Yeni müraciətlər (7 gün)",newApps]
   ];
   $("tiles").innerHTML=tiles.map(([lbl,val])=>`<div class="tile"><div class="lbl">${esc(lbl)}</div><div class="val">${val}</div></div>`).join("");
 }
@@ -501,11 +424,11 @@ $("toggleTableBtn").onclick=()=>{
   const shown=!$("chartTableBox").classList.contains("hidden");
   $("chartTableBox").classList.toggle("hidden",shown);
   $("chartBox").classList.toggle("hidden",!shown);
-  $("toggleTableBtn").textContent=shown?W("chartToggleTable"):W("chartToggleChart");
+  $("toggleTableBtn").textContent=shown?"cədvəl kimi göstər":"qrafik kimi göstər";
 };
 
 function renderApplications(rows){
-  if(!rows.length){$("applicationsBox").innerHTML=`<p class="empty">${esc(W("appsEmpty"))}</p>`;return;}
+  if(!rows.length){$("applicationsBox").innerHTML='<p class="empty">Hələ müraciət yoxdur.</p>';return;}
   let html='<table class="adm"><tr><th>Tarix</th><th>Ad Soyad</th><th>Telefon</th><th>Email</th><th>Rol</th><th>Məqsəd</th><th>Mesaj</th></tr>';
   rows.forEach((r,i)=>{
     const date=r.submitted_at?new Date(r.submitted_at).toLocaleString("az-AZ"):"—";
@@ -513,7 +436,7 @@ function renderApplications(rows){
     const msg=r.message||"";
     const short=msg.length>60?msg.slice(0,60)+"…":msg;
     html+=`<tr><td>${esc(date)}</td><td>${esc(r.full_name)}</td><td>${esc(r.phone)}</td><td>${esc(r.email)}</td><td>${esc(r.role)}</td><td>${esc(goal)}</td>
-      <td>${esc(short)}${msg.length>60?` <button class="linkbtn" data-id="app-${i}">${esc(W("appsExpand"))}</button>`:""}</td></tr>`;
+      <td>${esc(short)}${msg.length>60?` <button class="linkbtn" data-id="app-${i}">tam göstər</button>`:""}</td></tr>`;
     if(msg.length>60){
       html+=`<tr class="exp-row hidden" id="app-${i}"><td colspan="7">${esc(msg)}</td></tr>`;
     }
@@ -526,7 +449,7 @@ function renderApplications(rows){
 }
 
 function renderActivity(rows){
-  if(!rows.length){$("activityBox").innerHTML=`<p class="empty">${esc(W("activityEmpty"))}</p>`;return;}
+  if(!rows.length){$("activityBox").innerHTML='<p class="empty">Hələ ziyarət qeydə alınmayıb.</p>';return;}
   let html='<table class="adm"><tr><th>Vaxt</th><th>Səhifə</th><th>Referrer</th></tr>';
   rows.slice(0,25).forEach(r=>{
     const time=r.visited_at?new Date(r.visited_at).toLocaleString("az-AZ"):"—";
