@@ -12,6 +12,7 @@
 <div class="page">
   <div class="container-wide">
     <a href="/index.html" class="site-brand">← itba.az</a>
+    <p class="mini-link" style="text-align:left;margin:-10px 0 10px"><a href="dashboard.html">← Dashboard</a></p>
     <div style="text-align:center;margin-bottom:8px">
       <span class="badge">Career compatibility test</span>
       <h1>How well does IT Business Analysis fit you?</h1>
@@ -24,7 +25,7 @@
       <div class="progress" id="progressLine">0 of 0 answered</div>
       <div id="questionsBox"></div>
       <button class="btn btn-primary" id="submitBtn" disabled>Answer all questions to continue</button>
-      <div class="err" id="errBox" style="display:none"></div>
+      <div class="err" id="errBox" style="display:none" role="alert"></div>
     </div>
   </div>
 </div>
@@ -90,7 +91,10 @@ async function init() {
   if (qErr || !qs || qs.length === 0) {
     document.getElementById("loadingCard").innerHTML =
       '<h1 style="font-size:24px">Test unavailable</h1>' +
-      '<p class="subhead">The career test couldn\'t be loaded right now. Please try again shortly.</p>';
+      '<p class="subhead">The career test couldn\'t be loaded right now. Please try again shortly.</p>' +
+      '<div class="btn-row"><button class="btn btn-primary" id="retryInitBtn" style="width:auto">Try again</button>' +
+      '<a href="dashboard.html" class="btn btn-ghost" style="width:auto">Back to dashboard</a></div>';
+    document.getElementById("retryInitBtn").addEventListener("click", init);
     return;
   }
   questions = qs;
@@ -115,7 +119,10 @@ async function init() {
       .single();
     if (createErr || !created) {
       document.getElementById("loadingCard").innerHTML =
-        '<h1 style="font-size:24px">Couldn\'t start the test</h1><p class="subhead">Please try again in a moment.</p>';
+        '<h1 style="font-size:24px">Couldn\'t start the test</h1><p class="subhead">Please try again in a moment.</p>' +
+        '<div class="btn-row"><button class="btn btn-primary" id="retryInitBtn2" style="width:auto">Try again</button>' +
+        '<a href="dashboard.html" class="btn btn-ghost" style="width:auto">Back to dashboard</a></div>';
+      document.getElementById("retryInitBtn2").addEventListener("click", init);
       return;
     }
     attemptId = created.id;

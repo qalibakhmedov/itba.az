@@ -40,7 +40,7 @@
 <section class="content-page">
   <div class="container">
     <span class="badge">Məqalələr</span>
-    <h2 class="section-title" style="text-align:left;font-size:34px;margin-bottom:20px">IT BA Alətləri</h2>
+    <h2 class="section-title-left">IT BA Alətləri</h2>
     <div class="category-pills">
       <a href="/articles/" class="cat-pill">Hamısı</a>
       <a href="/articles/category/ai/" class="cat-pill">Süni İntellekt (AI)</a>
@@ -49,22 +49,32 @@
       <a href="/articles/category/news/" class="cat-pill">Sənaye Xəbərləri</a>
     </div>
     <input type="search" id="articleSearch" class="article-search" placeholder="Məqalələr arasında axtar…" aria-label="Məqalələr arasında axtar">
+    <p id="articleResultsCount" class="subhead" style="display:none;margin-bottom:16px" aria-live="polite"></p>
     <div class="article-grid" id="articleGrid">
-      <p class="subhead">Bu kateqoriyada hələ məqalə yoxdur.</p>
+      <p class="state-note" role="status">Bu kateqoriyada hələ məqalə yoxdur.</p>
     </div>
   </div>
 </section>
 <script>
 (function () {
   var input = document.getElementById("articleSearch");
+  var countEl = document.getElementById("articleResultsCount");
   var cards = Array.prototype.slice.call(document.querySelectorAll("#articleGrid .article-card"));
+  if (!cards.length) return;
+  function updateCount() {
+    var visible = cards.filter(function (c) { return c.style.display !== "none"; }).length;
+    countEl.style.display = "block";
+    countEl.textContent = visible + " / " + cards.length + " məqalə göstərilir";
+  }
   input.addEventListener("input", function () {
     var q = input.value.trim().toLowerCase();
     cards.forEach(function (card) {
       var text = card.textContent.toLowerCase();
       card.style.display = !q || text.indexOf(q) !== -1 ? "" : "none";
     });
+    updateCount();
   });
+  updateCount();
 })();
 </script>
 <footer>

@@ -13,27 +13,29 @@
 <div class="page">
   <div class="container-wide">
     <a href="/index.html" class="site-brand">← itba.az</a>
+    <p class="mini-link" style="text-align:left;margin:-10px 0 10px"><a href="dashboard.html">← Dashboard</a> · <a href="my-articles.html">My articles</a></p>
     <div class="card" id="loadingCard">
       <p class="subhead" style="margin:0">Loading…</p>
     </div>
     <div class="card" id="notAllowedCard" style="display:none">
       <h1 style="font-size:24px" id="notAllowedTitle"></h1>
-      <p class="subhead" id="notAllowedText" style="margin:0"></p>
+      <p class="subhead" id="notAllowedText" style="margin:0 0 16px"></p>
+      <a href="dashboard.html" class="btn btn-ghost" style="width:auto">Back to dashboard</a>
     </div>
     <div class="card" id="formCard" style="display:none">
       <h1 style="font-size:24px" id="formTitle">Write an article</h1>
       <p class="subhead">Saved as a draft until you submit it — nothing you write here is public until an admin approves it.</p>
       <form id="articleForm">
         <div class="field">
-          <label for="title">Title</label>
+          <label for="title">Title <span class="required">*</span></label>
           <input id="title" type="text" required>
         </div>
         <div class="field">
-          <label for="dek">Short excerpt</label>
+          <label for="dek">Short excerpt (optional)</label>
           <textarea id="dek" placeholder="One or two sentences shown on the article list" style="min-height:60px"></textarea>
         </div>
         <div class="field">
-          <label for="category">Category</label>
+          <label for="category">Category <span class="required">*</span></label>
           <select id="category" required>
             <option value="ai">AI</option>
             <option value="tools">IT BA Tools</option>
@@ -42,7 +44,7 @@
           </select>
         </div>
         <div class="field">
-          <label for="tags">Tags (comma-separated)</label>
+          <label for="tags">Tags (comma-separated, optional)</label>
           <input id="tags" type="text" placeholder="e.g. requirements, agile, banking">
         </div>
         <div class="field">
@@ -50,7 +52,7 @@
           <input id="coverImageUrl" type="url" placeholder="https://…">
         </div>
         <div class="field">
-          <label for="bodyInput">Content</label>
+          <label for="bodyInput">Content <span class="required">*</span></label>
           <input id="bodyInput" type="hidden">
           <trix-editor input="bodyInput" aria-label="Article content"></trix-editor>
         </div>
@@ -58,8 +60,8 @@
           <button type="submit" class="btn btn-ghost" id="saveDraftBtn">Save draft</button>
           <button type="button" class="btn btn-primary" id="submitReviewBtn">Submit for review</button>
         </div>
-        <div class="err" id="errBox" style="display:none"></div>
-        <div class="notice" id="okBox" style="display:none"></div>
+        <div class="err" id="errBox" style="display:none" role="alert"></div>
+        <div class="notice" id="okBox" style="display:none" aria-live="polite"></div>
       </form>
     </div>
   </div>

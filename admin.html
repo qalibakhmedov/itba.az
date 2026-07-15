@@ -32,11 +32,26 @@
   .field-gap{margin-top:14px}
   .btn{display:inline-block;width:100%;margin-top:16px;background:var(--red);color:#fff;border:none;border-radius:6px;padding:12px;font-family:var(--sans);font-weight:600;font-size:15px;cursor:pointer}
   .btn:hover{background:var(--red-dark)}
-  .btn.ghost{background:transparent;color:var(--red);border:1px solid var(--red)}
+  .btn:focus-visible{outline:2px solid var(--red-dark);outline-offset:2px}
+  /* --red on --paper computes to 4.23:1 (fails WCAG AA's 4.5:1) — ghost
+     buttons/tabs sit directly on --paper in several places (navtabs,
+     #refreshBtn), not just on white .card/.panel surfaces. --red-dark
+     computes to 5.55:1 on --paper and even more on white, so using it
+     here is a strict improvement with no context-dependent failure. */
+  .btn.ghost{background:transparent;color:var(--red-dark);border:1px solid var(--red-dark)}
   .btn.ghost:hover{background:#FBEFEC}
   .btn.small{width:auto;margin:0;padding:9px 18px;font-size:13px}
-  .err{margin-top:12px;font-size:13px;color:var(--red);font-weight:500}
-  .ok{margin-top:12px;font-size:13px;color:var(--green);font-weight:500}
+  .btn.danger{background:transparent;color:var(--red-dark);border:1px solid var(--red-dark)}
+  .btn.danger:hover{background:var(--red-dark);color:#fff}
+  /* Positive vs negative action needs its own color, not the same red
+     family as reject/delete — approve now reads as unambiguously
+     affirmative at a glance. */
+  .btn.success{background:var(--green);color:#fff}
+  .btn.success:hover{background:#125c39}
+  .err{margin-top:12px;font-size:13px;color:var(--red-dark);font-weight:500;background:#FDF1EF;border:1px solid rgba(169,58,43,.25);border-radius:8px;padding:10px 12px}
+  .err:empty{display:none;margin:0;padding:0;border:none;background:none}
+  .ok{margin-top:12px;font-size:13px;color:var(--green);font-weight:500;background:#EDF6F0;border:1px solid rgba(23,122,76,.25);border-radius:8px;padding:10px 12px}
+  .ok:empty{display:none;margin:0;padding:0;border:none;background:none}
   h2.admin-h{font-size:22px;margin-bottom:4px}
   .toprow{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px}
   .mini{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
@@ -56,14 +71,27 @@
   .vbaseline{stroke:var(--line);stroke-width:1}
   .chart-tooltip{position:fixed;pointer-events:none;background:var(--ink);color:#fff;font-family:var(--mono);font-size:11.5px;padding:6px 10px;border-radius:6px;z-index:1000;display:none;white-space:nowrap}
   .chart-labels{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:10px;color:var(--muted)}
-  .linkbtn{background:none;border:none;color:var(--red);cursor:pointer;font-size:12.5px;text-decoration:underline;padding:0}
+  .linkbtn{background:none;border:none;color:var(--red-dark);cursor:pointer;font-size:12.5px;text-decoration:underline;padding:0}
+  .linkbtn:focus-visible{outline:2px solid var(--red-dark);outline-offset:2px}
+  .linkbtn.danger{color:var(--red-dark);font-weight:700;text-decoration:none;padding:3px 8px;border:1px solid rgba(169,58,43,.35);border-radius:4px}
+  .linkbtn.danger:hover{background:#FDF1EF}
+  /* Zebra + sticky header + overflow wrapper, matching the treatment
+     exam.html's SQL-results table already had (see .tblbox there) —
+     previously only that one table had it, every table.adm row here
+     had no scan aids and no horizontal-scroll containment. */
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
   table.adm{width:100%;border-collapse:collapse;font-size:13px}
-  table.adm th{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;text-align:left;background:var(--ink);color:#fff;padding:9px 10px}
-  table.adm td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+  table.adm th{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;text-align:left;background:var(--ink);color:#fff;padding:9px 10px;position:sticky;top:0}
+  table.adm td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top;word-break:break-word}
+  table.adm tr:nth-child(even) td{background:#F7F9F8}
   tr.exp-row td{background:#F7F9F8;font-size:13px;line-height:1.6}
   .empty{color:var(--muted);font-size:13px;padding:10px 0}
-  .wgroup{margin-bottom:22px}
-  .wgroup-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .wgroup{margin-bottom:14px;border-bottom:1px solid var(--line)}
+  .wgroup-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:12px;padding-bottom:10px;cursor:pointer;list-style:none}
+  .wgroup-title::-webkit-details-marker{display:none}
+  .wgroup-title::before{content:"▸ ";color:var(--red-dark)}
+  .wgroup[open] .wgroup-title::before{content:"▾ "}
+  .wgroup .wfield:last-child{margin-bottom:22px}
   .wfield{margin-bottom:14px}
   .wfield .wf-label{font-size:12.5px;color:var(--muted);margin-bottom:5px}
   .wording-actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
@@ -74,7 +102,10 @@
 
 <header>
   <a class="brand" href="/index.html">itba.az&nbsp;<b>ADMIN</b></a>
-  <button id="logoutBtn" class="hidden">Çıxış</button>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span id="whoamiAdmin" class="hidden" style="font-family:var(--mono);font-size:12px;color:#C9D4DA"></span>
+    <button id="logoutBtn" class="hidden">Çıxış</button>
+  </div>
 </header>
 
 <div id="viewLogin" class="wrap">
@@ -264,48 +295,52 @@ const sbAuth=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
 
 /* ================= sayt mətnləri (index.html + academy/index.html) ================= */
-/* Each entry: [key, group, kind, current default text]. kind "text" ->
-   <input>, "long" -> <textarea>. Both pages read the same keys from
-   admin_wordings and apply them to elements with id="w-<key>" — index.html
-   for the "Ana səhifə" group, academy/index.html for everything else. */
+/* Each entry: [key, group, kind, current default text, human label].
+   kind "text" -> <input>, "long" -> <textarea>. Both pages read the same
+   keys from admin_wordings and apply them to elements with id="w-<key>"
+   — index.html for the "Ana səhifə" group, academy/index.html for
+   everything else. The 5th field (label) is what a non-technical editor
+   actually sees on the form — previously this rendered the raw key
+   itself (e.g. "faqQ1"), which is what the code calls the field, not
+   what a human would recognize it by. */
 const WORDING_FIELDS=[
-  ["homeHeroBadge","Ana səhifə (Hero)","text","Azərbaycanın IT Biznes Analitikləri Cəmiyyəti"],
-  ["homeHeroTitle","Ana səhifə (Hero)","text","IT Biznes Analitikləri üçün Azərbaycanın mərkəzi platforması"],
-  ["homeHeroSubtitle","Ana səhifə (Hero)","long","Karyera uyğunluq testini keçin, kurs və proqramları araşdırın, itba.az Akademiyası ilə peşəkar inkişafınızı davam etdirin."],
+  ["homeHeroBadge","Ana səhifə (Hero)","text","Azərbaycanın IT Biznes Analitikləri Cəmiyyəti","Badge mətni"],
+  ["homeHeroTitle","Ana səhifə (Hero)","text","IT Biznes Analitikləri üçün Azərbaycanın mərkəzi platforması","Başlıq"],
+  ["homeHeroSubtitle","Ana səhifə (Hero)","long","Karyera uyğunluq testini keçin, kurs və proqramları araşdırın, itba.az Akademiyası ilə peşəkar inkişafınızı davam etdirin.","Alt başlıq"],
 
-  ["heroBadge","Akademiya — Əsas bölmə (Hero)","text","Enrollment for new groups is open"],
-  ["heroTitle","Akademiya — Əsas bölmə (Hero)","text","Launch your IT Business Analysis career with a professional start"],
-  ["heroSubtitle","Akademiya — Əsas bölmə (Hero)","long","itba.az is a focused training platform for those who want to build a career in IT Business Analysis and for companies that want to grow strong internal BA teams."],
-  ["heroBtnPrimary","Akademiya — Əsas bölmə (Hero)","text","Join the IT BA Program"],
-  ["heroBtnSecondary","Akademiya — Əsas bölmə (Hero)","text","Request Corporate Training"],
-  ["heroCardTitle","Akademiya — Əsas bölmə (Hero)","text","IT Business Analysis Competency Path"],
+  ["heroBadge","Akademiya — Əsas bölmə (Hero)","text","Enrollment for new groups is open","Badge mətni"],
+  ["heroTitle","Akademiya — Əsas bölmə (Hero)","text","Launch your IT Business Analysis career with a professional start","Başlıq"],
+  ["heroSubtitle","Akademiya — Əsas bölmə (Hero)","long","itba.az is a focused training platform for those who want to build a career in IT Business Analysis and for companies that want to grow strong internal BA teams.","Alt başlıq"],
+  ["heroBtnPrimary","Akademiya — Əsas bölmə (Hero)","text","Join the IT BA Program","Əsas düymə mətni"],
+  ["heroBtnSecondary","Akademiya — Əsas bölmə (Hero)","text","Request Corporate Training","İkinci düymə mətni"],
+  ["heroCardTitle","Akademiya — Əsas bölmə (Hero)","text","IT Business Analysis Competency Path","Kart başlığı"],
 
-  ["aboutTitle","Why itba.az? bölməsi","text","Why itba.az?"],
-  ["aboutSubtitle","Why itba.az? bölməsi","long","The academy focuses only on IT Business Analysis, with competency-based, practice-oriented training designed to prepare you for real-world projects in banking, fintech, and enterprise environments."],
+  ["aboutTitle","Why itba.az? bölməsi","text","Why itba.az?","Bölmə başlığı"],
+  ["aboutSubtitle","Why itba.az? bölməsi","long","The academy focuses only on IT Business Analysis, with competency-based, practice-oriented training designed to prepare you for real-world projects in banking, fintech, and enterprise environments.","Bölmə alt mətni"],
 
-  ["whoTitle","Kimlər üçündür bölməsi","text","Who is this program for?"],
-  ["whoSubtitle","Kimlər üçündür bölməsi","long","This program is designed for career changers looking to enter IT Business Analysis, as well as corporate teams wanting to strengthen their internal BA capabilities."],
+  ["whoTitle","Kimlər üçündür bölməsi","text","Who is this program for?","Bölmə başlığı"],
+  ["whoSubtitle","Kimlər üçündür bölməsi","long","This program is designed for career changers looking to enter IT Business Analysis, as well as corporate teams wanting to strengthen their internal BA capabilities.","Bölmə alt mətni"],
 
-  ["servicesTitle","Xidmətlər bölməsi","text","What does itba.az offer?"],
-  ["benefitsTitle","Faydalar bölməsi","text","What do participants gain?"],
-  ["programTitle","Proqram bölməsi","text","IT BA Core Program – Module Structure"],
+  ["servicesTitle","Xidmətlər bölməsi","text","What does itba.az offer?","Bölmə başlığı"],
+  ["benefitsTitle","Faydalar bölməsi","text","What do participants gain?","Bölmə başlığı"],
+  ["programTitle","Proqram bölməsi","text","IT BA Core Program – Module Structure","Bölmə başlığı"],
 
-  ["faqTitle","FAQ bölməsi","text","Frequently Asked Questions"],
-  ["faqQ1","FAQ bölməsi","text","Are the classes online or offline?"],
-  ["faqA1","FAQ bölməsi","long","Mainly online/hybrid format to provide maximum flexibility. Offline groups in Baku are organized if there is sufficient demand."],
-  ["faqQ2","FAQ bölməsi","text","I have no IT background. Is this program suitable for me?"],
-  ["faqA2","FAQ bölməsi","long","Yes, the program is specifically designed for people coming from the business side into IT BA. We start with foundations and build up systematically."],
-  ["faqQ3","FAQ bölməsi","text","Do you guarantee a job after the course?"],
-  ["faqA3","FAQ bölməsi","long","We do not provide job guarantees, but we support you with portfolio building, CV/LinkedIn optimization, and interview preparation to maximize your chances."],
-  ["faqQ4","FAQ bölməsi","text","What are the payment options?"],
-  ["faqA4","FAQ bölməsi","long","Payment can be made in one-time or in installments. Detailed pricing and payment plans are shared after you submit the application form."],
-  ["faqQ5","FAQ bölməsi","text","Do you design separate programs for corporate clients?"],
-  ["faqA5","FAQ bölməsi","long","Yes, corporate programs are fully customizable. We tailor the curriculum and use real internal cases from your organization to ensure maximum relevance and impact."],
+  ["faqTitle","FAQ bölməsi","text","Frequently Asked Questions","Bölmə başlığı"],
+  ["faqQ1","FAQ bölməsi","text","Are the classes online or offline?","Sual 1"],
+  ["faqA1","FAQ bölməsi","long","Mainly online/hybrid format to provide maximum flexibility. Offline groups in Baku are organized if there is sufficient demand.","Cavab 1"],
+  ["faqQ2","FAQ bölməsi","text","I have no IT background. Is this program suitable for me?","Sual 2"],
+  ["faqA2","FAQ bölməsi","long","Yes, the program is specifically designed for people coming from the business side into IT BA. We start with foundations and build up systematically.","Cavab 2"],
+  ["faqQ3","FAQ bölməsi","text","Do you guarantee a job after the course?","Sual 3"],
+  ["faqA3","FAQ bölməsi","long","We do not provide job guarantees, but we support you with portfolio building, CV/LinkedIn optimization, and interview preparation to maximize your chances.","Cavab 3"],
+  ["faqQ4","FAQ bölməsi","text","What are the payment options?","Sual 4"],
+  ["faqA4","FAQ bölməsi","long","Payment can be made in one-time or in installments. Detailed pricing and payment plans are shared after you submit the application form.","Cavab 4"],
+  ["faqQ5","FAQ bölməsi","text","Do you design separate programs for corporate clients?","Sual 5"],
+  ["faqA5","FAQ bölməsi","long","Yes, corporate programs are fully customizable. We tailor the curriculum and use real internal cases from your organization to ensure maximum relevance and impact.","Cavab 5"],
 
-  ["applyTitle","Müraciət bölməsi","text","Start your IT Business Analysis journey today"],
-  ["applySubtitle","Müraciət bölməsi","long","Fill out the form below and we'll contact you soon to discuss your goals and how itba.az can help you achieve them."],
+  ["applyTitle","Müraciət bölməsi","text","Start your IT Business Analysis journey today","Bölmə başlığı"],
+  ["applySubtitle","Müraciət bölməsi","long","Fill out the form below and we'll contact you soon to discuss your goals and how itba.az can help you achieve them.","Bölmə alt mətni"],
 
-  ["footerText","Footer","text","© 2025 itba.az – IT Business Analysis Academy"]
+  ["footerText","Footer","text","© 2025 itba.az – IT Business Analysis Academy","Footer mətni"]
 ];
 const DEFAULT_WORDINGS=Object.fromEntries(WORDING_FIELDS.map(([key,,,def])=>[key,def]));
 let WORDINGS=Object.assign({},DEFAULT_WORDINGS);
@@ -327,14 +362,23 @@ async function saveWordings(newWordings){
 }
 
 function renderWordingForm(){
-  let html="", lastGroup=null;
-  for(const [key,group,kind] of WORDING_FIELDS){
-    if(group!==lastGroup){ html+=`<div class="wgroup-title">${esc(group)}</div>`; lastGroup=group; }
+  // Grouped into <details> sections (~30 fields total) instead of one
+  // long undifferentiated scroll — first section open by default so
+  // the form doesn't look empty on load.
+  let html="", lastGroup=null, first=true;
+  for(const [key,group,kind,,label] of WORDING_FIELDS){
+    if(group!==lastGroup){
+      if(lastGroup!==null) html+="</details>";
+      html+=`<details class="wgroup"${first?" open":""}><summary class="wgroup-title">${esc(group)}</summary>`;
+      lastGroup=group; first=false;
+    }
     const value=esc(WORDINGS[key]??DEFAULT_WORDINGS[key]??"");
+    const fieldLabel=esc(label||key);
     html+=kind==="long"
-      ?`<div class="wfield"><div class="wf-label">${esc(key)}</div><textarea data-key="${key}">${value}</textarea></div>`
-      :`<div class="wfield"><div class="wf-label">${esc(key)}</div><input type="text" data-key="${key}" value="${value}"></div>`;
+      ?`<div class="wfield"><label class="wf-label" for="wf-${key}">${fieldLabel}</label><textarea id="wf-${key}" data-key="${key}">${value}</textarea></div>`
+      :`<div class="wfield"><label class="wf-label" for="wf-${key}">${fieldLabel}</label><input type="text" id="wf-${key}" data-key="${key}" value="${value}"></div>`;
   }
+  html+="</details>";
   $("wordingFields").innerHTML=html;
 }
 $("wordingSaveBtn").onclick=async()=>{
@@ -454,10 +498,10 @@ async function loadCourses(){
           '<b>'+esc(c.title)+'</b>'+(c.is_ours?' <span class="mini">(bizim)</span>':'')+
           '<div class="mini">'+esc(c.provider)+' • '+info.join(" • ")+(c.active?'':' • deaktiv')+'</div>'+
         '</div>'+
-        '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+        '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'+
           '<button class="linkbtn" data-edit="'+c.id+'">redaktə et</button>'+
           '<button class="linkbtn" data-toggle-active="'+c.id+'" data-current="'+c.active+'">'+(c.active?"deaktiv et":"aktiv et")+'</button>'+
-          '<button class="linkbtn" data-delete="'+c.id+'">sil</button>'+
+          '<button class="linkbtn danger" data-delete="'+c.id+'">sil</button>'+
         '</div>'+
       '</div>'+
     '</div>';
@@ -515,8 +559,8 @@ async function loadModeration(){
     const safeBody=DOMPurify.sanitize(a.body_html||"");
     const rejectRow=a.status==="pending_review"?(
       '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">'+
-        '<button class="btn" style="width:auto" data-approve="'+a.id+'">Təsdiqlə</button>'+
-        '<input type="text" placeholder="Rədd səbəbi" id="reject-note-'+a.id+'" style="flex:1;min-width:180px">'+
+        '<button class="btn success" style="width:auto" data-approve="'+a.id+'">Təsdiqlə</button>'+
+        '<input type="text" placeholder="Rədd səbəbi" aria-label="Rədd səbəbi" id="reject-note-'+a.id+'" style="flex:1;min-width:180px">'+
         '<button class="btn ghost" style="width:auto" data-reject="'+a.id+'">Rədd et</button>'+
       '</div>'
     ):"";
@@ -558,6 +602,9 @@ function enterDashboard(){
   loadAll();
   stopAutoRefresh();
   refreshTimer=setInterval(loadAll,60000);
+  const who=$("whoamiAdmin");
+  who.textContent=ADMIN_EMAIL;
+  who.classList.remove("hidden");
 }
 
 $("loginBtn").onclick=async()=>{
@@ -693,8 +740,8 @@ function renderChart(rows){
     el.addEventListener("mouseleave",()=>{tip.style.display="none";});
   });
 
-  $("chartTableBox").innerHTML='<table class="adm"><tr><th>Tarix</th><th>Ziyarət</th></tr>'+
-    buckets.map(b=>`<tr><td>${b.date}</td><td>${b.count}</td></tr>`).join("")+"</table>";
+  $("chartTableBox").innerHTML='<div class="tblwrap"><table class="adm"><tr><th>Tarix</th><th>Ziyarət</th></tr>'+
+    buckets.map(b=>`<tr><td>${b.date}</td><td>${b.count}</td></tr>`).join("")+"</table></div>";
 }
 $("toggleTableBtn").onclick=()=>{
   const shown=!$("chartTableBox").classList.contains("hidden");
@@ -705,7 +752,7 @@ $("toggleTableBtn").onclick=()=>{
 
 function renderApplications(rows){
   if(!rows.length){$("applicationsBox").innerHTML='<p class="empty">Hələ müraciət yoxdur.</p>';return;}
-  let html='<table class="adm"><tr><th>Tarix</th><th>Ad Soyad</th><th>Telefon</th><th>Email</th><th>Rol</th><th>Məqsəd</th><th>Mesaj</th></tr>';
+  let html='<div class="tblwrap"><table class="adm"><tr><th>Tarix</th><th>Ad Soyad</th><th>Telefon</th><th>Email</th><th>Rol</th><th>Məqsəd</th><th>Mesaj</th></tr>';
   rows.forEach((r,i)=>{
     const date=r.submitted_at?new Date(r.submitted_at).toLocaleString("az-AZ"):"—";
     const goal=GOAL_LABELS[r.goal]||r.goal||"—";
@@ -717,7 +764,7 @@ function renderApplications(rows){
       html+=`<tr class="exp-row hidden" id="app-${i}"><td colspan="7">${esc(msg)}</td></tr>`;
     }
   });
-  html+="</table>";
+  html+="</table></div>";
   $("applicationsBox").innerHTML=html;
   $("applicationsBox").querySelectorAll(".linkbtn").forEach(b=>b.onclick=()=>{
     const el=document.getElementById(b.dataset.id);if(el)el.classList.toggle("hidden");
@@ -726,12 +773,12 @@ function renderApplications(rows){
 
 function renderActivity(rows){
   if(!rows.length){$("activityBox").innerHTML='<p class="empty">Hələ ziyarət qeydə alınmayıb.</p>';return;}
-  let html='<table class="adm"><tr><th>Vaxt</th><th>Səhifə</th><th>Referrer</th></tr>';
+  let html='<div class="tblwrap"><table class="adm"><tr><th>Vaxt</th><th>Səhifə</th><th>Referrer</th></tr>';
   rows.slice(0,25).forEach(r=>{
     const time=r.visited_at?new Date(r.visited_at).toLocaleString("az-AZ"):"—";
     html+=`<tr><td>${esc(time)}</td><td>${esc(r.page)}</td><td>${esc(r.referrer||"—")}</td></tr>`;
   });
-  html+="</table>";
+  html+="</table></div>";
   $("activityBox").innerHTML=html;
 }
 

@@ -32,19 +32,26 @@
   input:focus,textarea:focus{outline:2px solid var(--red);outline-offset:1px;border-color:transparent}
   .btn{display:inline-block;width:100%;margin-top:16px;background:var(--red);color:#fff;border:none;border-radius:6px;padding:12px;font-family:var(--sans);font-weight:600;font-size:15px;cursor:pointer}
   .btn:hover{background:var(--red-dark)}
-  .btn:disabled{background:#B9C2C7;cursor:not-allowed}
-  .btn.ghost{background:transparent;color:var(--red);border:1px solid var(--red)}
+  .btn:focus-visible{outline:2px solid var(--red-dark);outline-offset:2px}
+  .btn:disabled{background:#8A959B;color:#fff;cursor:not-allowed}
+  /* --red on --paper computes to 4.23:1 (fails WCAG AA 4.5:1) — ghost
+     buttons/tabs sit directly on --paper (teacher-panel tabs, "email
+     əlavə et"), not just on white cards. --red-dark passes at 5.55:1+
+     in every context, so using it here is a strict improvement. */
+  .btn.ghost{background:transparent;color:var(--red-dark);border:1px solid var(--red-dark)}
   .btn.ghost:hover{background:#FBEFEC}
   .btn.dark{background:var(--ink)}
   .btn.dark:hover{background:#0E1620}
   .login-note{margin-top:18px;font-size:12.5px;color:var(--muted);line-height:1.55;border-top:1px dashed var(--line);padding-top:14px}
   .admin-link{margin-top:14px;text-align:center;font-size:12px}
   .admin-link a{color:var(--muted);cursor:pointer;text-decoration:underline}
-  .err{margin-top:12px;font-size:13px;color:var(--red);font-weight:500}
+  .err{margin-top:12px;font-size:13px;color:var(--red-dark);font-weight:500;background:#FDF1EF;border:1px solid rgba(169,58,43,.25);border-radius:8px;padding:10px 12px}
+  .err:empty{display:none;margin:0;padding:0;border:none;background:none}
   .exam-grid{display:grid;grid-template-columns:56px 1fr;gap:22px}
   @media(max-width:680px){.exam-grid{grid-template-columns:1fr}.rail{display:flex!important;flex-direction:row!important;flex-wrap:wrap;width:100%!important}}
   .rail{display:flex;flex-direction:column;gap:5px;width:56px}
-  .cell{height:20px;border:1px solid var(--line);border-radius:3px;background:#fff;font-family:var(--mono);font-size:10px;color:#9AA8B1;display:flex;align-items:center;justify-content:center;min-width:34px}
+  .cell{height:20px;border:1px solid var(--line);border-radius:3px;background:#fff;font-family:var(--mono);font-size:10px;color:var(--muted);display:flex;align-items:center;justify-content:center;min-width:34px;cursor:pointer}
+  .cell:focus-visible{outline:2px solid var(--red-dark);outline-offset:1px}
   .cell.done{background:var(--green);border-color:var(--green);color:#fff}
   .cell.now{border-color:var(--red);color:var(--red);font-weight:600;box-shadow:0 0 0 2px rgba(199,70,52,.18)}
   .qcard{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
@@ -57,7 +64,15 @@
   textarea{width:100%;min-height:160px;background:var(--console);color:var(--console-text);border:1px solid #26313B;border-radius:8px;font-family:var(--mono);font-size:13.5px;line-height:1.6;padding:14px;resize:vertical;caret-color:#F0A196}
   textarea::placeholder{color:#57666F}
   .btnrow{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
-  .btnrow .btn{width:auto;flex:1;min-width:160px;margin-top:0;padding:12px 20px}
+  .btnrow .btn{width:auto;min-width:160px;margin-top:0;padding:12px 20px}
+  /* Testing a query and submitting a scored, semi-irreversible final
+     answer previously looked equally weighted (same size, color-only
+     difference). The submit action is now visually dominant; the dry
+     run is demoted to an outline style, matching how .btn.ghost already
+     reads as "secondary" everywhere else in this tool. */
+  .btnrow .btn.dark{flex:0 0 auto;background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btnrow .btn.dark:hover{background:#EAEDEC}
+  .btnrow #submitBtn{flex:1 1 auto;font-size:16px;padding:14px 20px}
   .feedback{margin-top:16px;padding:12px 16px;border-radius:8px;font-size:14px;font-weight:500;display:none;white-space:pre-wrap}
   .feedback.bad{display:block;background:#FBEDEA;color:var(--red-dark);border:1px solid #EFC4BC}
   .feedback.good{display:block;background:#E9F5EF;color:var(--green);border:1px solid #BBDECB}
@@ -66,9 +81,19 @@
   .shake{animation:shake .35s}
   @keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
   @media(prefers-reduced-motion:reduce){.shake{animation:none}}
-  .scorebar{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:14px;flex-wrap:wrap;gap:8px}
+  .scorebar{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:14px;flex-wrap:wrap;gap:8px}
   .scorebar b{color:var(--ink)}
-  #timerBox.time-warn b{color:var(--red)}
+  /* The timer is arguably the single most important number on this
+     screen for 115 of 120 minutes, but previously read as plain text
+     identical to the other stats until the last 5 minutes. Now it's a
+     persistent boxed pill with a graduated urgency state (15min amber,
+     5min red) instead of one abrupt color flip at the very end. */
+  #timerBox{font-size:14px;font-weight:600;padding:6px 14px;border-radius:20px;background:var(--card);border:1px solid var(--line);color:var(--ink)}
+  #timerBox b{font-variant-numeric:tabular-nums}
+  #timerBox.time-caution{background:#FDF6E8;border-color:#EEDBA6;color:#8A6A1B}
+  #timerBox.time-caution b{color:#8A6A1B}
+  #timerBox.time-warn{background:#FBEDEA;border-color:#EFC4BC;color:var(--red-dark)}
+  #timerBox.time-warn b{color:var(--red-dark)}
   .result-wrap{margin-top:18px}
   .result-meta{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px}
   .result-meta b{color:var(--ink)}
@@ -77,13 +102,15 @@
   table.res th{position:sticky;top:0;background:var(--ink);color:#fff;padding:7px 10px;text-align:left;font-weight:500}
   table.res td{padding:6px 10px;border-top:1px solid #EAEFF0}
   table.res tr:nth-child(even) td{background:#F7F9F8}
-  table.res td.null{color:#A5B2BA;font-style:italic}
+  table.res td.null{color:var(--muted);font-style:italic}
   .done-card{max-width:520px;margin:8vh auto 0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:40px;text-align:center}
   .done-card .big{font-family:var(--mono);font-size:52px;font-weight:600;color:var(--green)}
   .done-card p{color:var(--muted);margin-top:8px}
-  table.adm{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;font-size:13.5px}
-  table.adm th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.07em;text-align:left;background:var(--ink);color:#fff;padding:10px 12px}
-  table.adm td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+  table.adm{width:100%;border-collapse:collapse;background:#fff;font-size:13.5px}
+  table.adm th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.07em;text-align:left;background:var(--ink);color:#fff;padding:10px 12px;position:sticky;top:0}
+  table.adm td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top;word-break:break-word}
+  table.adm tr:nth-child(even) td{background:#F7F9F8}
   tr.exp-row td{background:#F7F9F8}
   .sqlbox{background:var(--console);color:var(--console-text);font-family:var(--mono);font-size:12px;padding:10px 12px;border-radius:6px;white-space:pre-wrap;margin:6px 0 10px}
   .mini{font-family:var(--mono);font-size:11px;color:var(--muted)}
@@ -572,7 +599,11 @@ function updateTimerDisplay(remain){
   const mm=String(Math.floor((totalSec%3600)/60)).padStart(2,"0");
   const ss=String(totalSec%60).padStart(2,"0");
   const el=$("timeLeft"); if(el) el.textContent=hh+":"+mm+":"+ss;
-  const box=$("timerBox"); if(box) box.classList.toggle("time-warn",totalSec<=300);
+  const box=$("timerBox");
+  if(box){
+    box.classList.toggle("time-caution",totalSec<=900&&totalSec>300);
+    box.classList.toggle("time-warn",totalSec<=300);
+  }
 }
 
 function renderRail(){
@@ -582,8 +613,11 @@ function renderRail(){
     const c=document.createElement("div");c.className="cell";c.textContent=String(i+1).padStart(2,"0");
     if(state.answers[realQi]&&state.answers[realQi].doneAt)c.classList.add("done");
     else if(i===state.current)c.classList.add("now");
-    c.style.cursor="pointer";
+    c.tabIndex=0;
+    c.setAttribute("role","button");
+    c.setAttribute("aria-label","Sual "+(i+1));
     c.onclick=()=>goToPosition(i);
+    c.onkeydown=(e)=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();goToPosition(i);}};
     rail.appendChild(c);
   }
 }
@@ -727,7 +761,7 @@ function rankedRoster(rows){
     .sort((a,b)=>(b.r?b.r.score:-1)-(a.r?a.r.score:-1));
 }
 function adminStudentView(rows){
-  let html='<table class="adm"><tr><th>#</th><th>Email</th><th>Bal</th><th>Sual</th><th>Status</th><th>Cavablar</th></tr>';
+  let html='<div class="tblwrap"><table class="adm"><tr><th>#</th><th>Email</th><th>Bal</th><th>Sual</th><th>Status</th><th>Cavablar</th></tr>';
   let n=0;
   for(const {email:em} of rankedRoster(rows)){
     n++;
@@ -740,14 +774,14 @@ function adminStudentView(rows){
       <td><button class="linkbtn" data-id="${id}">göstər</button></td></tr>
       <tr class="exp-row hidden" id="exp-${id}"><td colspan="6">${answersHtml(r)}</td></tr>`;
   }
-  html+="</table>";
+  html+="</table></div>";
   if(!storageOk)html+='<p class="mini" style="margin-top:10px">Diqqət: yaddaş xidmətinə çatmaq mümkün olmadı — məlumat yalnız bu sessiyada görünür.</p>';
   return html;
 }
 function adminQuestionView(rows){
   const qi=adminQFilter;
   let html=`<div class="mini" style="margin-bottom:12px;line-height:1.6">SUAL ${qi+1}: ${esc(QUESTIONS[qi])}</div>`;
-  html+='<table class="adm"><tr><th>#</th><th>Email</th><th>Cəhd</th><th>Nəticə</th><th>Status</th><th>Sorğu</th></tr>';
+  html+='<div class="tblwrap"><table class="adm"><tr><th>#</th><th>Email</th><th>Cəhd</th><th>Nəticə</th><th>Status</th><th>Sorğu</th></tr>';
   let n=0;
   for(const {email:em} of rankedRoster(rows)){
     n++;
@@ -758,7 +792,7 @@ function adminQuestionView(rows){
     html+=`<tr><td>${n}</td><td>${em}</td><td>${a.attempts}</td><td>${a.rows??"—"}</td><td>${status}</td>
       <td><div class="sqlbox" style="margin:0">${esc(a.sql||"")}</div></td></tr>`;
   }
-  html+="</table>";
+  html+="</table></div>";
   if(!storageOk)html+='<p class="mini" style="margin-top:10px">Diqqət: yaddaş xidmətinə çatmaq mümkün olmadı — məlumat yalnız bu sessiyada görünür.</p>';
   return html;
 }

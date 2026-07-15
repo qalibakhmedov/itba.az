@@ -29,18 +29,23 @@
         <span class="pill-status" id="verifiedPill">—</span>
       </div>
 
-      <div class="dashboard-row" id="articlesRow" style="display:none">
-        <span style="font-size:14px">Articles</span>
-        <span id="articlesAction"></span>
-      </div>
-
       <div class="dashboard-row">
         <span style="font-size:14px">Career compatibility test</span>
         <span id="testStatus" style="font-size:14px;color:var(--faint)">Not taken yet</span>
       </div>
 
-      <button class="btn btn-primary" id="testBtn" style="margin-top:22px">Take the career test</button>
-      <button class="btn btn-ghost" id="logoutBtn" style="margin-top:12px">Log out</button>
+      <div id="dashboardActions" style="margin-top:22px;display:flex;flex-direction:column;gap:12px">
+        <button class="btn btn-primary" id="testBtn">Take the career test</button>
+        <div id="articlesActions" style="display:none;gap:12px" class="btn-row">
+          <a href="write-article.html" class="btn btn-secondary" id="writeArticleBtn">Write an article</a>
+          <a href="my-articles.html" class="btn btn-ghost">My articles</a>
+        </div>
+        <p id="articlesLockedNote" class="mini-link" style="display:none;margin-top:4px">Article writing unlocks once an admin verifies your profile.</p>
+      </div>
+
+      <p class="mini-link" style="margin-top:24px">
+        <a href="#" id="logoutBtn">Log out</a>
+      </p>
     </div>
   </div>
 </div>
@@ -81,14 +86,17 @@
     const pill = document.getElementById("verifiedPill");
     row.style.display = "flex";
     pill.textContent = profile.verified ? "Verified" : "Pending review";
+    // Same status-pill color mapping used on my-articles.html, so
+    // "Pending review" reads as the same visual state everywhere it
+    // appears rather than one color here and another there.
     pill.classList.toggle("verified", !!profile.verified);
+    pill.classList.toggle("pending_review", !profile.verified);
 
-    const articlesRow = document.getElementById("articlesRow");
-    const articlesAction = document.getElementById("articlesAction");
-    articlesRow.style.display = "flex";
-    articlesAction.innerHTML = profile.verified
-      ? '<a href="write-article.html" style="color:var(--accent)">Write an article</a> · <a href="my-articles.html" style="color:var(--accent)">My articles</a>'
-      : '<span style="font-size:13px;color:var(--faint)">Unlocks once verified</span>';
+    if (profile.verified) {
+      document.getElementById("articlesActions").style.display = "flex";
+    } else {
+      document.getElementById("articlesLockedNote").style.display = "block";
+    }
   }
 
   const testBtn = document.getElementById("testBtn");
@@ -99,7 +107,8 @@
   }
   testBtn.addEventListener("click", () => { location.href = "test.html"; });
 
-  document.getElementById("logoutBtn").addEventListener("click", async () => {
+  document.getElementById("logoutBtn").addEventListener("click", async (e) => {
+    e.preventDefault();
     await sbAuth.auth.signOut();
     location.href = "login.html";
   });

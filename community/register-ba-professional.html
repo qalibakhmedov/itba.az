@@ -18,36 +18,38 @@
       <p class="subhead">Your profile will be reviewed before you can publish articles — you can still register and browse right away.</p>
       <form id="regForm">
         <div class="field">
-          <label for="fullName">Full name</label>
-          <input id="fullName" type="text" required>
+          <label for="fullName">Full name <span class="required">*</span></label>
+          <input id="fullName" type="text" required autocomplete="name">
         </div>
         <div class="field">
-          <label for="email">Email</label>
+          <label for="email">Email <span class="required">*</span></label>
           <input id="email" type="email" required autocomplete="email">
         </div>
         <div class="field">
-          <label for="password">Password</label>
+          <label for="password">Password <span class="required">*</span></label>
           <input id="password" type="password" required minlength="8" autocomplete="new-password">
+          <p class="mini-link" style="text-align:left;margin-top:6px">At least 8 characters.</p>
         </div>
         <div class="field">
-          <label for="currentTitle">Current title</label>
+          <label for="currentTitle">Current title (optional)</label>
           <input id="currentTitle" type="text" placeholder="e.g. IT Business Analyst">
         </div>
         <div class="field">
-          <label for="yearsExperience">Years of experience</label>
+          <label for="yearsExperience">Years of experience (optional)</label>
           <input id="yearsExperience" type="number" min="0">
         </div>
         <div class="field">
-          <label for="industry">Industry</label>
+          <label for="industry">Industry (optional)</label>
           <input id="industry" type="text" placeholder="e.g. Banking, Telecom">
         </div>
         <div class="field">
-          <label for="linkedinUrl">LinkedIn URL</label>
-          <input id="linkedinUrl" type="url" placeholder="https://linkedin.com/in/…">
+          <label for="linkedinUrl">LinkedIn URL (optional)</label>
+          <input id="linkedinUrl" type="url" placeholder="https://linkedin.com/in/…" autocomplete="url">
         </div>
         <button type="submit" class="btn btn-primary" id="submitBtn">Create account</button>
-        <div class="err" id="errBox" style="display:none"></div>
+        <div class="err" id="errBox" style="display:none" role="alert"></div>
       </form>
+      <div class="mini-link"><a href="register.html">← Not the right description? Pick again</a></div>
     </div>
     <div class="card" id="doneCard" style="display:none;text-align:center">
       <h1 style="font-size:24px">Check your email</h1>

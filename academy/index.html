@@ -45,10 +45,9 @@
                         </div>
                     </div>
                 </a>
-                <nav aria-label="Academy sections">
-                    <a href="#about">About</a>
-                    <a href="#who">Who is it for</a>
-                    <a href="#services">Services</a>
+                <nav aria-label="Primary">
+                    <a href="/articles/">Articles</a>
+                    <a href="/courses/">Courses</a>
                     <a href="#program">Program</a>
                     <a href="#faq">FAQ</a>
                     <a href="#apply">Apply</a>
@@ -56,19 +55,21 @@
                 <div class="header-buttons">
                     <a href="#apply" class="btn btn-ghost">Get Info</a>
                     <a href="#apply" class="btn btn-primary">Apply Now</a>
-                    <a href="/exam.html" class="btn btn-secondary">Login</a>
+                    <a href="/community/login.html" class="btn btn-secondary">Login</a>
                 </div>
                 <button class="mobile-menu-btn" id="mobileMenuBtn" aria-expanded="false" aria-controls="mobileNavPanel" aria-label="Menu">☰</button>
             </div>
-            <nav class="mobile-nav-panel" id="mobileNavPanel" aria-label="Academy sections (mobile)">
+            <nav class="mobile-nav-panel" id="mobileNavPanel" aria-label="Primary (mobile)">
                 <a href="/">Home</a>
+                <a href="/articles/">Articles</a>
+                <a href="/courses/">Courses</a>
                 <a href="#about">About</a>
                 <a href="#who">Who is it for</a>
                 <a href="#services">Services</a>
                 <a href="#program">Program</a>
                 <a href="#faq">FAQ</a>
                 <a href="#apply">Apply</a>
-                <a href="/exam.html">Login</a>
+                <a href="/community/login.html">Login</a>
             </nav>
         </div>
     </header>
@@ -377,6 +378,7 @@
                             <textarea id="appMessage" placeholder="I currently work in banking operations and want to move into IT BA..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">Submit Application</button>
+                        <div class="form-feedback" id="applyFeedback" role="alert"></div>
                         <p class="consent-note">By submitting the form, you agree to the processing of your contact information for communication purposes.</p>
                     </form>
                 </div>
@@ -487,12 +489,18 @@
             });
         });
 
-        // Form submission — writes to the same applications table as before
+        // Form submission — writes to the same applications table as before.
+        // Feedback now renders inline (.form-feedback) instead of a native
+        // alert(), which blocked the page and broke out of the design at
+        // the exact moment of conversion confirmation. Same request, same
+        // payload — only how the result is displayed changed.
         document.getElementById('applyForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const form = this;
             const btn = form.querySelector('button[type="submit"]');
+            const feedback = document.getElementById('applyFeedback');
             const originalText = btn.textContent;
+            feedback.className = 'form-feedback';
             btn.disabled = true; btn.textContent = 'Submitting…';
             const payload = {
                 full_name: document.getElementById('appFullName').value.trim(),
@@ -509,10 +517,12 @@
                     body: JSON.stringify([payload])
                 });
                 if (!res.ok) throw new Error("submit failed: " + res.status);
-                alert('Thank you for your application! We will contact you soon.');
+                feedback.textContent = 'Thank you for your application! We will contact you soon.';
+                feedback.className = 'form-feedback show success';
                 form.reset();
             } catch (err) {
-                alert('Something went wrong while sending your application. Please try again or contact us directly.');
+                feedback.textContent = 'Something went wrong while sending your application. Please try again or contact us directly.';
+                feedback.className = 'form-feedback show error';
             }
             btn.disabled = false; btn.textContent = originalText;
         });

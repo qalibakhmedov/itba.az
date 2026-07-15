@@ -53,8 +53,8 @@
     <section class="content-page">
         <div class="container">
             <span class="badge">Kurslar</span>
-            <h2 class="section-title" style="text-align:left;font-size:34px;margin-bottom:20px">IT Biznes Analitikası kurs kataloqu</h2>
-            <p class="subheadline" style="margin-bottom:30px">Azərbaycan bazarında mövcud olan kurslar — bizim proqram və digər təminatçılar bir yerdə.</p>
+            <h2 class="section-title-left">IT Biznes Analitikası kurs kataloqu</h2>
+            <p class="subhead" style="margin-bottom:30px">Azərbaycan bazarında mövcud olan kurslar — bizim proqram və digər təminatçılar bir yerdə.</p>
 
             <div class="filters-row">
                 <input type="search" id="courseSearch" class="article-search filter-search" placeholder="Axtar…" aria-label="Kurslar arasında axtar" style="margin-bottom:0">
@@ -78,9 +78,10 @@
                 </select>
             </div>
 
-            <div id="loadingNote" class="subhead">Yüklənir…</div>
+            <div id="loadingNote" class="state-note" role="status" aria-live="polite">Yüklənir…</div>
+            <p id="resultsCount" class="subhead" style="display:none;margin-bottom:16px" aria-live="polite"></p>
             <div class="cards-grid" id="courseGrid"></div>
-            <p id="emptyNote" class="subhead" style="display:none">Bu filtrlərə uyğun kurs tapılmadı.</p>
+            <p id="emptyNote" class="state-note" style="display:none">Bu filtrlərə uyğun kurs tapılmadı. Filtrləri dəyişməyi sınayın.</p>
         </div>
     </section>
 
@@ -138,21 +139,31 @@
             const grid = document.getElementById("courseGrid");
             grid.innerHTML = filtered.map(courseCardHtml).join("");
             document.getElementById("emptyNote").style.display = filtered.length ? "none" : "block";
+            const countEl = document.getElementById("resultsCount");
+            countEl.style.display = allCourses.length ? "block" : "none";
+            countEl.textContent = filtered.length + " / " + allCourses.length + " kurs göstərilir";
         }
 
-        (async () => {
+        async function loadCourses() {
+            const loadingNote = document.getElementById("loadingNote");
+            loadingNote.className = "state-note";
+            loadingNote.innerHTML = "Yüklənir…";
             try {
                 const res = await fetch(SUPABASE_URL + "/rest/v1/courses?active=eq.true&select=*&order=is_ours.desc,title.asc", {
                     cache: "no-store", headers: SB_HEADERS
                 });
                 if (!res.ok) throw new Error("fetch failed: " + res.status);
                 allCourses = await res.json();
-                document.getElementById("loadingNote").style.display = "none";
+                loadingNote.style.display = "none";
                 applyFilters();
             } catch (e) {
-                document.getElementById("loadingNote").textContent = "Kurslar yüklənmədi. Bir az sonra yenidən cəhd edin.";
+                loadingNote.className = "state-note warn";
+                loadingNote.innerHTML = "Kurslar yüklənmədi. İnternet bağlantınızı yoxlayın. " +
+                    '<span class="retry-link" id="retryLoadCourses">Yenidən cəhd et</span>';
+                document.getElementById("retryLoadCourses").addEventListener("click", loadCourses);
             }
-        })();
+        }
+        loadCourses();
 
         document.getElementById("courseSearch").addEventListener("input", applyFilters);
         document.getElementById("filterFormat").addEventListener("change", applyFilters);

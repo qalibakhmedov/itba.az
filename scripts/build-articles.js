@@ -151,27 +151,37 @@ function feedPage({ activeCategory, articles }) {
   const content = `<section class="content-page">
   <div class="container">
     <span class="badge">Məqalələr</span>
-    <h2 class="section-title" style="text-align:left;font-size:34px;margin-bottom:20px">${esc(activeCategory ? CATEGORY_LABEL[activeCategory] : "Bütün məqalələr")}</h2>
+    <h2 class="section-title-left">${esc(activeCategory ? CATEGORY_LABEL[activeCategory] : "Bütün məqalələr")}</h2>
     <div class="category-pills">
       ${categoryPillsHtml(activeCategory)}
     </div>
     <input type="search" id="articleSearch" class="article-search" placeholder="Məqalələr arasında axtar…" aria-label="Məqalələr arasında axtar">
+    <p id="articleResultsCount" class="subhead" style="display:none;margin-bottom:16px" aria-live="polite"></p>
     <div class="article-grid" id="articleGrid">
-      ${articles.length ? articles.map(articleCardHtml).join("\n      ") : '<p class="subhead">Bu kateqoriyada hələ məqalə yoxdur.</p>'}
+      ${articles.length ? articles.map(articleCardHtml).join("\n      ") : '<p class="state-note" role="status">Bu kateqoriyada hələ məqalə yoxdur.</p>'}
     </div>
   </div>
 </section>
 <script>
 (function () {
   var input = document.getElementById("articleSearch");
+  var countEl = document.getElementById("articleResultsCount");
   var cards = Array.prototype.slice.call(document.querySelectorAll("#articleGrid .article-card"));
+  if (!cards.length) return;
+  function updateCount() {
+    var visible = cards.filter(function (c) { return c.style.display !== "none"; }).length;
+    countEl.style.display = "block";
+    countEl.textContent = visible + " / " + cards.length + " məqalə göstərilir";
+  }
   input.addEventListener("input", function () {
     var q = input.value.trim().toLowerCase();
     cards.forEach(function (card) {
       var text = card.textContent.toLowerCase();
       card.style.display = !q || text.indexOf(q) !== -1 ? "" : "none";
     });
+    updateCount();
   });
+  updateCount();
 })();
 </script>`;
 
@@ -221,8 +231,8 @@ function placeholderPage() {
     content: `<section class="content-page">
   <div class="container">
     <span class="badge">Məqalələr</span>
-    <h2 class="section-title" style="text-align:left;font-size:34px;margin-bottom:20px">Hələ heç bir məqalə dərc olunmayıb</h2>
-    <p class="subhead" style="margin:0">İlk məqalələr icma üzvləri tərəfindən yazılıb, admin tərəfindən yoxlanılıb dərc ediləndə burada görünəcək.</p>
+    <h2 class="section-title-left">Hələ heç bir məqalə dərc olunmayıb</h2>
+    <p class="state-note" role="status">İlk məqalələr icma üzvləri tərəfindən yazılıb, admin tərəfindən yoxlanılıb dərc ediləndə burada görünəcək.</p>
   </div>
 </section>`,
   });

@@ -12,6 +12,7 @@
 <div class="page">
   <div class="container-wide">
     <a href="/index.html" class="site-brand">← itba.az</a>
+    <p class="mini-link" style="text-align:left;margin:-10px 0 10px"><a href="dashboard.html">← Dashboard</a></p>
     <div class="card" id="loadingCard">
       <p class="subhead" style="margin:0">Loading…</p>
     </div>
@@ -35,7 +36,7 @@ const STATUS_LABEL = {
   rejected: "Rejected",
 };
 
-(async () => {
+async function loadArticles() {
   const session = await requireSession();
   if (!session) return;
   trackVisit("community-my-articles");
@@ -48,9 +49,11 @@ const STATUS_LABEL = {
 
   const list = document.getElementById("articleList");
   if (error) {
-    list.innerHTML = '<p class="subhead">Couldn\'t load your articles. Please try again.</p>';
+    list.innerHTML = '<p class="state-note warn" role="alert">Couldn\'t load your articles. Please check your connection. ' +
+      '<span class="retry-link" id="retryLoadArticles">Try again</span></p>';
+    document.getElementById("retryLoadArticles").addEventListener("click", loadArticles);
   } else if (!articles || articles.length === 0) {
-    list.innerHTML = '<p class="subhead" style="margin:0">You haven\'t written anything yet.</p>';
+    list.innerHTML = '<p class="state-note" role="status">You haven\'t written anything yet — use "Write a new article" above to get started.</p>';
   } else {
     list.innerHTML = articles.map((a) => {
       const date = new Date(a.updated_at).toLocaleDateString();
@@ -72,7 +75,8 @@ const STATUS_LABEL = {
 
   document.getElementById("loadingCard").style.display = "none";
   document.getElementById("mainCard").style.display = "block";
-})();
+}
+loadArticles();
 </script>
 <script src="/js/particle-bg.js"></script>
 </body>
