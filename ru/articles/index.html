@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Статьи — itba.az</title>
+<meta name="description" content="Статьи, написанные сообществом IT Бизнес-Анализа, скоро появятся здесь.">
+<link rel="canonical" href="https://itba.az/ru/articles/">
+<link rel="alternate" hreflang="az" href="https://itba.az/articles/">
+<link rel="alternate" hreflang="en" href="https://itba.az/en/articles/">
+<link rel="alternate" hreflang="ru" href="https://itba.az/ru/articles/">
+<link rel="alternate" hreflang="x-default" href="https://itba.az/articles/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Статьи — itba.az">
+<meta property="og:description" content="Статьи, написанные сообществом IT Бизнес-Анализа, скоро появятся здесь.">
+<meta property="og:url" content="https://itba.az/ru/articles/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Статьи — itba.az">
+<meta name="twitter:description" content="Статьи, написанные сообществом IT Бизнес-Анализа, скоро появятся здесь.">
+<link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<div class="animated-bg"><canvas id="particle-bg" aria-hidden="true"></canvas></div>
+<header>
+  <div class="container">
+    <div class="header-content">
+      <a href="/ru/" class="logo-link">
+        <div class="logo-section">
+          <div class="logo-mark">BA</div>
+          <div class="logo-text"><h1>itba.az</h1><p>Статьи</p></div>
+        </div>
+      </a>
+      <nav aria-label="Primary">
+        <a href="/ru/articles/">Статьи</a>
+        <a href="/ru/courses/">Курсы</a>
+        <a href="/ru/academy/">Академия</a>
+      </nav>
+      <div class="header-buttons">
+        <a href="/community/login.html" class="btn btn-ghost">Войти</a>
+        <div class="lang-switch"><a href="/articles/" class="" hreflang="az">AZ</a><a href="/en/articles/" class="" hreflang="en">EN</a><a href="/ru/articles/" class="active" hreflang="ru">RU</a></div>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-expanded="false" aria-controls="mobileNavPanel" aria-label="Menu">☰</button>
+    </div>
+    <nav class="mobile-nav-panel" id="mobileNavPanel" aria-label="Primary (mobile)">
+      <a href="/ru/articles/">Статьи</a>
+        <a href="/ru/courses/">Курсы</a>
+        <a href="/ru/academy/">Академия</a>
+        <a href="/community/login.html">Войти</a>
+      <div class="lang-switch"><a href="/articles/" class="" hreflang="az">AZ</a><a href="/en/articles/" class="" hreflang="en">EN</a><a href="/ru/articles/" class="active" hreflang="ru">RU</a></div>
+    </nav>
+  </div>
+</header>
+<section class="content-page">
+  <div class="container">
+    <span class="badge">Статьи</span>
+    <h2 class="section-title-left">Пока не опубликовано ни одной статьи</h2>
+    <p class="state-note" role="status">Первые статьи, написанные участниками сообщества и проверенные администратором, появятся здесь после публикации.</p>
+  </div>
+</section>
+<footer>
+  <div class="container">
+    <p>© 2025 itba.az – Академия IT Бизнес-Анализа</p>
+    <div style="margin-top: 10px;">
+      <a href="/ru/">Главная</a>
+        <a href="/ru/articles/">Статьи</a>
+        <a href="/ru/courses/">Курсы</a>
+        <a href="/ru/academy/">Академия</a>
+    </div>
+  </div>
+</footer>
+<script src="/js/particle-bg.js"></script>
+<script>
+(function () {
+  var mobileBtn = document.getElementById('mobileMenuBtn');
+  var mobilePanel = document.getElementById('mobileNavPanel');
+  mobileBtn.addEventListener('click', function () {
+    var open = mobilePanel.classList.toggle('open');
+    mobileBtn.setAttribute('aria-expanded', String(open));
+  });
+  Array.prototype.forEach.call(mobilePanel.querySelectorAll('a'), function (a) {
+    a.addEventListener('click', function () {
+      mobilePanel.classList.remove('open');
+      mobileBtn.setAttribute('aria-expanded', 'false');
+    });
+  });
+})();
+</script>
+</body>
+</html>

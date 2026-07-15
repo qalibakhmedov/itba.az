@@ -172,8 +172,9 @@
     <div class="toprow">
       <div>
         <h2 class="admin-h">Sayt mətnlərini redaktə et</h2>
-        <div class="mini">Bu mətnlər itba.az ana səhifəsində (index.html) və Akademiya səhifəsində (academy/index.html) göstərilir. Dəyişikliklər saxlandıqdan sonra hər iki səhifədə dərhal əks olunur.</div>
+        <div class="mini">Bu mətnlər itba.az ana səhifəsində və Akademiya səhifəsində, hər 3 dildə (AZ/EN/RU) ayrıca göstərilir. Dəyişikliklər növbəti planlanmış build zamanı (15 dəqiqəyə qədər) saytda əks olunur.</div>
       </div>
+      <div id="wordingLangPills" style="display:flex;gap:8px"></div>
     </div>
     <div class="panel">
       <div id="wordingFields"></div>
@@ -303,47 +304,63 @@ const $=id=>document.getElementById(id);
    actually sees on the form — previously this rendered the raw key
    itself (e.g. "faqQ1"), which is what the code calls the field, not
    what a human would recognize it by. */
+/* Default text is now per-language ({az,en,ru}) — mirrors i18n/az.js,
+   i18n/en.js, i18n/ru.js's `wordings` sub-objects (those are read by
+   the Node build scripts; this copy is what the browser-side admin
+   panel needs, since it can't require() those CommonJS modules
+   directly — same accepted duplication this repo already has for
+   CATEGORY_LABEL across build-articles.js/index.html/here). */
 const WORDING_FIELDS=[
-  ["homeHeroBadge","Ana səhifə (Hero)","text","Azərbaycanın IT Biznes Analitikləri Cəmiyyəti","Badge mətni"],
-  ["homeHeroTitle","Ana səhifə (Hero)","text","IT Biznes Analitikləri üçün Azərbaycanın mərkəzi platforması","Başlıq"],
-  ["homeHeroSubtitle","Ana səhifə (Hero)","long","Karyera uyğunluq testini keçin, kurs və proqramları araşdırın, itba.az Akademiyası ilə peşəkar inkişafınızı davam etdirin.","Alt başlıq"],
+  ["homeHeroBadge","Ana səhifə (Hero)","text",{az:"Azərbaycanın IT Biznes Analitikləri Cəmiyyəti",en:"Azerbaijan's IT Business Analysis Community",ru:"Сообщество IT Бизнес-Аналитиков Азербайджана"},"Badge mətni"],
+  ["homeHeroTitle","Ana səhifə (Hero)","text",{az:"IT Biznes Analitikləri üçün Azərbaycanın mərkəzi platforması",en:"The central platform for IT Business Analysts in Azerbaijan",ru:"Центральная платформа для IT Бизнес-Аналитиков Азербайджана"},"Başlıq"],
+  ["homeHeroSubtitle","Ana səhifə (Hero)","long",{az:"Karyera uyğunluq testini keçin, kurs və proqramları araşdırın, itba.az Akademiyası ilə peşəkar inkişafınızı davam etdirin.",en:"Take the career-fit test, explore courses and programs, and continue your professional growth with the itba.az Academy.",ru:"Пройдите тест на профпригодность, изучите курсы и программы, продолжайте профессиональное развитие вместе с Академией itba.az."},"Alt başlıq"],
 
-  ["heroBadge","Akademiya — Əsas bölmə (Hero)","text","Enrollment for new groups is open","Badge mətni"],
-  ["heroTitle","Akademiya — Əsas bölmə (Hero)","text","Launch your IT Business Analysis career with a professional start","Başlıq"],
-  ["heroSubtitle","Akademiya — Əsas bölmə (Hero)","long","itba.az is a focused training platform for those who want to build a career in IT Business Analysis and for companies that want to grow strong internal BA teams.","Alt başlıq"],
-  ["heroBtnPrimary","Akademiya — Əsas bölmə (Hero)","text","Join the IT BA Program","Əsas düymə mətni"],
-  ["heroBtnSecondary","Akademiya — Əsas bölmə (Hero)","text","Request Corporate Training","İkinci düymə mətni"],
-  ["heroCardTitle","Akademiya — Əsas bölmə (Hero)","text","IT Business Analysis Competency Path","Kart başlığı"],
+  ["heroBadge","Akademiya — Əsas bölmə (Hero)","text",{az:"Yeni qruplar üçün qeydiyyat açıqdır",en:"Enrollment for new groups is open",ru:"Открыт набор в новые группы"},"Badge mətni"],
+  ["heroTitle","Akademiya — Əsas bölmə (Hero)","text",{az:"IT Biznes Analitikası karyeranıza peşəkar başlanğıc verin",en:"Launch your IT Business Analysis career with a professional start",ru:"Начните карьеру в IT Бизнес-Анализе с профессионального старта"},"Başlıq"],
+  ["heroSubtitle","Akademiya — Əsas bölmə (Hero)","long",{az:"itba.az — IT Biznes Analitikası sahəsində karyera qurmaq istəyənlər və güclü daxili BA komandaları yaratmaq istəyən şirkətlər üçün fokuslanmış təlim platformasıdır.",en:"itba.az is a focused training platform for those who want to build a career in IT Business Analysis and for companies that want to grow strong internal BA teams.",ru:"itba.az — целенаправленная обучающая платформа для тех, кто хочет построить карьеру в IT Бизнес-Анализе, и для компаний, которые хотят развивать сильные внутренние команды BA."},"Alt başlıq"],
+  ["heroBtnPrimary","Akademiya — Əsas bölmə (Hero)","text",{az:"IT BA Proqramına qoşulun",en:"Join the IT BA Program",ru:"Присоединиться к программе IT BA"},"Əsas düymə mətni"],
+  ["heroBtnSecondary","Akademiya — Əsas bölmə (Hero)","text",{az:"Korporativ Təlim Sorğusu",en:"Request Corporate Training",ru:"Запросить корпоративное обучение"},"İkinci düymə mətni"],
+  ["heroCardTitle","Akademiya — Əsas bölmə (Hero)","text",{az:"IT Biznes Analitikası Bacarıq Yolu",en:"IT Business Analysis Competency Path",ru:"Путь развития компетенций IT Бизнес-Аналитика"},"Kart başlığı"],
 
-  ["aboutTitle","Why itba.az? bölməsi","text","Why itba.az?","Bölmə başlığı"],
-  ["aboutSubtitle","Why itba.az? bölməsi","long","The academy focuses only on IT Business Analysis, with competency-based, practice-oriented training designed to prepare you for real-world projects in banking, fintech, and enterprise environments.","Bölmə alt mətni"],
+  ["aboutTitle","Why itba.az? bölməsi","text",{az:"Niyə itba.az?",en:"Why itba.az?",ru:"Почему itba.az?"},"Bölmə başlığı"],
+  ["aboutSubtitle","Why itba.az? bölməsi","long",{az:"Akademiya yalnız IT Biznes Analitikasına fokuslanır; bank, fintech və korporativ mühitlərdə real layihələrə hazır olmanız üçün bacarıq əsaslı, praktika yönümlü təlim təqdim edir.",en:"The academy focuses only on IT Business Analysis, with competency-based, practice-oriented training designed to prepare you for real-world projects in banking, fintech, and enterprise environments.",ru:"Академия фокусируется исключительно на IT Бизнес-Анализе, предлагая обучение на основе компетенций и практики, чтобы подготовить вас к реальным проектам в банковской сфере, финтехе и корпоративной среде."},"Bölmə alt mətni"],
 
-  ["whoTitle","Kimlər üçündür bölməsi","text","Who is this program for?","Bölmə başlığı"],
-  ["whoSubtitle","Kimlər üçündür bölməsi","long","This program is designed for career changers looking to enter IT Business Analysis, as well as corporate teams wanting to strengthen their internal BA capabilities.","Bölmə alt mətni"],
+  ["whoTitle","Kimlər üçündür bölməsi","text",{az:"Bu proqram kimlər üçündür?",en:"Who is this program for?",ru:"Для кого эта программа?"},"Bölmə başlığı"],
+  ["whoSubtitle","Kimlər üçündür bölməsi","long",{az:"Bu proqram IT Biznes Analitikasına keçmək istəyən karyera dəyişdirənlər, həmçinin daxili BA bacarıqlarını gücləndirmək istəyən korporativ komandalar üçün nəzərdə tutulub.",en:"This program is designed for career changers looking to enter IT Business Analysis, as well as corporate teams wanting to strengthen their internal BA capabilities.",ru:"Эта программа разработана для тех, кто меняет карьеру и хочет войти в IT Бизнес-Анализ, а также для корпоративных команд, желающих укрепить свои внутренние возможности BA."},"Bölmə alt mətni"],
 
-  ["servicesTitle","Xidmətlər bölməsi","text","What does itba.az offer?","Bölmə başlığı"],
-  ["benefitsTitle","Faydalar bölməsi","text","What do participants gain?","Bölmə başlığı"],
-  ["programTitle","Proqram bölməsi","text","IT BA Core Program – Module Structure","Bölmə başlığı"],
+  ["servicesTitle","Xidmətlər bölməsi","text",{az:"itba.az nə təklif edir?",en:"What does itba.az offer?",ru:"Что предлагает itba.az?"},"Bölmə başlığı"],
+  ["benefitsTitle","Faydalar bölməsi","text",{az:"İştirakçılar nə əldə edir?",en:"What do participants gain?",ru:"Что получают участники?"},"Bölmə başlığı"],
+  ["programTitle","Proqram bölməsi","text",{az:"IT BA Əsas Proqramı – Modul Strukturu",en:"IT BA Core Program – Module Structure",ru:"Основная программа IT BA – Структура модулей"},"Bölmə başlığı"],
 
-  ["faqTitle","FAQ bölməsi","text","Frequently Asked Questions","Bölmə başlığı"],
-  ["faqQ1","FAQ bölməsi","text","Are the classes online or offline?","Sual 1"],
-  ["faqA1","FAQ bölməsi","long","Mainly online/hybrid format to provide maximum flexibility. Offline groups in Baku are organized if there is sufficient demand.","Cavab 1"],
-  ["faqQ2","FAQ bölməsi","text","I have no IT background. Is this program suitable for me?","Sual 2"],
-  ["faqA2","FAQ bölməsi","long","Yes, the program is specifically designed for people coming from the business side into IT BA. We start with foundations and build up systematically.","Cavab 2"],
-  ["faqQ3","FAQ bölməsi","text","Do you guarantee a job after the course?","Sual 3"],
-  ["faqA3","FAQ bölməsi","long","We do not provide job guarantees, but we support you with portfolio building, CV/LinkedIn optimization, and interview preparation to maximize your chances.","Cavab 3"],
-  ["faqQ4","FAQ bölməsi","text","What are the payment options?","Sual 4"],
-  ["faqA4","FAQ bölməsi","long","Payment can be made in one-time or in installments. Detailed pricing and payment plans are shared after you submit the application form.","Cavab 4"],
-  ["faqQ5","FAQ bölməsi","text","Do you design separate programs for corporate clients?","Sual 5"],
-  ["faqA5","FAQ bölməsi","long","Yes, corporate programs are fully customizable. We tailor the curriculum and use real internal cases from your organization to ensure maximum relevance and impact.","Cavab 5"],
+  ["faqTitle","FAQ bölməsi","text",{az:"Tez-tez verilən suallar",en:"Frequently Asked Questions",ru:"Часто задаваемые вопросы"},"Bölmə başlığı"],
+  ["faqQ1","FAQ bölməsi","text",{az:"Dərslər onlayn, yoxsa oflayndır?",en:"Are the classes online or offline?",ru:"Занятия проходят онлайн или офлайн?"},"Sual 1"],
+  ["faqA1","FAQ bölməsi","long",{az:"Maksimum çeviklik üçün əsasən onlayn/hibrid formatdadır. Kifayət qədər tələb olduqda Bakıda oflayn qruplar da təşkil olunur.",en:"Mainly online/hybrid format to provide maximum flexibility. Offline groups in Baku are organized if there is sufficient demand.",ru:"В основном онлайн/гибридный формат для максимальной гибкости. Офлайн-группы в Баку организуются при достаточном спросе."},"Cavab 1"],
+  ["faqQ2","FAQ bölməsi","text",{az:"IT sahəsində təcrübəm yoxdur. Bu proqram mənim üçün uyğundurmu?",en:"I have no IT background. Is this program suitable for me?",ru:"У меня нет IT-образования. Подходит ли мне эта программа?"},"Sual 2"],
+  ["faqA2","FAQ bölməsi","long",{az:"Bəli, proqram xüsusilə biznes tərəfindən IT BA-ya keçid edənlər üçün nəzərdə tutulub. Əsaslardan başlayıb sistemli şəkildə irəliləyirik.",en:"Yes, the program is specifically designed for people coming from the business side into IT BA. We start with foundations and build up systematically.",ru:"Да, программа специально разработана для людей, приходящих в IT BA из бизнес-сферы. Мы начинаем с основ и системно продвигаемся дальше."},"Cavab 2"],
+  ["faqQ3","FAQ bölməsi","text",{az:"Kurs bitdikdən sonra iş təminatı verirsinizmi?",en:"Do you guarantee a job after the course?",ru:"Гарантируете ли вы трудоустройство после курса?"},"Sual 3"],
+  ["faqA3","FAQ bölməsi","long",{az:"İş təminatı vermirik, lakin şanslarınızı artırmaq üçün portfolio hazırlığı, CV/LinkedIn optimallaşdırması və müsahibə hazırlığında sizə dəstək oluruq.",en:"We do not provide job guarantees, but we support you with portfolio building, CV/LinkedIn optimization, and interview preparation to maximize your chances.",ru:"Мы не гарантируем трудоустройство, но помогаем с созданием портфолио, оптимизацией резюме/LinkedIn и подготовкой к собеседованиям, чтобы максимизировать ваши шансы."},"Cavab 3"],
+  ["faqQ4","FAQ bölməsi","text",{az:"Ödəniş seçimləri hansılardır?",en:"What are the payment options?",ru:"Какие есть варианты оплаты?"},"Sual 4"],
+  ["faqA4","FAQ bölməsi","long",{az:"Ödəniş birdəfəlik və ya hissə-hissə edilə bilər. Ətraflı qiymət və ödəniş planları müraciət formasını göndərdikdən sonra sizinlə paylaşılır.",en:"Payment can be made in one-time or in installments. Detailed pricing and payment plans are shared after you submit the application form.",ru:"Оплата возможна единовременно или в рассрочку. Подробные тарифы и планы оплаты предоставляются после подачи заявки."},"Cavab 4"],
+  ["faqQ5","FAQ bölməsi","text",{az:"Korporativ müştərilər üçün ayrıca proqramlar hazırlayırsınızmı?",en:"Do you design separate programs for corporate clients?",ru:"Разрабатываете ли вы отдельные программы для корпоративных клиентов?"},"Sual 5"],
+  ["faqA5","FAQ bölməsi","long",{az:"Bəli, korporativ proqramlar tam fərdiləşdirilə bilər. Kurikulumu təşkilatınızın real daxili keysləri əsasında uyğunlaşdırırıq ki, maksimum aktuallıq və effekt təmin olunsun.",en:"Yes, corporate programs are fully customizable. We tailor the curriculum and use real internal cases from your organization to ensure maximum relevance and impact.",ru:"Да, корпоративные программы полностью настраиваются. Мы адаптируем программу на основе реальных внутренних кейсов вашей организации для максимальной релевантности и эффекта."},"Cavab 5"],
 
-  ["applyTitle","Müraciət bölməsi","text","Start your IT Business Analysis journey today","Bölmə başlığı"],
-  ["applySubtitle","Müraciət bölməsi","long","Fill out the form below and we'll contact you soon to discuss your goals and how itba.az can help you achieve them.","Bölmə alt mətni"],
+  ["applyTitle","Müraciət bölməsi","text",{az:"IT Biznes Analitikası yolçuluğunuza bu gün başlayın",en:"Start your IT Business Analysis journey today",ru:"Начните свой путь в IT Бизнес-Анализе уже сегодня"},"Bölmə başlığı"],
+  ["applySubtitle","Müraciət bölməsi","long",{az:"Aşağıdakı formu doldurun — məqsədlərinizi və itba.az-ın sizə necə kömək edə biləcəyini müzakirə etmək üçün tezliklə sizinlə əlaqə saxlayacağıq.",en:"Fill out the form below and we'll contact you soon to discuss your goals and how itba.az can help you achieve them.",ru:"Заполните форму ниже, и мы свяжемся с вами в ближайшее время, чтобы обсудить ваши цели и то, как itba.az может помочь вам их достичь."},"Bölmə alt mətni"],
 
-  ["footerText","Footer","text","© 2025 itba.az – IT Business Analysis Academy","Footer mətni"]
+  ["footerText","Footer","text",{az:"© 2025 itba.az – IT Biznes Analitikası Akademiyası",en:"© 2025 itba.az – IT Business Analysis Academy",ru:"© 2025 itba.az – Академия IT Бизнес-Анализа"},"Footer mətni"]
 ];
-const DEFAULT_WORDINGS=Object.fromEntries(WORDING_FIELDS.map(([key,,,def])=>[key,def]));
-let WORDINGS=Object.assign({},DEFAULT_WORDINGS);
+const WORDING_LANGS=["az","en","ru"];
+let activeWordingLang="az";
+// DEFAULT_WORDINGS[lang][key] — per-language defaults from WORDING_FIELDS.
+const DEFAULT_WORDINGS={};
+for(const lang of WORDING_LANGS){
+  DEFAULT_WORDINGS[lang]=Object.fromEntries(WORDING_FIELDS.map(([key,,,defs])=>[key,defs[lang]]));
+}
+// Raw saved shape from the DB: {az:{...},en:{...},ru:{...}} — see
+// supabase/migrate-wordings-per-language.sql for the one-time migration
+// from the old flat shape. Missing/legacy-shaped data is treated as "no
+// saved overrides yet" (falls back to DEFAULT_WORDINGS), not an error.
+let SAVED_WORDINGS={};
 
 /* Uses sbAuth.from() (not raw fetch) so the request carries the logged-in
    admin's session token where relevant. SELECT on admin_wordings stays
@@ -353,18 +370,33 @@ async function loadWordings(){
   try{
     const{data,error}=await sbAuth.from("admin_wordings").select("wordings").eq("id",1).maybeSingle();
     if(error) throw error;
-    if(data&&data.wordings) WORDINGS=Object.assign({},DEFAULT_WORDINGS,data.wordings);
+    SAVED_WORDINGS=(data&&data.wordings)||{};
   }catch(e){ /* saxlanmış mətnlərə çatmaq mümkün olmadı — standart mətnlərlə davam edilir */ }
 }
+// Saves the FULL nested object (all 3 languages) — admin_wordings is a
+// single row, so an update to one language must not clobber the other
+// two's already-saved content.
 async function saveWordings(newWordings){
   const{error}=await sbAuth.from("admin_wordings").upsert({id:1,wordings:newWordings});
   if(error) throw new Error("wordings save failed: "+error.message);
+}
+
+function renderLangPills(){
+  $("wordingLangPills").innerHTML=WORDING_LANGS.map(l=>
+    `<button type="button" class="btn ghost small wlang-pill${l===activeWordingLang?" tab-active":""}" data-lang="${l}">${l.toUpperCase()}</button>`
+  ).join("");
+  $("wordingLangPills").querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{
+    activeWordingLang=b.dataset.lang;
+    renderLangPills();
+    renderWordingForm();
+  });
 }
 
 function renderWordingForm(){
   // Grouped into <details> sections (~30 fields total) instead of one
   // long undifferentiated scroll — first section open by default so
   // the form doesn't look empty on load.
+  const langSaved=SAVED_WORDINGS[activeWordingLang]||{};
   let html="", lastGroup=null, first=true;
   for(const [key,group,kind,,label] of WORDING_FIELDS){
     if(group!==lastGroup){
@@ -372,7 +404,7 @@ function renderWordingForm(){
       html+=`<details class="wgroup"${first?" open":""}><summary class="wgroup-title">${esc(group)}</summary>`;
       lastGroup=group; first=false;
     }
-    const value=esc(WORDINGS[key]??DEFAULT_WORDINGS[key]??"");
+    const value=esc(langSaved[key]??DEFAULT_WORDINGS[activeWordingLang][key]??"");
     const fieldLabel=esc(label||key);
     html+=kind==="long"
       ?`<div class="wfield"><label class="wf-label" for="wf-${key}">${fieldLabel}</label><textarea id="wf-${key}" data-key="${key}">${value}</textarea></div>`
@@ -387,9 +419,10 @@ $("wordingSaveBtn").onclick=async()=>{
   $("wordingFields").querySelectorAll("[data-key]").forEach(el=>{updated[el.dataset.key]=el.value;});
   $("wordingSaveBtn").disabled=true;$("wordingSaveBtn").textContent="Saxlanılır…";
   try{
-    await saveWordings(updated);
-    WORDINGS=Object.assign({},DEFAULT_WORDINGS,updated);
-    $("wordingOk").textContent="Yadda saxlanıldı. Ana səhifədə dərhal əks olunacaq.";
+    const merged=Object.assign({},SAVED_WORDINGS,{[activeWordingLang]:updated});
+    await saveWordings(merged);
+    SAVED_WORDINGS=merged;
+    $("wordingOk").textContent="Yadda saxlanıldı ("+activeWordingLang.toUpperCase()+"). Növbəti build zamanı saytda əks olunacaq.";
   }catch(e){
     $("wordingErr").textContent="Yadda saxlanılmadı — internet bağlantısını yoxlayın və ya Supabase cədvəlinin yaradıldığını təsdiq edin.";
   }
@@ -399,10 +432,12 @@ $("wordingResetBtn").onclick=async()=>{
   $("wordingErr").textContent="";$("wordingOk").textContent="";
   $("wordingSaveBtn").disabled=true;
   try{
-    await saveWordings({});
-    WORDINGS=Object.assign({},DEFAULT_WORDINGS);
+    const merged=Object.assign({},SAVED_WORDINGS);
+    delete merged[activeWordingLang];
+    await saveWordings(merged);
+    SAVED_WORDINGS=merged;
     renderWordingForm();
-    $("wordingOk").textContent="Standart mətnlərə qaytarıldı.";
+    $("wordingOk").textContent="Standart mətnlərə qaytarıldı ("+activeWordingLang.toUpperCase()+").";
   }catch(e){
     $("wordingErr").textContent="Sıfırlanmadı — internet bağlantısını yoxlayın.";
   }
@@ -422,7 +457,7 @@ function showTab(t){
   $("navKurslarBtn").classList.toggle("tab-active",t==="kurslar");
 }
 $("navMonitoringBtn").onclick=()=>showTab("monitoring");
-$("navWordingBtn").onclick=async()=>{await loadWordings();renderWordingForm();showTab("wording");};
+$("navWordingBtn").onclick=async()=>{await loadWordings();renderLangPills();renderWordingForm();showTab("wording");};
 $("navModerationBtn").onclick=async()=>{await loadModeration();showTab("moderation");};
 $("navKurslarBtn").onclick=async()=>{await loadCourses();showTab("kurslar");};
 $("modFilter").onchange=loadModeration;

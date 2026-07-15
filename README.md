@@ -9,20 +9,23 @@ this project's own.
 
 | File | What it is |
 |---|---|
-| `index.html` | Community-first home: hero + three teaser cards (career test / academy / corporate training). Redesigned off a single-page brochure — see "Site restructure" below. |
-| `academy/index.html` | The academy brochure itself — About/Who/Services/Benefits/Program/FAQ/Apply, migrated close to verbatim from the old `index.html`, including the real "Apply" lead form. |
-| `exam.html` | Browser-only Oracle SQL exam simulator over the standard HR schema, backed by [sql.js](https://sql.js.org/) (SQLite compiled to WebAssembly) with a thin Oracle-compatibility layer (`TO_CHAR`, `NVL`, `DECODE`, Julian-day dates, etc.). Includes a teacher panel (client-side passcode) for reviewing student answers. |
-| `admin.html` | Site admin dashboard (Supabase Auth email+password login): visit analytics, Apply-form submissions, and an in-panel wording editor covering both `index.html` and `academy/index.html`. |
+| `index.html`, `en/index.html`, `ru/index.html` | Community-first home in all 3 languages — hero + three teaser cards (career test / academy / corporate training). **Generated**, not hand-written — see "Trilingual support" below. |
+| `academy/index.html` (+ `en/academy/`, `ru/academy/`) | The academy brochure — About/Who/Services/Benefits/Program/FAQ/Apply, including the real "Apply" lead form. **Generated**, not hand-written. |
+| `exam.html` | Browser-only Oracle SQL exam simulator over the standard HR schema, backed by [sql.js](https://sql.js.org/) (SQLite compiled to WebAssembly) with a thin Oracle-compatibility layer (`TO_CHAR`, `NVL`, `DECODE`, Julian-day dates, etc.). Includes a teacher panel (client-side passcode) for reviewing student answers. Azerbaijani-only by design — internal tool, not part of the trilingual public site. |
+| `admin.html` | Site admin dashboard (Supabase Auth email+password login): visit analytics, Apply-form submissions, and an in-panel wording editor covering `index.html`/`academy/index.html` in all 3 languages (AZ/EN/RU pills). Azerbaijani-only UI itself — internal tool. |
 | `community/` | Phase 1 of the community platform: self-serve registration (career-changer / junior BA / working IT BA roles) and a gated career-compatibility test. Plain HTML/JS, same pattern as the rest of this repo — no framework, no build step (an earlier Next.js/Vercel version of this was built and abandoned in favor of keeping everything on GitHub Pages; see `git log` if curious). Entry point: `community/register.html`. Paths here are intentionally **not** renamed to clean URLs (e.g. `/auth/register/`) yet — doing so means also updating Supabase's Auth redirect allow-list, deferred until it's convenient rather than bundled into the site restructure below. |
 | `js/site-common.js` | Supabase config and small helpers (`esc`, visitor-id tracking) shared by every page. |
 | `js/community-common.js` | Supabase Auth client + `requireSession()` gate, shared by `community/*.html`. |
 | `js/particle-bg.js` | The particle-network background (respects `prefers-reduced-motion`), shared by `index.html`, `academy/index.html`, and `community/*.html`. |
 | `css/site.css` | Shared brand styling for `index.html` and `academy/index.html` — two pages needing the identical ~700-line brand block is worse than one shared file (same reasoning as `css/community.css` below, one level up in page count). |
 | `css/community.css` | Shared brand styling for `community/*.html` — the one deviation from this repo's per-file-inline-`<style>` convention, justified by page count (9 pages would mean 9x duplication otherwise, worse than the 3x that motivated `js/site-common.js`). |
-| `sitemap.xml` | **Generated**, not hand-edited — `scripts/build-articles.js` rewrites it every run (see "Article platform" below). `robots.txt` (still hand-maintained) points at it and disallows crawling `community/*.html`. |
-| `articles/` | The article platform's public output — entirely **generated** by `scripts/build-articles.js`, committed to the repo so GitHub Pages can serve it as plain static files. Don't hand-edit anything under here; it's overwritten on the next build. |
-| `community/write-article.html`, `community/my-articles.html` | Author-facing pages, gated to verified `ba_professional` accounts (same `requireSession()` pattern as the rest of `community/`) — write/edit a draft, submit for review, see your own articles' status. |
-| `courses/index.html` | Course directory — admin-curated catalog of IT BA courses on the Azerbaijani market (ours and others). Static shell for its own SEO; the list and filters (format/level/language/search) are client-rendered against Supabase, same pattern as the rest of the public site's live data (no per-course pages, no build step needed here — see "Course directory" below). |
+| `sitemap.xml` | **Generated**, not hand-edited — `scripts/build-articles.js` rewrites it every run, now listing all 3 language variants of every page (see "Trilingual support" below). `robots.txt` (still hand-maintained) points at it and disallows crawling `community/*.html`. |
+| `articles/`, `en/articles/`, `ru/articles/` | The article platform's public output in all 3 languages — entirely **generated** by `scripts/build-articles.js`. Article body content is not translated (whatever language the author wrote); only the chrome (nav, footer, category names, search, empty states) is localized. Don't hand-edit anything under here; it's overwritten on the next build. |
+| `community/write-article.html`, `community/my-articles.html` | Author-facing pages, gated to verified `ba_professional` accounts (same `requireSession()` pattern as the rest of `community/`) — write/edit a draft, submit for review, see your own articles' status. Azerbaijani/English UI only (not part of the trilingual public-page scope). |
+| `courses/index.html` (+ `en/courses/`, `ru/courses/`) | Course directory in all 3 languages — admin-curated catalog of IT BA courses on the Azerbaijani market (ours and others). **Generated** shell for its own SEO; the list and filters (format/level/language/search) are client-rendered against Supabase (no per-course pages, no build step needed for the data itself). |
+| `i18n/az.js`, `i18n/en.js`, `i18n/ru.js` | Translation dictionaries for every chrome/structural string on the public pages (nav, buttons, FAQ, program modules, filters, empty states). `az.js` is the source of truth for Azerbaijani; `en.js`/`ru.js` are draft translations — see "Trilingual support" below for what's draft-quality vs. verbatim-preserved. |
+| `scripts/lib/shell.js` | Shared page-shell module (header/footer/hreflang/particle-bg markup) used by both `scripts/build-site.js` and `scripts/build-articles.js`, so this is written once, not duplicated per script. |
+| `scripts/build-site.js` | Generates `index.html`, `academy/index.html`, `courses/index.html` (and their `en/`/`ru/` variants) from `i18n/*.js` + `admin_wordings`. |
 
 ## Site restructure (community platform, Phase 1 of the redesign)
 
@@ -94,21 +97,86 @@ admin's session token, which `is_admin()` checks.
 An admin-curated catalog of IT BA courses on the Azerbaijani market —
 itba.az's own program plus other providers. Unlike articles, there's no
 author/review workflow here: admin is the only writer (same trust model
-as `admin_wordings`), managed from `admin.html`'s **Kurslar** tab. Unlike
-articles, there's also no build-time static generation — `courses/
-index.html` is a static shell (for its own SEO) that fetches active
-courses client-side with the public anon key and filters them entirely
-in the browser (format/level/language/search), the same pattern
-`index.html`'s latest-articles teaser already uses. No per-course pages;
-most rows just link out to the provider's own site via `url`.
+as `admin_wordings`), managed from `admin.html`'s **Kurslar** tab. The
+page shell is now generated by `scripts/build-site.js` (for hreflang/SEO
+across all 3 languages, see below), but the course *list itself* still
+has no build-time generation — it fetches active courses client-side
+with the public anon key and filters them entirely in the browser
+(format/level/language/search). No per-course pages; most rows just link
+out to the provider's own site via `url`.
+
+## Trilingual support (AZ/EN/RU)
+
+`index.html`, `academy/index.html`, `courses/index.html`, and the whole
+article platform are generated in 3 languages: `/` (Azerbaijani,
+default), `/en/`, `/ru/` — real, separate, crawlable URLs (not a
+client-side toggle), so each language variant is genuinely indexable on
+its own. Every generated page carries `hreflang` alternates to its two
+siblings plus `x-default` → the Azerbaijani version, and its own `lang`
+attribute. There's no automatic redirect based on browser language —
+Google treats that as an anti-pattern (it interferes with crawling and
+can trap users on the wrong version) — the switcher in the header/mobile
+nav is a set of plain `<a>` links, so it works with JS disabled.
+
+**Article body content is not translated** — an article shows up
+identically on `/articles/<slug>/`, `/en/articles/<slug>/`, and
+`/ru/articles/<slug>/`; only the surrounding chrome is localized. Authors
+write in whichever language they want; there's no per-article language
+tagging yet.
+
+`index.html`, `academy/index.html`, and `courses/index.html` are no
+longer hand-edited — they're generated by `scripts/build-site.js` from
+`i18n/<lang>.js` (structural/chrome text) merged with
+`admin_wordings.wordings.<lang>` (the admin-editable subset — hero
+copy, FAQ, etc.), the same way `articles/` has been generated by
+`scripts/build-articles.js` since Phase 2. Future copy changes go
+through `admin.html`'s Wording tab (now with an AZ/EN/RU pill selector)
+or by editing `i18n/*.js` directly for chrome text — not by hand-editing
+the HTML files these scripts write.
+
+**A content correction made during this work**: `academy/index.html`'s
+copy had actually been written in English the whole time, despite the
+rest of the platform being Azerbaijani-first (flagged as a known
+inconsistency in an earlier pass, deferred at the time). Building real
+3-language support was the natural moment to fix it — `i18n/az.js`'s
+academy section is a genuine new Azerbaijani translation, and the
+original English text was preserved as-is in `i18n/en.js` rather than
+lost.
+
+**Translation quality**: `i18n/az.js` for home/courses/articles is the
+original, already-live Azerbaijani copy (unchanged). Everything else —
+the new Azerbaijani academy translation, and all of `i18n/en.js`'s
+home/courses/articles and `i18n/ru.js` — is a first draft, meant to be
+reviewed (ideally by a native speaker) before being treated as final,
+publish-ready copy.
+
+`admin_wordings.wordings` changed shape from a flat object
+(`{heroTitle: "...", ...}`) to one nested per language (`{az: {...},
+en: {...}, ru: {...}}`). Run `supabase/migrate-wordings-per-language.sql`
+once (idempotent) to move any existing saved edits into the `az` slot
+before the first trilingual build — the merge logic falls back to
+`i18n/*.js`'s defaults for any language slot that isn't there yet, so
+this doesn't need to happen before the code ships, just before you'd
+expect previously-saved Azerbaijani edits to still show up.
 
 ## Local development
 
-No build step — just serve the directory and open a page:
+No build step to *serve* the site — just serve the directory and open a
+page:
 
 ```
 python3 -m http.server 8934
 # then open http://localhost:8934/index.html (or exam.html / admin.html)
+```
+
+`index.html`/`academy/index.html`/`courses/index.html`/`articles/` are
+generated files, though (see "Trilingual support" and "Article platform"
+above) — to regenerate them after changing `i18n/*.js` or content in
+Supabase:
+
+```
+npm ci
+npm run build        # runs build:site then build:articles
 ```
 
 ## Backend (Supabase)

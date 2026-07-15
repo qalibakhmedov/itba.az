@@ -1123,3 +1123,61 @@ footer a:hover {
     font-weight: 600;
     cursor: pointer;
 }
+
+/* Language switcher — plain <a> links to the real per-language URL of
+   the current page (not a JS toggle), so it works with JS disabled and
+   costs a crawler nothing to follow. Shown in the desktop header (next
+   to the primary buttons) and again inside the mobile nav panel. */
+.lang-switch {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+}
+
+.lang-switch a {
+    padding: 6px 9px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.lang-switch a:hover {
+    color: var(--ink-strong);
+}
+
+.lang-switch a.active {
+    color: var(--accent);
+    background: rgba(255, 107, 53, 0.1);
+}
+
+.lang-switch a:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: 1px;
+}
+
+/* Header's own switch is hidden on narrow viewports (mobile-nav-panel
+   carries a second copy instead, see .mobile-nav-panel .lang-switch). */
+.header-buttons .lang-switch {
+    margin-left: 4px;
+}
+
+.mobile-nav-panel .lang-switch {
+    display: none;
+    padding-top: 10px;
+    margin-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mobile-nav-panel.open .lang-switch {
+    display: flex;
+}
+
+@media (max-width: 968px) {
+    .header-buttons .lang-switch {
+        display: none;
+    }
+}

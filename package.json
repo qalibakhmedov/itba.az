@@ -3,7 +3,9 @@
   "private": true,
   "description": "Build-time-only tooling for itba.az's static article pages, plus a local-only dev data seeder. Neither affects how the site is served — GitHub Pages still serves plain committed files with zero server-side computation at request time. See README.md.",
   "scripts": {
+    "build:site": "node scripts/build-site.js",
     "build:articles": "node scripts/build-articles.js",
+    "build": "npm run build:site && npm run build:articles",
     "seed:dev-data": "node scripts/seed-dev-data.js"
   },
   "dependencies": {

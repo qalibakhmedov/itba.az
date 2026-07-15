@@ -1,9 +1,10 @@
-name: Build article pages
+name: Build site
 
-# Regenerates articles/*, sitemap.xml from Supabase's published articles.
-# No live server is involved anywhere else in this site — this is the
-# only place code runs; the output is plain committed HTML that GitHub
-# Pages serves as-is. See README for the full pipeline.
+# Regenerates the trilingual (az/en/ru) home/academy/courses pages, the
+# article platform, and sitemap.xml from Supabase's published content
+# and admin_wordings. No live server is involved anywhere else in this
+# site — this is the only place code runs; the output is plain committed
+# HTML that GitHub Pages serves as-is. See README for the full pipeline.
 on:
   schedule:
     - cron: "*/15 * * * *"
@@ -24,16 +25,16 @@ jobs:
 
       - run: npm ci
 
-      - run: npm run build:articles
+      - run: npm run build
 
       - name: Commit and push if changed
         run: |
           git config user.name "itba-az-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add articles/ sitemap.xml
+          git add index.html academy/ courses/ articles/ en/ ru/ sitemap.xml
           if git diff --cached --quiet; then
-            echo "No article content changes."
+            echo "No content changes."
           else
-            git commit -m "Rebuild article pages [skip ci]"
+            git commit -m "Rebuild site [skip ci]"
             git push
           fi

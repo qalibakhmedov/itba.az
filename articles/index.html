@@ -6,7 +6,11 @@
 <title>Məqalələr — itba.az</title>
 <meta name="description" content="IT Biznes Analitikası üzrə icma tərəfindən yazılmış məqalələr tezliklə burada olacaq.">
 <link rel="canonical" href="https://itba.az/articles/">
-<meta property="og:type" content="article">
+<link rel="alternate" hreflang="az" href="https://itba.az/articles/">
+<link rel="alternate" hreflang="en" href="https://itba.az/en/articles/">
+<link rel="alternate" hreflang="ru" href="https://itba.az/ru/articles/">
+<link rel="alternate" hreflang="x-default" href="https://itba.az/articles/">
+<meta property="og:type" content="website">
 <meta property="og:title" content="Məqalələr — itba.az">
 <meta property="og:description" content="IT Biznes Analitikası üzrə icma tərəfindən yazılmış məqalələr tezliklə burada olacaq.">
 <meta property="og:url" content="https://itba.az/articles/">
@@ -33,8 +37,17 @@
       </nav>
       <div class="header-buttons">
         <a href="/community/login.html" class="btn btn-ghost">Daxil ol</a>
+        <div class="lang-switch"><a href="/articles/" class="active" hreflang="az">AZ</a><a href="/en/articles/" class="" hreflang="en">EN</a><a href="/ru/articles/" class="" hreflang="ru">RU</a></div>
       </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-expanded="false" aria-controls="mobileNavPanel" aria-label="Menu">☰</button>
     </div>
+    <nav class="mobile-nav-panel" id="mobileNavPanel" aria-label="Primary (mobile)">
+      <a href="/articles/">Məqalələr</a>
+        <a href="/courses/">Kurslar</a>
+        <a href="/academy/">Akademiya</a>
+        <a href="/community/login.html">Daxil ol</a>
+      <div class="lang-switch"><a href="/articles/" class="active" hreflang="az">AZ</a><a href="/en/articles/" class="" hreflang="en">EN</a><a href="/ru/articles/" class="" hreflang="ru">RU</a></div>
+    </nav>
   </div>
 </header>
 <section class="content-page">
@@ -49,12 +62,28 @@
     <p>© 2025 itba.az – IT Business Analysis Academy</p>
     <div style="margin-top: 10px;">
       <a href="/">Ana səhifə</a>
-      <a href="/articles/">Məqalələr</a>
-      <a href="/courses/">Kurslar</a>
-      <a href="/academy/">Akademiya</a>
+        <a href="/articles/">Məqalələr</a>
+        <a href="/courses/">Kurslar</a>
+        <a href="/academy/">Akademiya</a>
     </div>
   </div>
 </footer>
 <script src="/js/particle-bg.js"></script>
+<script>
+(function () {
+  var mobileBtn = document.getElementById('mobileMenuBtn');
+  var mobilePanel = document.getElementById('mobileNavPanel');
+  mobileBtn.addEventListener('click', function () {
+    var open = mobilePanel.classList.toggle('open');
+    mobileBtn.setAttribute('aria-expanded', String(open));
+  });
+  Array.prototype.forEach.call(mobilePanel.querySelectorAll('a'), function (a) {
+    a.addEventListener('click', function () {
+      mobilePanel.classList.remove('open');
+      mobileBtn.setAttribute('aria-expanded', 'false');
+    });
+  });
+})();
+</script>
 </body>
 </html>

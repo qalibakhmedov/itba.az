@@ -1,218 +1,180 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-    <meta charset="UTF-8">
-    <script>
-        // Old single-page anchors (itba.az/#program etc.) now live on
-        // /academy/ — the brochure content moved there. No server-side
-        // redirect config exists on GitHub Pages, so this runs as early as
-        // possible and hands off before the old anchor target is missed.
-        (function () {
-            var moved = ["about", "who", "services", "program", "faq", "apply"];
-            var hash = location.hash.slice(1);
-            if (moved.indexOf(hash) !== -1) {
-                location.replace("/academy/" + location.hash);
-            }
-        })();
-    </script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>itba.az — IT Biznes Analitikləri Platforması</title>
-    <meta name="description" content="Azərbaycanın IT Biznes Analitikləri Cəmiyyəti: karyera uyğunluq testi, IT BA akademiya proqramı və korporativ təlim bir platformada.">
-    <link rel="canonical" href="https://itba.az/">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="itba.az — IT Biznes Analitikləri Platforması">
-    <meta property="og:description" content="Azərbaycanın IT Biznes Analitikləri Cəmiyyəti: karyera uyğunluq testi, IT BA akademiya proqramı və korporativ təlim bir platformada.">
-    <meta property="og:url" content="https://itba.az/">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="itba.az — IT Biznes Analitikləri Platforması">
-    <meta name="twitter:description" content="Azərbaycanın IT Biznes Analitikləri Cəmiyyəti: karyera uyğunluq testi, IT BA akademiya proqramı və korporativ təlim bir platformada.">
-    <link rel="stylesheet" href="/css/site.css">
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "EducationalOrganization",
-      "name": "itba.az",
-      "url": "https://itba.az/",
-      "description": "Azerbaijan's IT Business Analysis community platform: career test, training academy, and corporate programs.",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Baku",
-        "addressCountry": "AZ"
-      }
-    }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>itba.az — IT Biznes Analitikləri Platforması</title>
+<meta name="description" content="Azərbaycanın IT Biznes Analitikləri Cəmiyyəti: karyera uyğunluq testi, IT BA akademiya proqramı və korporativ təlim bir platformada.">
+<link rel="canonical" href="https://itba.az/">
+<link rel="alternate" hreflang="az" href="https://itba.az/">
+<link rel="alternate" hreflang="en" href="https://itba.az/en/">
+<link rel="alternate" hreflang="ru" href="https://itba.az/ru/">
+<link rel="alternate" hreflang="x-default" href="https://itba.az/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="itba.az — IT Biznes Analitikləri Platforması">
+<meta property="og:description" content="Azərbaycanın IT Biznes Analitikləri Cəmiyyəti: karyera uyğunluq testi, IT BA akademiya proqramı və korporativ təlim bir platformada.">
+<meta property="og:url" content="https://itba.az/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="itba.az — IT Biznes Analitikləri Platforması">
+<meta name="twitter:description" content="Azərbaycanın IT Biznes Analitikləri Cəmiyyəti: karyera uyğunluq testi, IT BA akademiya proqramı və korporativ təlim bir platformada.">
+<link rel="stylesheet" href="/css/site.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"EducationalOrganization","name":"itba.az","url":"https://itba.az/","description":"Azerbaijan's IT Business Analysis community platform: career test, training academy, and corporate programs.","address":{"@type":"PostalAddress","addressLocality":"Baku","addressCountry":"AZ"}}</script>
 </head>
 <body>
-    <div class="animated-bg">
-        <canvas id="particle-bg" aria-hidden="true"></canvas>
+<div class="animated-bg"><canvas id="particle-bg" aria-hidden="true"></canvas></div>
+<header>
+  <div class="container">
+    <div class="header-content">
+      <a href="/" class="logo-link">
+        <div class="logo-section">
+          <div class="logo-mark">BA</div>
+          <div class="logo-text"><h1>itba.az</h1><p>IT Business Analysis Community</p></div>
+        </div>
+      </a>
+      <nav aria-label="Primary">
+        <a href="/academy/">Akademiya</a>
+        <a href="/articles/">Məqalələr</a>
+        <a href="/courses/">Kurslar</a>
+        <a href="/community/register.html">Karyera Testi</a>
+      </nav>
+      <div class="header-buttons">
+        <a href="/community/login.html" class="btn btn-ghost">Daxil ol</a>
+          <a href="/community/register.html" class="btn btn-primary">Qeydiyyat</a>
+        <div class="lang-switch"><a href="/" class="active" hreflang="az">AZ</a><a href="/en/" class="" hreflang="en">EN</a><a href="/ru/" class="" hreflang="ru">RU</a></div>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-expanded="false" aria-controls="mobileNavPanel" aria-label="Menu">☰</button>
     </div>
-
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <a href="/" class="logo-link">
-                    <div class="logo-section">
-                        <div class="logo-mark">BA</div>
-                        <div class="logo-text">
-                            <h1>itba.az</h1>
-                            <p>IT Business Analysis Community</p>
-                        </div>
-                    </div>
-                </a>
-                <nav aria-label="Primary">
-                    <a href="/academy/">Akademiya</a>
-                    <a href="/articles/">Məqalələr</a>
-                    <a href="/courses/">Kurslar</a>
-                    <a href="community/register.html">Karyera Testi</a>
-                </nav>
-                <div class="header-buttons">
-                    <a href="community/login.html" class="btn btn-ghost">Daxil ol</a>
-                    <a href="community/register.html" class="btn btn-primary">Qeydiyyat</a>
-                </div>
-                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-expanded="false" aria-controls="mobileNavPanel" aria-label="Menu">☰</button>
-            </div>
-            <nav class="mobile-nav-panel" id="mobileNavPanel" aria-label="Primary (mobile)">
-                <a href="/academy/">Akademiya</a>
-                <a href="/articles/">Məqalələr</a>
-                <a href="/courses/">Kurslar</a>
-                <a href="community/register.html">Karyera Testi</a>
-                <a href="community/login.html">Daxil ol</a>
-                <a href="community/register.html">Qeydiyyat</a>
-            </nav>
+    <nav class="mobile-nav-panel" id="mobileNavPanel" aria-label="Primary (mobile)">
+      <a href="/academy/">Akademiya</a>
+        <a href="/articles/">Məqalələr</a>
+        <a href="/courses/">Kurslar</a>
+        <a href="/community/register.html">Karyera Testi</a>
+        <a href="/community/login.html">Daxil ol</a>
+        <a href="/community/register.html">Qeydiyyat</a>
+      <div class="lang-switch"><a href="/" class="active" hreflang="az">AZ</a><a href="/en/" class="" hreflang="en">EN</a><a href="/ru/" class="" hreflang="ru">RU</a></div>
+    </nav>
+  </div>
+</header>
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div>
+        <span class="badge" id="w-homeHeroBadge">Azərbaycanın IT Biznes Analitikləri Cəmiyyəti</span>
+        <h2 id="w-homeHeroTitle">IT Biznes Analitikləri üçün Azərbaycanın mərkəzi platforması</h2>
+        <p class="subheadline" id="w-homeHeroSubtitle">Karyera uyğunluq testini keçin, kurs və proqramları araşdırın, itba.az Akademiyası ilə peşəkar inkişafınızı davam etdirin.</p>
+        <div class="hero-buttons">
+          <a href="/community/register.html" class="btn btn-primary">Karyera testini keç</a>
+          <a href="/academy/" class="btn btn-secondary">Akademiya proqramına bax</a>
         </div>
-    </header>
-
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div>
-                    <span class="badge" id="w-homeHeroBadge">Azərbaycanın IT Biznes Analitikləri Cəmiyyəti</span>
-                    <h2 id="w-homeHeroTitle">IT Biznes Analitikləri üçün Azərbaycanın mərkəzi platforması</h2>
-                    <p class="subheadline" id="w-homeHeroSubtitle">Karyera uyğunluq testini keçin, kurs və proqramları araşdırın, itba.az Akademiyası ilə peşəkar inkişafınızı davam etdirin.</p>
-                    <div class="hero-buttons">
-                        <a href="community/register.html" class="btn btn-primary">Karyera testini keç</a>
-                        <a href="/academy/" class="btn btn-secondary">Akademiya proqramına bax</a>
-                    </div>
-                </div>
-                <div>
-                    <div class="hero-card">
-                        <h3>itba.az icması</h3>
-                        <div class="chips">
-                            <span class="chip">Karyera Testi</span>
-                            <span class="chip">Akademiya Proqramı</span>
-                            <span class="chip">Korporativ Təlim</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      </div>
+      <div>
+        <div class="hero-card">
+          <h3>itba.az icması</h3>
+          <div class="chips">
+            <span class="chip">Karyera Testi</span>
+            <span class="chip">Akademiya Proqramı</span>
+            <span class="chip">Korporativ Təlim</span>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <section id="explore">
-        <div class="container">
-            <h3 class="section-title">itba.az ilə nə edə bilərsiniz?</h3>
-            <div class="cards-grid">
-                <a href="community/register.html" class="card">
-                    <span class="card-label">Karyera Testi</span>
-                    <h3>IT BA sahəsinə nə dərəcədə uyğun olduğunuzu öyrənin</h3>
-                    <p>Qısa qeydiyyatdan sonra analitik düşüncə, kommunikasiya və alət bacarıqlarınızı ölçən test — nəticədə fərdi hesabat alırsınız.</p>
-                </a>
-                <a href="/academy/" class="card">
-                    <span class="card-label">Akademiya</span>
-                    <h3>6 modullu peşəkar IT BA təlim proqramı</h3>
-                    <p>Bank və fintech sahəsindən real keyslər əsasında qurulan, portfolio ilə başa çatan struktur proqram.</p>
-                </a>
-                <a href="/academy/#apply" class="card">
-                    <span class="card-label">Korporativ</span>
-                    <h3>Komandanız üçün korporativ IT BA təlimi</h3>
-                    <p>Təşkilatınızın öz sistemlərinə uyğunlaşdırılan, KPI və qiymətləndirmə ilə dəstəklənən daxili akademiya proqramı.</p>
-                </a>
-            </div>
-        </div>
-    </section>
+<section id="explore">
+  <div class="container">
+    <h3 class="section-title">itba.az ilə nə edə bilərsiniz?</h3>
+    <div class="cards-grid">
+      <a href="/community/register.html" class="card">
+        <span class="card-label">Karyera Testi</span>
+        <h3>IT BA sahəsinə nə dərəcədə uyğun olduğunuzu öyrənin</h3>
+        <p>Qısa qeydiyyatdan sonra analitik düşüncə, kommunikasiya və alət bacarıqlarınızı ölçən test — nəticədə fərdi hesabat alırsınız.</p>
+      </a>
+      <a href="/academy/" class="card">
+        <span class="card-label">Akademiya</span>
+        <h3>6 modullu peşəkar IT BA təlim proqramı</h3>
+        <p>Bank və fintech sahəsindən real keyslər əsasında qurulan, portfolio ilə başa çatan struktur proqram.</p>
+      </a>
+      <a href="/academy/#apply" class="card">
+        <span class="card-label">Korporativ</span>
+        <h3>Komandanız üçün korporativ IT BA təlimi</h3>
+        <p>Təşkilatınızın öz sistemlərinə uyğunlaşdırılan, KPI və qiymətləndirmə ilə dəstəklənən daxili akademiya proqramı.</p>
+      </a>
+    </div>
+  </div>
+</section>
 
-    <section id="latestArticles" style="display:none" aria-live="polite">
-        <div class="container">
-            <h3 class="section-title">Son məqalələr</h3>
-            <div class="cards-grid" id="latestArticlesGrid"></div>
-            <p style="text-align:center;margin-top:30px"><a href="/articles/" class="btn btn-secondary">Bütün məqalələr</a></p>
-        </div>
-    </section>
+<section id="latestArticles" style="display:none" aria-live="polite">
+  <div class="container">
+    <h3 class="section-title">Son məqalələr</h3>
+    <div class="cards-grid" id="latestArticlesGrid"></div>
+    <p style="text-align:center;margin-top:30px"><a href="/articles/" class="btn btn-secondary">Bütün məqalələr</a></p>
+  </div>
+</section>
+<script src="/js/site-common.js"></script>
+<script>
+  trackVisit("index");
+  var WORDING_LANG = "az";
 
-    <footer>
-        <div class="container">
-            <p id="w-footerText">© 2025 itba.az – IT Business Analysis Academy</p>
-            <div style="margin-top: 10px;">
-                <a href="/academy/">Akademiya</a>
-                <a href="community/register.html">Karyera Testi</a>
-                <a href="/articles/">Məqalələr</a>
-                <a href="/courses/">Kurslar</a>
-                <a href="exam.html">Oracle SQL Təcrübə İmtahanı</a>
-            </div>
-        </div>
-    </footer>
+  (async () => {
+    try {
+      const res = await fetch(SUPABASE_URL + "/rest/v1/admin_wordings?id=eq.1&select=wordings", { cache: "no-store", headers: SB_HEADERS });
+      if (!res.ok) return;
+      const rows = await res.json();
+      const wordings = ((rows[0] && rows[0].wordings) || {})[WORDING_LANG] || {};
+      document.querySelectorAll('[id^="w-"]').forEach(el => {
+        const key = el.id.slice(2);
+        if (Object.prototype.hasOwnProperty.call(wordings, key)) el.textContent = wordings[key];
+      });
+    } catch (e) { /* keep the built-in copy */ }
+  })();
 
-    <script src="js/site-common.js"></script>
-    <script>
-        trackVisit("index");
-
-        // Apply any admin-edited wording overrides. Every element with an
-        // id="w-<key>" is a candidate; only keys actually present in the
-        // saved overrides are touched, so the hardcoded copy above already
-        // serves as the fallback — nothing to do if this fetch fails.
-        (async () => {
-            try {
-                const res = await fetch(SUPABASE_URL + "/rest/v1/admin_wordings?id=eq.1&select=wordings", {
-                    cache: "no-store", headers: SB_HEADERS
-                });
-                if (!res.ok) return;
-                const rows = await res.json();
-                const wordings = (rows[0] && rows[0].wordings) || {};
-                document.querySelectorAll('[id^="w-"]').forEach(el => {
-                    const key = el.id.slice(2);
-                    if (Object.prototype.hasOwnProperty.call(wordings, key)) el.textContent = wordings[key];
-                });
-            } catch (e) { /* keep the hardcoded copy */ }
-        })();
-
-        // Latest published articles teaser
-        const CATEGORY_LABEL = {
-            ai: "Süni İntellekt (AI)",
-            tools: "IT BA Alətləri",
-            case_studies: "Praktik Keys / Real Hadisələr",
-            news: "Sənaye Xəbərləri",
-        };
-        (async () => {
-            try {
-                const res = await fetch(SUPABASE_URL + "/rest/v1/articles?status=eq.published&select=slug,title,dek,category,reading_time_minutes&order=published_at.desc&limit=3", {
-                    cache: "no-store", headers: SB_HEADERS
-                });
-                if (!res.ok) return;
-                const articles = await res.json();
-                if (!articles.length) return;
-                document.getElementById("latestArticlesGrid").innerHTML = articles.map(a =>
-                    '<a href="/articles/' + a.slug + '/" class="card">' +
-                        '<span class="card-label">' + esc(CATEGORY_LABEL[a.category] || a.category) + '</span>' +
-                        '<h3>' + esc(a.title) + '</h3>' +
-                        '<p>' + esc(a.dek || "") + '</p>' +
-                    '</a>'
-                ).join("");
-                document.getElementById("latestArticles").style.display = "block";
-            } catch (e) { /* no teaser if this fails */ }
-        })();
-
-        // Mobile nav toggle
-        const mobileBtn = document.getElementById('mobileMenuBtn');
-        const mobilePanel = document.getElementById('mobileNavPanel');
-        mobileBtn.addEventListener('click', () => {
-            const open = mobilePanel.classList.toggle('open');
-            mobileBtn.setAttribute('aria-expanded', String(open));
-        });
-        mobilePanel.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-            mobilePanel.classList.remove('open');
-            mobileBtn.setAttribute('aria-expanded', 'false');
-        }));
-    </script>
-    <script src="js/particle-bg.js"></script>
+  const CATEGORY_LABEL = {"ai":"Süni İntellekt (AI)","tools":"IT BA Alətləri","case_studies":"Praktik Keys / Real Hadisələr","news":"Sənaye Xəbərləri"};
+  (async () => {
+    try {
+      const res = await fetch(SUPABASE_URL + "/rest/v1/articles?status=eq.published&select=slug,title,dek,category,reading_time_minutes&order=published_at.desc&limit=3", { cache: "no-store", headers: SB_HEADERS });
+      if (!res.ok) return;
+      const articles = await res.json();
+      if (!articles.length) return;
+      document.getElementById("latestArticlesGrid").innerHTML = articles.map(a =>
+        '<a href="/articles/' + a.slug + '/" class="card">' +
+          '<span class="card-label">' + esc(CATEGORY_LABEL[a.category] || a.category) + '</span>' +
+          '<h3>' + esc(a.title) + '</h3>' +
+          '<p>' + esc(a.dek || "") + '</p>' +
+        '</a>'
+      ).join("");
+      document.getElementById("latestArticles").style.display = "block";
+    } catch (e) { /* no teaser if this fails */ }
+  })();
+</script>
+<footer>
+  <div class="container">
+    <p>© 2025 itba.az – IT Business Analysis Academy</p>
+    <div style="margin-top: 10px;">
+      <a href="/academy/">Akademiya</a>
+        <a href="/community/register.html">Karyera Testi</a>
+        <a href="/articles/">Məqalələr</a>
+        <a href="/courses/">Kurslar</a>
+        <a href="/exam.html">Oracle SQL Təcrübə İmtahanı</a>
+    </div>
+  </div>
+</footer>
+<script src="/js/particle-bg.js"></script>
+<script>
+(function () {
+  var mobileBtn = document.getElementById('mobileMenuBtn');
+  var mobilePanel = document.getElementById('mobileNavPanel');
+  mobileBtn.addEventListener('click', function () {
+    var open = mobilePanel.classList.toggle('open');
+    mobileBtn.setAttribute('aria-expanded', String(open));
+  });
+  Array.prototype.forEach.call(mobilePanel.querySelectorAll('a'), function (a) {
+    a.addEventListener('click', function () {
+      mobilePanel.classList.remove('open');
+      mobileBtn.setAttribute('aria-expanded', 'false');
+    });
+  });
+})();
+</script>
 </body>
 </html>
