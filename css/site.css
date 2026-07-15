@@ -913,3 +913,42 @@ footer a:hover {
     background: none;
     padding: 0;
 }
+
+/* Course directory */
+.filters-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.filter-select,
+.article-search.filter-search {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #e0e7ff;
+    font-size: 14px;
+    font-family: inherit;
+    margin-bottom: 0;
+}
+
+.filter-select:focus,
+.article-search.filter-search:focus {
+    outline: none;
+    border-color: #ff6b35;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.course-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 8px;
+    background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
+    vertical-align: middle;
+}

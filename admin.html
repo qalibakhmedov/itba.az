@@ -26,9 +26,9 @@
   .login-card h1{font-size:24px;font-weight:700;margin-bottom:4px}
   .login-card .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
   label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-  input[type=password],input[type=email],input[type=text],textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:14px;background:#FBFCFC;color:var(--ink)}
+  input[type=password],input[type=email],input[type=text],input[type=url],select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:14px;background:#FBFCFC;color:var(--ink)}
   textarea{min-height:70px;resize:vertical;line-height:1.5}
-  input:focus,textarea:focus{outline:2px solid var(--red);outline-offset:1px;border-color:transparent}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--red);outline-offset:1px;border-color:transparent}
   .field-gap{margin-top:14px}
   .btn{display:inline-block;width:100%;margin-top:16px;background:var(--red);color:#fff;border:none;border-radius:6px;padding:12px;font-family:var(--sans);font-weight:600;font-size:15px;cursor:pointer}
   .btn:hover{background:var(--red-dark)}
@@ -97,6 +97,7 @@
     <button class="btn ghost" id="navMonitoringBtn">Monitorinq</button>
     <button class="btn ghost" id="navWordingBtn">Mətnlər</button>
     <button class="btn ghost" id="navModerationBtn">Moderasiya</button>
+    <button class="btn ghost" id="navKurslarBtn">Kurslar</button>
   </div>
 
   <div id="viewMonitoring">
@@ -169,6 +170,81 @@
     </div>
     <div class="panel">
       <div id="moderationBox">Yüklənir…</div>
+    </div>
+  </div>
+
+  <div id="viewKurslar" class="hidden">
+    <div class="toprow">
+      <div>
+        <h2 class="admin-h">Kurs kataloqu</h2>
+        <div class="mini">Bu kurslar /courses/ səhifəsində göstərilir (yalnız aktiv olanlar).</div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3><span id="courseFormTitle">Yeni kurs əlavə et</span></h3>
+      <div class="field-gap">
+        <label for="courseTitle">Ad</label>
+        <input type="text" id="courseTitle">
+      </div>
+      <div class="field-gap">
+        <label for="courseProvider">Təminatçı</label>
+        <input type="text" id="courseProvider">
+      </div>
+      <div class="field-gap">
+        <label style="display:inline-flex;align-items:center;gap:8px;text-transform:none;font-family:var(--sans);font-size:14px">
+          <input type="checkbox" id="courseIsOurs" style="width:auto"> Bizim proqram
+        </label>
+      </div>
+      <div class="field-gap">
+        <label for="coursePrice">Qiymət</label>
+        <input type="text" id="coursePrice" placeholder="məs. 450 AZN, Pulsuz, Sorğu üzrə">
+      </div>
+      <div class="field-gap">
+        <label for="courseFormat">Format</label>
+        <select id="courseFormat">
+          <option value="online">Onlayn</option>
+          <option value="offline">Oflayn</option>
+          <option value="hybrid">Hibrid</option>
+        </select>
+      </div>
+      <div class="field-gap">
+        <label for="courseLevel">Səviyyə</label>
+        <select id="courseLevel">
+          <option value="beginner">Başlanğıc</option>
+          <option value="intermediate">Orta</option>
+          <option value="advanced">Qabaqcıl</option>
+        </select>
+      </div>
+      <div class="field-gap">
+        <label for="courseLanguage">Dil</label>
+        <select id="courseLanguage">
+          <option value="az">Azərbaycan</option>
+          <option value="en">İngilis</option>
+          <option value="ru">Rus</option>
+        </select>
+      </div>
+      <div class="field-gap">
+        <label for="courseUrl">URL</label>
+        <input type="url" id="courseUrl" placeholder="https://…">
+      </div>
+      <div class="field-gap">
+        <label for="courseDescription">Təsvir</label>
+        <textarea id="courseDescription"></textarea>
+      </div>
+      <div class="field-gap">
+        <label style="display:inline-flex;align-items:center;gap:8px;text-transform:none;font-family:var(--sans);font-size:14px">
+          <input type="checkbox" id="courseActive" checked style="width:auto"> Aktiv (saytda göstərilsin)
+        </label>
+      </div>
+      <div class="field-gap" style="display:flex;gap:10px">
+        <button class="btn" id="courseSaveBtn" style="max-width:200px">Yadda saxla</button>
+        <button class="btn ghost" id="courseCancelEditBtn" style="max-width:160px;display:none">Ləğv et</button>
+      </div>
+      <div class="err" id="courseErr"></div>
+    </div>
+    <div class="panel">
+      <h3><span>Mövcud kurslar</span></h3>
+      <div id="coursesBox">Yüklənir…</div>
     </div>
   </div>
 </div>
@@ -295,14 +371,127 @@ function showTab(t){
   $("viewMonitoring").classList.toggle("hidden",t!=="monitoring");
   $("viewWording").classList.toggle("hidden",t!=="wording");
   $("viewModeration").classList.toggle("hidden",t!=="moderation");
+  $("viewKurslar").classList.toggle("hidden",t!=="kurslar");
   $("navMonitoringBtn").classList.toggle("tab-active",t==="monitoring");
   $("navWordingBtn").classList.toggle("tab-active",t==="wording");
   $("navModerationBtn").classList.toggle("tab-active",t==="moderation");
+  $("navKurslarBtn").classList.toggle("tab-active",t==="kurslar");
 }
 $("navMonitoringBtn").onclick=()=>showTab("monitoring");
 $("navWordingBtn").onclick=async()=>{await loadWordings();renderWordingForm();showTab("wording");};
 $("navModerationBtn").onclick=async()=>{await loadModeration();showTab("moderation");};
+$("navKurslarBtn").onclick=async()=>{await loadCourses();showTab("kurslar");};
 $("modFilter").onchange=loadModeration;
+
+/* ================= kurs kataloqu ================= */
+const COURSE_FORMAT_LABEL={online:"Onlayn",offline:"Oflayn",hybrid:"Hibrid"};
+const COURSE_LEVEL_LABEL={beginner:"Başlanğıc",intermediate:"Orta",advanced:"Qabaqcıl"};
+const COURSE_LANGUAGE_LABEL={az:"Azərbaycan",en:"İngilis",ru:"Rus"};
+let editingCourseId=null;
+
+function resetCourseForm(){
+  editingCourseId=null;
+  $("courseFormTitle").textContent="Yeni kurs əlavə et";
+  $("courseTitle").value="";
+  $("courseProvider").value="";
+  $("courseIsOurs").checked=false;
+  $("coursePrice").value="";
+  $("courseFormat").value="online";
+  $("courseLevel").value="beginner";
+  $("courseLanguage").value="az";
+  $("courseUrl").value="";
+  $("courseDescription").value="";
+  $("courseActive").checked=true;
+  $("courseCancelEditBtn").style.display="none";
+  $("courseErr").textContent="";
+}
+$("courseCancelEditBtn").onclick=resetCourseForm;
+
+$("courseSaveBtn").onclick=async()=>{
+  const errEl=$("courseErr");
+  errEl.textContent="";
+  const title=$("courseTitle").value.trim();
+  const provider=$("courseProvider").value.trim();
+  if(!title||!provider){errEl.textContent="Ad və təminatçı vacibdir.";return;}
+
+  const payload={
+    title,provider,
+    is_ours:$("courseIsOurs").checked,
+    price:$("coursePrice").value.trim()||null,
+    format:$("courseFormat").value,
+    level:$("courseLevel").value,
+    language:$("courseLanguage").value,
+    url:$("courseUrl").value.trim()||null,
+    description:$("courseDescription").value.trim()||null,
+    active:$("courseActive").checked,
+  };
+
+  // sbAuth.from() (not raw fetch) — carries the admin session token that
+  // is_admin() (supabase/schema-rbac.sql) checks. Same reason as
+  // loadModeration()/sbFetch() above.
+  const q=editingCourseId
+    ? sbAuth.from("courses").update(payload).eq("id",editingCourseId)
+    : sbAuth.from("courses").insert(payload);
+  const{error}=await q;
+  if(error){errEl.textContent="Yadda saxlanmadı — yenidən cəhd edin.";return;}
+  resetCourseForm();
+  loadCourses();
+};
+
+async function loadCourses(){
+  const box=$("coursesBox");
+  box.textContent="Yüklənir…";
+  const{data:courses,error}=await sbAuth.from("courses").select("*").order("title");
+  if(error){box.textContent="Yüklənmədi.";return;}
+  if(!courses.length){box.innerHTML='<p class="mini">Hələ kurs əlavə edilməyib.</p>';return;}
+
+  box.innerHTML=courses.map(c=>{
+    const info=[COURSE_FORMAT_LABEL[c.format]||c.format,COURSE_LEVEL_LABEL[c.level]||c.level,COURSE_LANGUAGE_LABEL[c.language]||c.language];
+    if(c.price) info.push(esc(c.price));
+    return '<div class="panel" style="margin-bottom:10px">'+
+      '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">'+
+        '<div>'+
+          '<b>'+esc(c.title)+'</b>'+(c.is_ours?' <span class="mini">(bizim)</span>':'')+
+          '<div class="mini">'+esc(c.provider)+' • '+info.join(" • ")+(c.active?'':' • deaktiv')+'</div>'+
+        '</div>'+
+        '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+          '<button class="linkbtn" data-edit="'+c.id+'">redaktə et</button>'+
+          '<button class="linkbtn" data-toggle-active="'+c.id+'" data-current="'+c.active+'">'+(c.active?"deaktiv et":"aktiv et")+'</button>'+
+          '<button class="linkbtn" data-delete="'+c.id+'">sil</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join("");
+
+  box.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{
+    const c=courses.find(x=>String(x.id)===b.dataset.edit);
+    if(!c)return;
+    editingCourseId=c.id;
+    $("courseFormTitle").textContent="Kursu redaktə et";
+    $("courseTitle").value=c.title;
+    $("courseProvider").value=c.provider;
+    $("courseIsOurs").checked=c.is_ours;
+    $("coursePrice").value=c.price||"";
+    $("courseFormat").value=c.format;
+    $("courseLevel").value=c.level;
+    $("courseLanguage").value=c.language;
+    $("courseUrl").value=c.url||"";
+    $("courseDescription").value=c.description||"";
+    $("courseActive").checked=c.active;
+    $("courseCancelEditBtn").style.display="inline-block";
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+  box.querySelectorAll("[data-toggle-active]").forEach(b=>b.onclick=async()=>{
+    const newActive=b.dataset.current!=="true";
+    await sbAuth.from("courses").update({active:newActive}).eq("id",b.dataset.toggleActive);
+    loadCourses();
+  });
+  box.querySelectorAll("[data-delete]").forEach(b=>b.onclick=async()=>{
+    if(!confirm("Bu kursu silmək istədiyinizə əminsiniz?"))return;
+    await sbAuth.from("courses").delete().eq("id",b.dataset.delete);
+    loadCourses();
+  });
+}
 
 /* ================= məqalə moderasiyası ================= */
 const CATEGORY_LABEL={ai:"AI",tools:"IT BA Alətləri",case_studies:"Praktik Keys / Real Hadisələr",news:"Sənaye Xəbərləri"};

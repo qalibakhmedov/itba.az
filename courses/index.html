@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurslar — itba.az</title>
+    <meta name="description" content="Azərbaycan bazarında mövcud olan IT Biznes Analitikası kurslarının kataloqu — bizim proqram və digər təminatçılar bir yerdə.">
+    <link rel="canonical" href="https://itba.az/courses/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Kurslar — itba.az">
+    <meta property="og:description" content="Azərbaycan bazarında mövcud olan IT Biznes Analitikası kurslarının kataloqu.">
+    <meta property="og:url" content="https://itba.az/courses/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Kurslar — itba.az">
+    <meta name="twitter:description" content="Azərbaycan bazarında mövcud olan IT Biznes Analitikası kurslarının kataloqu.">
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+    <div class="animated-bg">
+        <canvas id="particle-bg" aria-hidden="true"></canvas>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo-link">
+                    <div class="logo-section">
+                        <div class="logo-mark">BA</div>
+                        <div class="logo-text">
+                            <h1>itba.az</h1>
+                            <p>Kurslar</p>
+                        </div>
+                    </div>
+                </a>
+                <nav aria-label="Primary">
+                    <a href="/articles/">Məqalələr</a>
+                    <a href="/academy/">Akademiya</a>
+                </nav>
+                <div class="header-buttons">
+                    <a href="/community/login.html" class="btn btn-ghost">Daxil ol</a>
+                </div>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-expanded="false" aria-controls="mobileNavPanel" aria-label="Menu">☰</button>
+            </div>
+            <nav class="mobile-nav-panel" id="mobileNavPanel" aria-label="Primary (mobile)">
+                <a href="/">Ana səhifə</a>
+                <a href="/articles/">Məqalələr</a>
+                <a href="/academy/">Akademiya</a>
+                <a href="/community/login.html">Daxil ol</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="content-page">
+        <div class="container">
+            <span class="badge">Kurslar</span>
+            <h2 class="section-title" style="text-align:left;font-size:34px;margin-bottom:20px">IT Biznes Analitikası kurs kataloqu</h2>
+            <p class="subheadline" style="margin-bottom:30px">Azərbaycan bazarında mövcud olan kurslar — bizim proqram və digər təminatçılar bir yerdə.</p>
+
+            <div class="filters-row">
+                <input type="search" id="courseSearch" class="article-search filter-search" placeholder="Axtar…" aria-label="Kurslar arasında axtar" style="margin-bottom:0">
+                <select id="filterFormat" class="filter-select" aria-label="Format">
+                    <option value="">Bütün formatlar</option>
+                    <option value="online">Onlayn</option>
+                    <option value="offline">Oflayn</option>
+                    <option value="hybrid">Hibrid</option>
+                </select>
+                <select id="filterLevel" class="filter-select" aria-label="Səviyyə">
+                    <option value="">Bütün səviyyələr</option>
+                    <option value="beginner">Başlanğıc</option>
+                    <option value="intermediate">Orta</option>
+                    <option value="advanced">Qabaqcıl</option>
+                </select>
+                <select id="filterLanguage" class="filter-select" aria-label="Dil">
+                    <option value="">Bütün dillər</option>
+                    <option value="az">Azərbaycan</option>
+                    <option value="en">İngilis</option>
+                    <option value="ru">Rus</option>
+                </select>
+            </div>
+
+            <div id="loadingNote" class="subhead">Yüklənir…</div>
+            <div class="cards-grid" id="courseGrid"></div>
+            <p id="emptyNote" class="subhead" style="display:none">Bu filtrlərə uyğun kurs tapılmadı.</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 itba.az – IT Business Analysis Academy</p>
+            <div style="margin-top: 10px;">
+                <a href="/">Ana səhifə</a>
+                <a href="/academy/">Akademiya</a>
+                <a href="/articles/">Məqalələr</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/site-common.js"></script>
+    <script>
+        trackVisit("courses");
+
+        const FORMAT_LABEL = { online: "Onlayn", offline: "Oflayn", hybrid: "Hibrid" };
+        const LEVEL_LABEL = { beginner: "Başlanğıc", intermediate: "Orta", advanced: "Qabaqcıl" };
+        const LANGUAGE_LABEL = { az: "Azərbaycan", en: "İngilis", ru: "Rus" };
+
+        let allCourses = [];
+
+        function courseCardHtml(c) {
+            const badge = c.is_ours ? '<span class="course-badge">Bizim proqram</span>' : "";
+            const infoBits = [FORMAT_LABEL[c.format] || c.format, LEVEL_LABEL[c.level] || c.level, LANGUAGE_LABEL[c.language] || c.language];
+            if (c.price) infoBits.push(c.price);
+            const linkAttrs = c.url ? ' href="' + esc(c.url) + '" target="_blank" rel="noopener noreferrer"' : ' href="#"';
+            return '<a class="card"' + linkAttrs + '>' +
+                '<span class="card-label">' + esc(c.provider) + '</span>' +
+                '<h3>' + esc(c.title) + badge + '</h3>' +
+                (c.description ? '<p>' + esc(c.description) + '</p>' : "") +
+                '<div class="card-info">' + infoBits.map(esc).join(" • ") + '</div>' +
+            '</a>';
+        }
+
+        function applyFilters() {
+            const q = document.getElementById("courseSearch").value.trim().toLowerCase();
+            const format = document.getElementById("filterFormat").value;
+            const level = document.getElementById("filterLevel").value;
+            const language = document.getElementById("filterLanguage").value;
+
+            const filtered = allCourses.filter((c) => {
+                if (format && c.format !== format) return false;
+                if (level && c.level !== level) return false;
+                if (language && c.language !== language) return false;
+                if (q) {
+                    const haystack = (c.title + " " + c.provider + " " + (c.description || "")).toLowerCase();
+                    if (haystack.indexOf(q) === -1) return false;
+                }
+                return true;
+            });
+
+            const grid = document.getElementById("courseGrid");
+            grid.innerHTML = filtered.map(courseCardHtml).join("");
+            document.getElementById("emptyNote").style.display = filtered.length ? "none" : "block";
+        }
+
+        (async () => {
+            try {
+                const res = await fetch(SUPABASE_URL + "/rest/v1/courses?active=eq.true&select=*&order=is_ours.desc,title.asc", {
+                    cache: "no-store", headers: SB_HEADERS
+                });
+                if (!res.ok) throw new Error("fetch failed: " + res.status);
+                allCourses = await res.json();
+                document.getElementById("loadingNote").style.display = "none";
+                applyFilters();
+            } catch (e) {
+                document.getElementById("loadingNote").textContent = "Kurslar yüklənmədi. Bir az sonra yenidən cəhd edin.";
+            }
+        })();
+
+        document.getElementById("courseSearch").addEventListener("input", applyFilters);
+        document.getElementById("filterFormat").addEventListener("change", applyFilters);
+        document.getElementById("filterLevel").addEventListener("change", applyFilters);
+        document.getElementById("filterLanguage").addEventListener("change", applyFilters);
+
+        // Mobile nav toggle
+        const mobileBtn = document.getElementById('mobileMenuBtn');
+        const mobilePanel = document.getElementById('mobileNavPanel');
+        mobileBtn.addEventListener('click', () => {
+            const open = mobilePanel.classList.toggle('open');
+            mobileBtn.setAttribute('aria-expanded', String(open));
+        });
+        mobilePanel.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+            mobilePanel.classList.remove('open');
+            mobileBtn.setAttribute('aria-expanded', 'false');
+        }));
+    </script>
+    <script src="/js/particle-bg.js"></script>
+</body>
+</html>

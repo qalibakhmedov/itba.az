@@ -22,6 +22,7 @@ this project's own.
 | `sitemap.xml` | **Generated**, not hand-edited — `scripts/build-articles.js` rewrites it every run (see "Article platform" below). `robots.txt` (still hand-maintained) points at it and disallows crawling `community/*.html`. |
 | `articles/` | The article platform's public output — entirely **generated** by `scripts/build-articles.js`, committed to the repo so GitHub Pages can serve it as plain static files. Don't hand-edit anything under here; it's overwritten on the next build. |
 | `community/write-article.html`, `community/my-articles.html` | Author-facing pages, gated to verified `ba_professional` accounts (same `requireSession()` pattern as the rest of `community/`) — write/edit a draft, submit for review, see your own articles' status. |
+| `courses/index.html` | Course directory — admin-curated catalog of IT BA courses on the Azerbaijani market (ours and others). Static shell for its own SEO; the list and filters (format/level/language/search) are client-rendered against Supabase, same pattern as the rest of the public site's live data (no per-course pages, no build step needed here — see "Course directory" below). |
 
 ## Site restructure (community platform, Phase 1 of the redesign)
 
@@ -88,6 +89,19 @@ selector) with approve/reject actions — like the Wording tab, these go
 through `sbAuth.from(...)` (not raw `fetch`) so the request carries the
 admin's session token, which `is_admin()` checks.
 
+## Course directory (Phase 3)
+
+An admin-curated catalog of IT BA courses on the Azerbaijani market —
+itba.az's own program plus other providers. Unlike articles, there's no
+author/review workflow here: admin is the only writer (same trust model
+as `admin_wordings`), managed from `admin.html`'s **Kurslar** tab. Unlike
+articles, there's also no build-time static generation — `courses/
+index.html` is a static shell (for its own SEO) that fetches active
+courses client-side with the public anon key and filters them entirely
+in the browser (format/level/language/search), the same pattern
+`index.html`'s latest-articles teaser already uses. No per-course pages;
+most rows just link out to the provider's own site via `url`.
+
 ## Local development
 
 No build step — just serve the directory and open a page:
@@ -127,6 +141,9 @@ top of that same project — run, in order:
 4. `supabase/schema-articles.sql` — the `articles` table + the RLS
    policies that make admin review actually mandatory (not just a UI
    convention). Depends on `profiles` (step 1) and `is_admin()` (step 3).
+5. `supabase/schema-courses.sql` — the `courses` table. Simpler trust
+   model than articles (admin is the only writer). Depends on
+   `is_admin()` (step 3).
 
 The Supabase URL and publishable (anon) key are intentionally committed in
 `js/site-common.js` — this is expected for a client-only app; real access

@@ -95,6 +95,7 @@ ${jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script
       </a>
       <nav aria-label="Primary">
         <a href="/articles/">Məqalələr</a>
+        <a href="/courses/">Kurslar</a>
         <a href="/academy/">Akademiya</a>
       </nav>
       <div class="header-buttons">
@@ -110,6 +111,7 @@ ${content}
     <div style="margin-top: 10px;">
       <a href="/">Ana səhifə</a>
       <a href="/articles/">Məqalələr</a>
+      <a href="/courses/">Kurslar</a>
       <a href="/academy/">Akademiya</a>
     </div>
   </div>
@@ -236,6 +238,7 @@ function buildSitemap(articles) {
   const staticUrls = [
     { loc: `${SITE_URL}/`, changefreq: "weekly", priority: "1.0" },
     { loc: `${SITE_URL}/academy/`, changefreq: "monthly", priority: "0.8" },
+    { loc: `${SITE_URL}/courses/`, changefreq: "weekly", priority: "0.8" },
     { loc: `${SITE_URL}/articles/`, changefreq: "daily", priority: "0.9" },
     ...CATEGORIES.map((cat) => ({ loc: `${SITE_URL}/articles/category/${cat}/`, changefreq: "daily", priority: "0.7" })),
     ...articles.map((a) => ({ loc: `${SITE_URL}/articles/${a.slug}/`, changefreq: "monthly", priority: "0.6" })),
