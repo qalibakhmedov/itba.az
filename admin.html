@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>itba.az — Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDF1F0; --card:#FFFFFF; --ink:#17222D; --muted:#5D6E7A;
+    --line:#D6DEE1; --red:#C74634; --red-dark:#A93A2B; --green:#177A4C;
+    --sans:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);min-height:100vh}
+  .hidden{display:none!important}
+  header{background:var(--ink);color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  header .brand{font-family:var(--mono);font-size:14px;letter-spacing:.08em}
+  header .brand b{color:#F0A196}
+  header button{background:transparent;border:1px solid #3A4956;color:#C9D4DA;font-family:var(--mono);font-size:12px;padding:5px 12px;border-radius:4px;cursor:pointer}
+  header button:hover{border-color:#F0A196;color:#fff}
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 18px 60px}
+  .login-card{max-width:420px;margin:10vh auto 0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:34px 32px;box-shadow:0 10px 30px rgba(23,34,45,.07)}
+  .login-card h1{font-size:24px;font-weight:700;margin-bottom:4px}
+  .login-card .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
+  label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  input[type=password]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:14px;background:#FBFCFC;color:var(--ink)}
+  input:focus{outline:2px solid var(--red);outline-offset:1px;border-color:transparent}
+  .btn{display:inline-block;width:100%;margin-top:16px;background:var(--red);color:#fff;border:none;border-radius:6px;padding:12px;font-family:var(--sans);font-weight:600;font-size:15px;cursor:pointer}
+  .btn:hover{background:var(--red-dark)}
+  .btn.ghost{background:transparent;color:var(--red);border:1px solid var(--red)}
+  .btn.ghost:hover{background:#FBEFEC}
+  .btn.small{width:auto;margin:0;padding:9px 18px;font-size:13px}
+  .err{margin-top:12px;font-size:13px;color:var(--red);font-weight:500}
+  h2.admin-h{font-size:22px;margin-bottom:4px}
+  .toprow{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+  .mini{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:26px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+  .tile .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .tile .val{font-size:30px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin-bottom:26px}
+  .panel h3{font-size:16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .vchart{width:100%;height:180px;display:block}
+  .vbar{fill:var(--red);cursor:pointer;transition:fill .15s}
+  .vbar:hover{fill:var(--red-dark)}
+  .vbaseline{stroke:var(--line);stroke-width:1}
+  .chart-tooltip{position:fixed;pointer-events:none;background:var(--ink);color:#fff;font-family:var(--mono);font-size:11.5px;padding:6px 10px;border-radius:6px;z-index:1000;display:none;white-space:nowrap}
+  .chart-labels{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .linkbtn{background:none;border:none;color:var(--red);cursor:pointer;font-size:12.5px;text-decoration:underline;padding:0}
+  table.adm{width:100%;border-collapse:collapse;font-size:13px}
+  table.adm th{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;text-align:left;background:var(--ink);color:#fff;padding:9px 10px}
+  table.adm td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+  tr.exp-row td{background:#F7F9F8;font-size:13px;line-height:1.6}
+  .empty{color:var(--muted);font-size:13px;padding:10px 0}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">itba.az&nbsp;<b>ADMIN</b></div>
+  <button id="logoutBtn" class="hidden">Çıxış</button>
+</header>
+
+<div id="viewLogin" class="wrap">
+  <div class="login-card">
+    <h1>Admin girişi</h1>
+    <div class="sub">Sayt statistikası və müraciətlər</div>
+    <label for="adminCode">Admin kodu</label>
+    <input type="password" id="adminCode" placeholder="kod">
+    <button class="btn" id="loginBtn">Daxil ol</button>
+    <div class="err" id="loginErr"></div>
+  </div>
+</div>
+
+<div id="viewDash" class="wrap hidden">
+  <div class="toprow">
+    <div>
+      <h2 class="admin-h">Sayt statistikası</h2>
+      <div class="mini" id="lastRefreshed"></div>
+    </div>
+    <button class="btn ghost small" id="refreshBtn">Yenilə</button>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="panel">
+    <h3>
+      <span>Son 14 gün — ziyarətlər</span>
+      <button class="linkbtn" id="toggleTableBtn">cədvəl kimi göstər</button>
+    </h3>
+    <div id="chartBox"></div>
+    <div id="chartTableBox" class="hidden"></div>
+  </div>
+
+  <div class="panel">
+    <h3>Müraciətlər (Apply formu)</h3>
+    <div id="applicationsBox">Yüklənir…</div>
+  </div>
+
+  <div class="panel">
+    <h3>Son fəaliyyət</h3>
+    <div id="activityBox">Yüklənir…</div>
+  </div>
+</div>
+
+<div id="chartTooltip" class="chart-tooltip"></div>
+
+<script>
+const SUPABASE_URL="https://ndsdnsntpqbyktjrcjtq.supabase.co";
+const SUPABASE_KEY="sb_publishable_5Hv23JPUmQEIZXHyygkkUg_tWU7SuET";
+const SB_HEADERS={"apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"};
+const ADMIN_CODE="ITBA-SITE-2026";
+const GOAL_LABELS={start:"Start an IT BA career",develop:"Develop as an existing IT BA",corporate:"Corporate training / team development",other:"Other"};
+
+const $=id=>document.getElementById(id);
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function show(v){["viewLogin","viewDash"].forEach(x=>$(x).classList.add("hidden"));$(v).classList.remove("hidden");$("logoutBtn").classList.toggle("hidden",v==="viewLogin");}
+
+let refreshTimer=null;
+$("loginBtn").onclick=()=>{
+  if($("adminCode").value.trim()===ADMIN_CODE){
+    show("viewDash");
+    loadAll();
+    stopAutoRefresh();
+    refreshTimer=setInterval(loadAll,60000);
+  } else {
+    $("loginErr").textContent="Admin kodu yanlışdır.";
+  }
+};
+$("adminCode").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginBtn").click();});
+$("logoutBtn").onclick=()=>{stopAutoRefresh();$("adminCode").value="";show("viewLogin");};
+$("refreshBtn").onclick=loadAll;
+function stopAutoRefresh(){if(refreshTimer){clearInterval(refreshTimer);refreshTimer=null;}}
+
+async function sbFetch(path){
+  const res=await fetch(SUPABASE_URL+"/rest/v1/"+path,{cache:"no-store",headers:Object.assign({},SB_HEADERS,{"Prefer":"count=exact"})});
+  if(!res.ok) throw new Error("Supabase sorğu xətası: "+res.status);
+  const range=res.headers.get("content-range");
+  const total=range&&range.split("/")[1]!=="*"?parseInt(range.split("/")[1],10):null;
+  const rows=await res.json();
+  return {total,rows};
+}
+
+const LOAD_ERR='<p class="empty">Məlumat yüklənmədi — internet bağlantısını yoxlayın və ya Supabase cədvəlinin yaradıldığını təsdiq edin.</p>';
+
+async function loadAll(){
+  const [visitsResult,appsResult]=await Promise.allSettled([
+    sbFetch("page_visits?select=page,visitor_id,visited_at,referrer&order=visited_at.desc&limit=3000"),
+    sbFetch("applications?select=*&order=submitted_at.desc&limit=1000")
+  ]);
+  const visits=visitsResult.status==="fulfilled"?visitsResult.value:null;
+  const apps=appsResult.status==="fulfilled"?appsResult.value:null;
+
+  if(visits&&apps){ renderTiles(visits,apps); }
+  else{ $("tiles").innerHTML=LOAD_ERR; }
+
+  if(visits){ renderChart(visits.rows); renderActivity(visits.rows); }
+  else{ $("chartBox").innerHTML=LOAD_ERR; $("activityBox").innerHTML=LOAD_ERR; }
+
+  if(apps){ renderApplications(apps.rows); }
+  else{ $("applicationsBox").innerHTML=LOAD_ERR; }
+
+  $("lastRefreshed").textContent="Son yenilənmə: "+new Date().toLocaleTimeString("az-AZ");
+}
+
+function renderTiles(visits,apps){
+  const rows=visits.rows;
+  const uniqueVisitors=new Set(rows.map(r=>r.visitor_id||"anon")).size;
+  const todayStr=new Date().toISOString().slice(0,10);
+  const visitsToday=rows.filter(r=>(r.visited_at||"").slice(0,10)===todayStr).length;
+  const totalVisits=visits.total??rows.length;
+  const totalApps=apps.total??apps.rows.length;
+  const weekAgo=Date.now()-7*24*60*60*1000;
+  const newApps=apps.rows.filter(r=>new Date(r.submitted_at).getTime()>=weekAgo).length;
+  const tiles=[
+    ["Ümumi ziyarətlər",totalVisits],
+    ["Unikal ziyarətçilər",uniqueVisitors],
+    ["Bu gün",visitsToday],
+    ["Ümumi müraciətlər",totalApps],
+    ["Yeni müraciətlər (7 gün)",newApps]
+  ];
+  $("tiles").innerHTML=tiles.map(([lbl,val])=>`<div class="tile"><div class="lbl">${lbl}</div><div class="val">${val}</div></div>`).join("");
+}
+
+function dailyBuckets(rows,days){
+  const buckets={},labels=[];
+  const now=new Date();
+  for(let i=days-1;i>=0;i--){
+    const d=new Date(now);d.setDate(d.getDate()-i);
+    const key=d.toISOString().slice(0,10);
+    buckets[key]=0;labels.push(key);
+  }
+  rows.forEach(r=>{const key=(r.visited_at||"").slice(0,10);if(key in buckets)buckets[key]++;});
+  return labels.map(k=>({date:k,count:buckets[k]}));
+}
+
+function renderChart(rows){
+  const buckets=dailyBuckets(rows,14);
+  const w=700,h=180,padL=8,padR=8,padT=10,padB=8;
+  const innerW=w-padL-padR,innerH=h-padT-padB;
+  const n=buckets.length,gap=6;
+  const barW=(innerW-gap*(n-1))/n;
+  const max=Math.max(1,...buckets.map(b=>b.count));
+  const baselineY=padT+innerH;
+  let bars="";
+  buckets.forEach((b,i)=>{
+    const bh=Math.round((b.count/max)*(innerH-6));
+    const x=padL+i*(barW+gap);
+    const y=baselineY-Math.max(bh,1);
+    bars+=`<rect class="vbar" data-date="${b.date}" data-count="${b.count}" x="${x.toFixed(1)}" y="${y}" width="${barW.toFixed(1)}" height="${Math.max(bh,1)}" rx="4" ry="4"></rect>`;
+  });
+  $("chartBox").innerHTML=`<svg viewBox="0 0 ${w} ${h}" class="vchart" role="img" aria-label="Son 14 gün ziyarət sayı">
+      <line x1="${padL}" y1="${baselineY}" x2="${w-padR}" y2="${baselineY}" class="vbaseline"/>
+      ${bars}
+    </svg>
+    <div class="chart-labels"><span>${buckets[0].date.slice(5)}</span><span>${buckets[buckets.length-1].date.slice(5)}</span></div>`;
+
+  const tip=$("chartTooltip");
+  $("chartBox").querySelectorAll(".vbar").forEach(el=>{
+    el.addEventListener("mousemove",e=>{
+      tip.style.display="block";
+      tip.style.left=(e.clientX+12)+"px";
+      tip.style.top=(e.clientY+12)+"px";
+      tip.textContent=el.dataset.date+" — "+el.dataset.count+" ziyarət";
+    });
+    el.addEventListener("mouseleave",()=>{tip.style.display="none";});
+  });
+
+  $("chartTableBox").innerHTML='<table class="adm"><tr><th>Tarix</th><th>Ziyarət</th></tr>'+
+    buckets.map(b=>`<tr><td>${b.date}</td><td>${b.count}</td></tr>`).join("")+"</table>";
+}
+$("toggleTableBtn").onclick=()=>{
+  const shown=!$("chartTableBox").classList.contains("hidden");
+  $("chartTableBox").classList.toggle("hidden",shown);
+  $("chartBox").classList.toggle("hidden",!shown);
+  $("toggleTableBtn").textContent=shown?"cədvəl kimi göstər":"qrafik kimi göstər";
+};
+
+function renderApplications(rows){
+  if(!rows.length){$("applicationsBox").innerHTML='<p class="empty">Hələ müraciət yoxdur.</p>';return;}
+  let html='<table class="adm"><tr><th>Tarix</th><th>Ad Soyad</th><th>Telefon</th><th>Email</th><th>Rol</th><th>Məqsəd</th><th>Mesaj</th></tr>';
+  rows.forEach((r,i)=>{
+    const date=r.submitted_at?new Date(r.submitted_at).toLocaleString("az-AZ"):"—";
+    const goal=GOAL_LABELS[r.goal]||r.goal||"—";
+    const msg=r.message||"";
+    const short=msg.length>60?msg.slice(0,60)+"…":msg;
+    html+=`<tr><td>${esc(date)}</td><td>${esc(r.full_name)}</td><td>${esc(r.phone)}</td><td>${esc(r.email)}</td><td>${esc(r.role)}</td><td>${esc(goal)}</td>
+      <td>${esc(short)}${msg.length>60?` <button class="linkbtn" data-id="app-${i}">tam göstər</button>`:""}</td></tr>`;
+    if(msg.length>60){
+      html+=`<tr class="exp-row hidden" id="app-${i}"><td colspan="7">${esc(msg)}</td></tr>`;
+    }
+  });
+  html+="</table>";
+  $("applicationsBox").innerHTML=html;
+  $("applicationsBox").querySelectorAll(".linkbtn").forEach(b=>b.onclick=()=>{
+    const el=document.getElementById(b.dataset.id);if(el)el.classList.toggle("hidden");
+  });
+}
+
+function renderActivity(rows){
+  if(!rows.length){$("activityBox").innerHTML='<p class="empty">Hələ ziyarət qeydə alınmayıb.</p>';return;}
+  let html='<table class="adm"><tr><th>Vaxt</th><th>Səhifə</th><th>Referrer</th></tr>';
+  rows.slice(0,25).forEach(r=>{
+    const time=r.visited_at?new Date(r.visited_at).toLocaleString("az-AZ"):"—";
+    html+=`<tr><td>${esc(time)}</td><td>${esc(r.page)}</td><td>${esc(r.referrer||"—")}</td></tr>`;
+  });
+  html+="</table>";
+  $("activityBox").innerHTML=html;
+}
+</script>
+</body>
+</html>

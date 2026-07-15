@@ -1042,23 +1042,23 @@
                     <form id="applyForm">
                         <div class="form-group">
                             <label>Full Name *</label>
-                            <input type="text" required placeholder="Your full name">
+                            <input type="text" id="appFullName" required placeholder="Your full name">
                         </div>
                         <div class="form-group">
                             <label>Phone / WhatsApp *</label>
-                            <input type="tel" required placeholder="+994 XX XXX XX XX">
+                            <input type="tel" id="appPhone" required placeholder="+994 XX XXX XX XX">
                         </div>
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" placeholder="your.email@example.com">
+                            <input type="email" id="appEmail" placeholder="your.email@example.com">
                         </div>
                         <div class="form-group">
                             <label>Current role / field</label>
-                            <input type="text" placeholder="e.g., Banking operations, Customer service">
+                            <input type="text" id="appRole" placeholder="e.g., Banking operations, Customer service">
                         </div>
                         <div class="form-group">
                             <label>Goal *</label>
-                            <select required>
+                            <select id="appGoal" required>
                                 <option value="">Select your goal...</option>
                                 <option value="start">Start an IT BA career</option>
                                 <option value="develop">Develop as an existing IT BA</option>
@@ -1068,7 +1068,7 @@
                         </div>
                         <div class="form-group">
                             <label>Message / Notes</label>
-                            <textarea placeholder="I currently work in banking operations and want to move into IT BA..."></textarea>
+                            <textarea id="appMessage" placeholder="I currently work in banking operations and want to move into IT BA..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">Submit Application</button>
                         <p class="consent-note">By submitting the form, you agree to the processing of your contact information for communication purposes.</p>
@@ -1115,6 +1115,24 @@
     </footer>
 
     <script>
+        // Supabase (shared backend used across the site for analytics + lead capture)
+        const SUPABASE_URL = "https://ndsdnsntpqbyktjrcjtq.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_5Hv23JPUmQEIZXHyygkkUg_tWU7SuET";
+        const SB_HEADERS = { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" };
+
+        function getVisitorId() {
+            try {
+                let id = localStorage.getItem("itba_visitor_id");
+                if (!id) { id = "v_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 10); localStorage.setItem("itba_visitor_id", id); }
+                return id;
+            } catch (e) { return "anon"; }
+        }
+        fetch(SUPABASE_URL + "/rest/v1/page_visits", {
+            method: "POST", cache: "no-store",
+            headers: Object.assign({}, SB_HEADERS, { "Prefer": "return=minimal" }),
+            body: JSON.stringify([{ page: "index", visitor_id: getVisitorId(), referrer: document.referrer || null }])
+        }).catch(() => {});
+
         // Particle Network Animation
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
@@ -1256,10 +1274,33 @@
         });
 
         // Form submission
-        document.getElementById('applyForm').addEventListener('submit', function(e) {
+        document.getElementById('applyForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            alert('Thank you for your application! We will contact you soon.');
-            this.reset();
+            const form = this;
+            const btn = form.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.disabled = true; btn.textContent = 'Submitting…';
+            const payload = {
+                full_name: document.getElementById('appFullName').value.trim(),
+                phone: document.getElementById('appPhone').value.trim(),
+                email: document.getElementById('appEmail').value.trim(),
+                role: document.getElementById('appRole').value.trim(),
+                goal: document.getElementById('appGoal').value,
+                message: document.getElementById('appMessage').value.trim()
+            };
+            try {
+                const res = await fetch(SUPABASE_URL + "/rest/v1/applications", {
+                    method: "POST", cache: "no-store",
+                    headers: Object.assign({}, SB_HEADERS, { "Prefer": "return=minimal" }),
+                    body: JSON.stringify([payload])
+                });
+                if (!res.ok) throw new Error("submit failed: " + res.status);
+                alert('Thank you for your application! We will contact you soon.');
+                form.reset();
+            } catch (err) {
+                alert('Something went wrong while sending your application. Please try again or contact us directly.');
+            }
+            btn.disabled = false; btn.textContent = originalText;
         });
     </script>
 </body>
