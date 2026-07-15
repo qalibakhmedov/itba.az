@@ -34,15 +34,20 @@
   .btn.ghost:hover{background:#FBEFEC}
   .btn.small{width:auto;margin:0;padding:9px 18px;font-size:13px}
   .err{margin-top:12px;font-size:13px;color:var(--red);font-weight:500}
+  .ok{margin-top:12px;font-size:13px;color:var(--green);font-weight:500}
   h2.admin-h{font-size:22px;margin-bottom:4px}
   .toprow{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px}
   .mini{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .navtabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
+  .navtabs button{width:auto;margin:0;padding:9px 20px;font-size:13.5px}
+  .tab-active{background:var(--ink)!important;color:#fff!important;border-color:var(--ink)!important}
   .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:26px}
   .tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
   .tile .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
   .tile .val{font-size:30px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums}
   .panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin-bottom:26px}
   .panel h3{font-size:16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .panel-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
   .vchart{width:100%;height:180px;display:block}
   .vbar{fill:var(--red);cursor:pointer;transition:fill .15s}
   .vbar:hover{fill:var(--red-dark)}
@@ -55,6 +60,16 @@
   table.adm td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
   tr.exp-row td{background:#F7F9F8;font-size:13px;line-height:1.6}
   .empty{color:var(--muted);font-size:13px;padding:10px 0}
+  .devlog{list-style:none}
+  .devlog li{padding:12px 0;border-top:1px solid var(--line)}
+  .devlog li:first-child{border-top:none}
+  .devlog .dl-date{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.05em}
+  .devlog .dl-title{font-weight:600;margin:2px 0 3px}
+  .devlog .dl-desc{font-size:13px;color:var(--muted);line-height:1.5}
+  .wfield{margin-bottom:16px}
+  .wfield .wf-label{font-size:12.5px;color:var(--muted);margin-bottom:5px}
+  .wording-actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+  .wording-actions .btn{width:auto;margin:0;padding:11px 22px}
 </style>
 </head>
 <body>
@@ -66,8 +81,8 @@
 
 <div id="viewLogin" class="wrap">
   <div class="login-card">
-    <h1>Admin girişi</h1>
-    <div class="sub">Sayt statistikası və müraciətlər</div>
+    <h1 id="loginTitleEl">Admin girişi</h1>
+    <div class="sub" id="loginSubEl">Sayt statistikası və müraciətlər</div>
     <label for="loginEmail">Email</label>
     <input type="email" id="loginEmail" placeholder="admin@itba.az" autocomplete="username">
     <div class="field-gap">
@@ -79,34 +94,70 @@
   </div>
 </div>
 
-<div id="viewDash" class="wrap hidden">
-  <div class="toprow">
-    <div>
-      <h2 class="admin-h">Sayt statistikası</h2>
-      <div class="mini" id="lastRefreshed"></div>
+<div id="viewApp" class="wrap hidden">
+  <div class="navtabs">
+    <button class="btn ghost" id="navMonitoringBtn">Monitorinq</button>
+    <button class="btn ghost" id="navWordingBtn">Mətnlər</button>
+  </div>
+
+  <div id="viewMonitoring">
+    <div class="toprow">
+      <div>
+        <h2 class="admin-h" id="dashTitleEl">Sayt statistikası</h2>
+        <div class="mini" id="lastRefreshed"></div>
+      </div>
+      <button class="btn ghost small" id="refreshBtn">Yenilə</button>
     </div>
-    <button class="btn ghost small" id="refreshBtn">Yenilə</button>
+
+    <div class="panel">
+      <h3><span id="devlogTitleEl">İnkişaf tarixçəsi</span></h3>
+      <ul class="devlog" id="devlogList"></ul>
+    </div>
+
+    <div class="tiles" id="tiles"></div>
+
+    <div class="panel">
+      <h3>
+        <span id="chartTitleEl">Son 14 gün — ziyarətlər</span>
+        <div class="panel-actions">
+          <button class="linkbtn" id="chartDownloadBtn">Ziyarətləri CSV kimi yüklə</button>
+          <button class="linkbtn" id="toggleTableBtn">cədvəl kimi göstər</button>
+        </div>
+      </h3>
+      <div id="chartBox"></div>
+      <div id="chartTableBox" class="hidden"></div>
+    </div>
+
+    <div class="panel">
+      <h3>
+        <span id="appsTitleEl">Müraciətlər (Apply formu)</span>
+        <button class="linkbtn" id="appsDownloadBtn">Müraciətləri CSV kimi yüklə</button>
+      </h3>
+      <div id="applicationsBox">Yüklənir…</div>
+    </div>
+
+    <div class="panel">
+      <h3><span id="activityTitleEl">Son fəaliyyət</span></h3>
+      <div id="activityBox">Yüklənir…</div>
+    </div>
   </div>
 
-  <div class="tiles" id="tiles"></div>
-
-  <div class="panel">
-    <h3>
-      <span>Son 14 gün — ziyarətlər</span>
-      <button class="linkbtn" id="toggleTableBtn">cədvəl kimi göstər</button>
-    </h3>
-    <div id="chartBox"></div>
-    <div id="chartTableBox" class="hidden"></div>
-  </div>
-
-  <div class="panel">
-    <h3>Müraciətlər (Apply formu)</h3>
-    <div id="applicationsBox">Yüklənir…</div>
-  </div>
-
-  <div class="panel">
-    <h3>Son fəaliyyət</h3>
-    <div id="activityBox">Yüklənir…</div>
+  <div id="viewWording" class="hidden">
+    <div class="toprow">
+      <div>
+        <h2 class="admin-h" id="wordingTitleEl">Panel mətnlərini redaktə et</h2>
+        <div class="mini" id="wordingSubEl">Aşağıdakı mətnləri dəyişib yadda saxlaya bilərsiniz. Dəyişikliklər dərhal panelə tətbiq olunur.</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div id="wordingFields"></div>
+      <div class="wording-actions">
+        <button class="btn" id="wordingSaveBtn" style="max-width:220px">Yadda saxla</button>
+        <button class="btn ghost" id="wordingResetBtn" style="max-width:260px">Standart mətnlərə qaytar</button>
+      </div>
+      <div class="err" id="wordingErr"></div>
+      <div class="ok" id="wordingOk"></div>
+    </div>
   </div>
 </div>
 
@@ -124,12 +175,192 @@ const sbAuth=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const $=id=>document.getElementById(id);
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
-function show(v){["viewLogin","viewDash"].forEach(x=>$(x).classList.add("hidden"));$(v).classList.remove("hidden");$("logoutBtn").classList.toggle("hidden",v!=="viewDash");}
+
+/* ================= inkişaf tarixçəsi (dev log) ================= */
+const DEV_LOG=[
+  {date:"2026-07-10",title:"Oracle SQL imtahan platforması",desc:"HR sxemi üzərində işləyən, brauzerdə çalışan Oracle SQL imtahan simulyatoru (exam.html) quruldu — 25 sual, sual başı 4 bal."},
+  {date:"2026-07-10",title:"Müəllim paneli: sual üzrə baxış və avtomatik yenilənmə",desc:"Müəllim hər tələbənin hər suala yazdığı sorğunu ayrıca görə bilir; panel hər 60 saniyədən bir özü yenilənir."},
+  {date:"2026-07-10",title:"Tələbə irəliləyişinin real bazada saxlanması",desc:"Tələbə cavabları brauzerlər arası paylaşılmırdı (yalnız yaddaşda qalırdı) — Supabase əsaslı ortaq yaddaşa keçirildi ki, müəllim panelində real vaxtda görünsün."},
+  {date:"2026-07-10",title:"2 saatlıq imtahan vaxtı və geri sayım",desc:"Tələbə pəncərəsinə 2 saatlıq geri sayan taymer əlavə olundu; vaxt bitdikdə imtahan avtomatik başa çatdırılır."},
+  {date:"2026-07-10",title:"Müəllim panelindən tələbə email-i əlavə etmək",desc:"Müəllim panelə yeni tələbə email-ləri əlavə edə bilir; siyahı Supabase-də saxlanılır."},
+  {date:"2026-07-10",title:"Bal üzrə sıralama və sərbəst sual naviqasiyası",desc:"Müəllim panelində iştirakçılar bala görə sıralanır; tələbələr üçün hər tələbədə fərqli sual sırası və sıralamaya klikləyərək istənilən suala keçid imkanı yaradıldı."},
+  {date:"2026-07-10",title:"Sual mətnini kopyalamağın və cavaba yapışdırmağın qarşısının alınması",desc:"Sual mətni seçilə/kopyalanabilməz edildi; SQL redaktoruna yapışdırma (paste) bloklandı."},
+  {date:"2026-07-15",title:"Sayt admin paneli: ziyarət izləməsi və müraciətlər lövhəsi",desc:"index.html-də Apply formu artıq Supabase-ə real məlumat yazır; sayt ziyarətləri izlənilir; yeni admin.html — statistika, qrafik, müraciətlər və fəaliyyət lenti."},
+  {date:"2026-07-15",title:"Admin girişi: email + şifrə (əvvəlcə OTP ilə, sonra sadələşdirildi)",desc:"Admin girişi ümumi koddan Supabase Auth əsaslı email+şifrə sisteminə keçirildi."},
+  {date:"2026-07-15",title:"Admin paneli iki hissəyə bölündü: Monitorinq və Mətnlər",desc:"Monitorinq bölməsinə inkişaf tarixçəsi və CSV yükləmə funksiyaları, ayrıca Mətnlər bölməsinə panel mətnlərini redaktə etmək imkanı əlavə olundu."}
+];
+function renderDevLog(){
+  $("devlogList").innerHTML=DEV_LOG.map(e=>`
+    <li>
+      <div class="dl-date">${esc(e.date)}</div>
+      <div class="dl-title">${esc(e.title)}</div>
+      <div class="dl-desc">${esc(e.desc)}</div>
+    </li>`).join("");
+}
+
+/* ================= mətnlər (wording) sistemi ================= */
+const DEFAULT_WORDINGS={
+  loginTitle:"Admin girişi",
+  loginSub:"Sayt statistikası və müraciətlər",
+  loginBtn:"Daxil ol",
+  logoutBtn:"Çıxış",
+  navMonitoring:"Monitorinq",
+  navWording:"Mətnlər",
+  dashTitle:"Sayt statistikası",
+  refreshBtn:"Yenilə",
+  devlogTitle:"İnkişaf tarixçəsi",
+  tileTotalVisits:"Ümumi ziyarətlər",
+  tileUniqueVisitors:"Unikal ziyarətçilər",
+  tileToday:"Bu gün",
+  tileTotalApps:"Ümumi müraciətlər",
+  tileNewApps:"Yeni müraciətlər (7 gün)",
+  chartTitle:"Son 14 gün — ziyarətlər",
+  chartToggleTable:"cədvəl kimi göstər",
+  chartToggleChart:"qrafik kimi göstər",
+  chartDownloadBtn:"Ziyarətləri CSV kimi yüklə",
+  appsTitle:"Müraciətlər (Apply formu)",
+  appsEmpty:"Hələ müraciət yoxdur.",
+  appsExpand:"tam göstər",
+  appsDownloadBtn:"Müraciətləri CSV kimi yüklə",
+  activityTitle:"Son fəaliyyət",
+  activityEmpty:"Hələ ziyarət qeydə alınmayıb.",
+  wordingTitle:"Panel mətnlərini redaktə et",
+  wordingSub:"Aşağıdakı mətnləri dəyişib yadda saxlaya bilərsiniz. Dəyişikliklər dərhal panelə tətbiq olunur.",
+  wordingSaveBtn:"Yadda saxla",
+  wordingResetBtn:"Standart mətnlərə qaytar"
+};
+const WORDING_LABELS={
+  loginTitle:"Giriş səhifəsi başlığı",
+  loginSub:"Giriş səhifəsi alt mətni",
+  loginBtn:"Giriş düyməsi mətni",
+  logoutBtn:"Çıxış düyməsi mətni",
+  navMonitoring:"'Monitorinq' tab adı",
+  navWording:"'Mətnlər' tab adı",
+  dashTitle:"Monitorinq səhifəsinin başlığı",
+  refreshBtn:"Yenilə düyməsi mətni",
+  devlogTitle:"İnkişaf tarixçəsi bölməsinin başlığı",
+  tileTotalVisits:"'Ümumi ziyarətlər' plitəsinin adı",
+  tileUniqueVisitors:"'Unikal ziyarətçilər' plitəsinin adı",
+  tileToday:"'Bu gün' plitəsinin adı",
+  tileTotalApps:"'Ümumi müraciətlər' plitəsinin adı",
+  tileNewApps:"'Yeni müraciətlər' plitəsinin adı",
+  chartTitle:"Qrafik panelinin başlığı",
+  chartToggleTable:"Qrafikdən cədvələ keçid düyməsi",
+  chartToggleChart:"Cədvəldən qrafikə keçid düyməsi",
+  chartDownloadBtn:"Ziyarətləri yükləmə düyməsi",
+  appsTitle:"Müraciətlər panelinin başlığı",
+  appsEmpty:"Müraciət olmadıqda göstərilən mətn",
+  appsExpand:"Mesajı tam göstərmə düyməsi",
+  appsDownloadBtn:"Müraciətləri yükləmə düyməsi",
+  activityTitle:"Son fəaliyyət panelinin başlığı",
+  activityEmpty:"Fəaliyyət olmadıqda göstərilən mətn",
+  wordingTitle:"Mətnlər panelinin başlığı",
+  wordingSub:"Mətnlər panelinin izah mətni",
+  wordingSaveBtn:"Yadda saxla düyməsi",
+  wordingResetBtn:"Sıfırlama düyməsi"
+};
+let WORDINGS=Object.assign({},DEFAULT_WORDINGS);
+function W(key){return WORDINGS[key]??DEFAULT_WORDINGS[key]??key;}
+
+const SB_WORDINGS_ROW=SUPABASE_URL+"/rest/v1/admin_wordings?id=eq.1&select=wordings";
+async function loadWordings(){
+  try{
+    const res=await fetch(SB_WORDINGS_ROW,{cache:"no-store",headers:SB_HEADERS});
+    if(!res.ok) throw new Error("wordings fetch failed: "+res.status);
+    const rows=await res.json();
+    if(rows.length&&rows[0].wordings) WORDINGS=Object.assign({},DEFAULT_WORDINGS,rows[0].wordings);
+  }catch(e){ /* saxlanmış mətnlərə çatmaq mümkün olmadı — standart mətnlərlə davam edilir */ }
+}
+async function saveWordings(newWordings){
+  const res=await fetch(SUPABASE_URL+"/rest/v1/admin_wordings",{
+    method:"POST",cache:"no-store",
+    headers:Object.assign({},SB_HEADERS,{"Prefer":"resolution=merge-duplicates,return=minimal"}),
+    body:JSON.stringify([{id:1,wordings:newWordings}])
+  });
+  if(!res.ok) throw new Error("wordings save failed: "+res.status);
+}
+
+function applyStaticWordings(){
+  $("loginTitleEl").textContent=W("loginTitle");
+  $("loginSubEl").textContent=W("loginSub");
+  $("loginBtn").textContent=W("loginBtn");
+  $("logoutBtn").textContent=W("logoutBtn");
+  $("navMonitoringBtn").textContent=W("navMonitoring");
+  $("navWordingBtn").textContent=W("navWording");
+  $("dashTitleEl").textContent=W("dashTitle");
+  $("refreshBtn").textContent=W("refreshBtn");
+  $("devlogTitleEl").textContent=W("devlogTitle");
+  $("chartTitleEl").textContent=W("chartTitle");
+  $("chartDownloadBtn").textContent=W("chartDownloadBtn");
+  $("toggleTableBtn").textContent=$("chartTableBox").classList.contains("hidden")?W("chartToggleTable"):W("chartToggleChart");
+  $("appsTitleEl").textContent=W("appsTitle");
+  $("appsDownloadBtn").textContent=W("appsDownloadBtn");
+  $("activityTitleEl").textContent=W("activityTitle");
+  $("wordingTitleEl").textContent=W("wordingTitle");
+  $("wordingSubEl").textContent=W("wordingSub");
+  $("wordingSaveBtn").textContent=W("wordingSaveBtn");
+  $("wordingResetBtn").textContent=W("wordingResetBtn");
+}
+
+function renderWordingForm(){
+  $("wordingFields").innerHTML=Object.keys(DEFAULT_WORDINGS).map(k=>`
+    <div class="wfield">
+      <div class="wf-label">${esc(WORDING_LABELS[k]||k)}</div>
+      <input type="text" data-key="${k}" value="${esc(W(k))}">
+    </div>`).join("");
+}
+$("wordingSaveBtn").onclick=async()=>{
+  $("wordingErr").textContent="";$("wordingOk").textContent="";
+  const updated={};
+  $("wordingFields").querySelectorAll("input[data-key]").forEach(inp=>{updated[inp.dataset.key]=inp.value;});
+  $("wordingSaveBtn").disabled=true;$("wordingSaveBtn").textContent="Saxlanılır…";
+  try{
+    await saveWordings(updated);
+    WORDINGS=Object.assign({},DEFAULT_WORDINGS,updated);
+    applyStaticWordings();
+    renderWordingForm();
+    if(lastVisits&&lastApps){ renderTiles({rows:lastVisits,total:lastVisitsTotal},{rows:lastApps,total:lastAppsTotal}); renderChart(lastVisits); renderApplications(lastApps); renderActivity(lastVisits); }
+    $("wordingOk").textContent="Yadda saxlanıldı.";
+  }catch(e){
+    $("wordingErr").textContent="Yadda saxlanılmadı — internet bağlantısını yoxlayın və ya Supabase cədvəlinin yaradıldığını təsdiq edin.";
+  }
+  $("wordingSaveBtn").disabled=false;$("wordingSaveBtn").textContent=W("wordingSaveBtn");
+};
+$("wordingResetBtn").onclick=async()=>{
+  $("wordingErr").textContent="";$("wordingOk").textContent="";
+  $("wordingSaveBtn").disabled=true;
+  try{
+    await saveWordings({});
+    WORDINGS=Object.assign({},DEFAULT_WORDINGS);
+    applyStaticWordings();
+    renderWordingForm();
+    if(lastVisits&&lastApps){ renderTiles({rows:lastVisits,total:lastVisitsTotal},{rows:lastApps,total:lastAppsTotal}); renderChart(lastVisits); renderApplications(lastApps); renderActivity(lastVisits); }
+    $("wordingOk").textContent="Standart mətnlərə qaytarıldı.";
+  }catch(e){
+    $("wordingErr").textContent="Sıfırlanmadı — internet bağlantısını yoxlayın.";
+  }
+  $("wordingSaveBtn").disabled=false;
+};
+
+/* ================= naviqasiya & giriş ================= */
+function show(v){["viewLogin","viewApp"].forEach(x=>$(x).classList.add("hidden"));$(v).classList.remove("hidden");$("logoutBtn").classList.toggle("hidden",v!=="viewApp");}
+function showTab(t){
+  $("viewMonitoring").classList.toggle("hidden",t!=="monitoring");
+  $("viewWording").classList.toggle("hidden",t!=="wording");
+  $("navMonitoringBtn").classList.toggle("tab-active",t==="monitoring");
+  $("navWordingBtn").classList.toggle("tab-active",t==="wording");
+}
+$("navMonitoringBtn").onclick=()=>showTab("monitoring");
+$("navWordingBtn").onclick=()=>{renderWordingForm();showTab("wording");};
 
 let refreshTimer=null;
 function stopAutoRefresh(){if(refreshTimer){clearInterval(refreshTimer);refreshTimer=null;}}
-function enterDashboard(){
-  show("viewDash");
+async function enterDashboard(){
+  await loadWordings();
+  applyStaticWordings();
+  renderDevLog();
+  show("viewApp");
+  showTab("monitoring");
   loadAll();
   stopAutoRefresh();
   refreshTimer=setInterval(loadAll,60000);
@@ -143,7 +374,7 @@ $("loginBtn").onclick=async()=>{
   if(!password){$("loginErr").textContent="Şifrəni daxil edin.";return;}
   $("loginBtn").disabled=true;$("loginBtn").textContent="Yoxlanılır…";
   const{error}=await sbAuth.auth.signInWithPassword({email,password});
-  $("loginBtn").disabled=false;$("loginBtn").textContent="Daxil ol";
+  $("loginBtn").disabled=false;$("loginBtn").textContent=W("loginBtn");
   if(error){
     $("loginErr").textContent=error.code==="email_not_confirmed"
       ?"Email hələ təsdiqlənməyib — qeydiyyat zamanı göndərilən təsdiq linkini emailinizdən açın, sonra yenidən cəhd edin."
@@ -168,6 +399,7 @@ $("refreshBtn").onclick=loadAll;
   if(session&&session.user&&session.user.email===ADMIN_EMAIL) enterDashboard();
 })();
 
+/* ================= data yüklənməsi ================= */
 async function sbFetch(path){
   const res=await fetch(SUPABASE_URL+"/rest/v1/"+path,{cache:"no-store",headers:Object.assign({},SB_HEADERS,{"Prefer":"count=exact"})});
   if(!res.ok) throw new Error("Supabase sorğu xətası: "+res.status);
@@ -178,6 +410,7 @@ async function sbFetch(path){
 }
 
 const LOAD_ERR='<p class="empty">Məlumat yüklənmədi — internet bağlantısını yoxlayın və ya Supabase cədvəlinin yaradıldığını təsdiq edin.</p>';
+let lastVisits=null,lastVisitsTotal=null,lastApps=null,lastAppsTotal=null;
 
 async function loadAll(){
   const [visitsResult,appsResult]=await Promise.allSettled([
@@ -187,7 +420,7 @@ async function loadAll(){
   const visits=visitsResult.status==="fulfilled"?visitsResult.value:null;
   const apps=appsResult.status==="fulfilled"?appsResult.value:null;
 
-  if(visits&&apps){ renderTiles(visits,apps); }
+  if(visits&&apps){ renderTiles(visits,apps); lastVisits=visits.rows;lastVisitsTotal=visits.total;lastApps=apps.rows;lastAppsTotal=apps.total; }
   else{ $("tiles").innerHTML=LOAD_ERR; }
 
   if(visits){ renderChart(visits.rows); renderActivity(visits.rows); }
@@ -209,13 +442,13 @@ function renderTiles(visits,apps){
   const weekAgo=Date.now()-7*24*60*60*1000;
   const newApps=apps.rows.filter(r=>new Date(r.submitted_at).getTime()>=weekAgo).length;
   const tiles=[
-    ["Ümumi ziyarətlər",totalVisits],
-    ["Unikal ziyarətçilər",uniqueVisitors],
-    ["Bu gün",visitsToday],
-    ["Ümumi müraciətlər",totalApps],
-    ["Yeni müraciətlər (7 gün)",newApps]
+    [W("tileTotalVisits"),totalVisits],
+    [W("tileUniqueVisitors"),uniqueVisitors],
+    [W("tileToday"),visitsToday],
+    [W("tileTotalApps"),totalApps],
+    [W("tileNewApps"),newApps]
   ];
-  $("tiles").innerHTML=tiles.map(([lbl,val])=>`<div class="tile"><div class="lbl">${lbl}</div><div class="val">${val}</div></div>`).join("");
+  $("tiles").innerHTML=tiles.map(([lbl,val])=>`<div class="tile"><div class="lbl">${esc(lbl)}</div><div class="val">${val}</div></div>`).join("");
 }
 
 function dailyBuckets(rows,days){
@@ -269,11 +502,11 @@ $("toggleTableBtn").onclick=()=>{
   const shown=!$("chartTableBox").classList.contains("hidden");
   $("chartTableBox").classList.toggle("hidden",shown);
   $("chartBox").classList.toggle("hidden",!shown);
-  $("toggleTableBtn").textContent=shown?"cədvəl kimi göstər":"qrafik kimi göstər";
+  $("toggleTableBtn").textContent=shown?W("chartToggleTable"):W("chartToggleChart");
 };
 
 function renderApplications(rows){
-  if(!rows.length){$("applicationsBox").innerHTML='<p class="empty">Hələ müraciət yoxdur.</p>';return;}
+  if(!rows.length){$("applicationsBox").innerHTML=`<p class="empty">${esc(W("appsEmpty"))}</p>`;return;}
   let html='<table class="adm"><tr><th>Tarix</th><th>Ad Soyad</th><th>Telefon</th><th>Email</th><th>Rol</th><th>Məqsəd</th><th>Mesaj</th></tr>';
   rows.forEach((r,i)=>{
     const date=r.submitted_at?new Date(r.submitted_at).toLocaleString("az-AZ"):"—";
@@ -281,7 +514,7 @@ function renderApplications(rows){
     const msg=r.message||"";
     const short=msg.length>60?msg.slice(0,60)+"…":msg;
     html+=`<tr><td>${esc(date)}</td><td>${esc(r.full_name)}</td><td>${esc(r.phone)}</td><td>${esc(r.email)}</td><td>${esc(r.role)}</td><td>${esc(goal)}</td>
-      <td>${esc(short)}${msg.length>60?` <button class="linkbtn" data-id="app-${i}">tam göstər</button>`:""}</td></tr>`;
+      <td>${esc(short)}${msg.length>60?` <button class="linkbtn" data-id="app-${i}">${esc(W("appsExpand"))}</button>`:""}</td></tr>`;
     if(msg.length>60){
       html+=`<tr class="exp-row hidden" id="app-${i}"><td colspan="7">${esc(msg)}</td></tr>`;
     }
@@ -294,7 +527,7 @@ function renderApplications(rows){
 }
 
 function renderActivity(rows){
-  if(!rows.length){$("activityBox").innerHTML='<p class="empty">Hələ ziyarət qeydə alınmayıb.</p>';return;}
+  if(!rows.length){$("activityBox").innerHTML=`<p class="empty">${esc(W("activityEmpty"))}</p>`;return;}
   let html='<table class="adm"><tr><th>Vaxt</th><th>Səhifə</th><th>Referrer</th></tr>';
   rows.slice(0,25).forEach(r=>{
     const time=r.visited_at?new Date(r.visited_at).toLocaleString("az-AZ"):"—";
@@ -303,6 +536,49 @@ function renderActivity(rows){
   html+="</table>";
   $("activityBox").innerHTML=html;
 }
+
+/* ================= CSV ixracı ================= */
+function csvEscape(v){
+  if(v==null) return "";
+  const s=String(v);
+  return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+}
+function toCSV(rows,columns){
+  const header=columns.map(c=>csvEscape(c.label)).join(",");
+  const lines=rows.map(r=>columns.map(c=>csvEscape(typeof c.get==="function"?c.get(r):r[c.key])).join(","));
+  return [header,...lines].join("\n");
+}
+function downloadCSV(filename,csv){
+  const blob=new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+$("chartDownloadBtn").onclick=()=>{
+  if(!lastVisits){return;}
+  const csv=toCSV(lastVisits,[
+    {label:"Tarix",key:"visited_at"},
+    {label:"Səhifə",key:"page"},
+    {label:"Ziyarətçi ID",key:"visitor_id"},
+    {label:"Referrer",key:"referrer"}
+  ]);
+  downloadCSV("ziyaretler_"+new Date().toISOString().slice(0,10)+".csv",csv);
+};
+$("appsDownloadBtn").onclick=()=>{
+  if(!lastApps){return;}
+  const csv=toCSV(lastApps,[
+    {label:"Tarix",key:"submitted_at"},
+    {label:"Ad Soyad",key:"full_name"},
+    {label:"Telefon",key:"phone"},
+    {label:"Email",key:"email"},
+    {label:"Rol",key:"role"},
+    {label:"Məqsəd",get:r=>GOAL_LABELS[r.goal]||r.goal},
+    {label:"Mesaj",key:"message"}
+  ]);
+  downloadCSV("muraciyetler_"+new Date().toISOString().slice(0,10)+".csv",csv);
+};
 </script>
 </body>
 </html>
