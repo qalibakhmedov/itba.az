@@ -68,6 +68,21 @@ a {
   z-index: 1;
 }
 
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--faint);
+  text-decoration: none;
+  margin-bottom: 18px;
+  transition: color 0.2s;
+}
+
+.site-brand:hover {
+  color: var(--accent);
+}
+
 .badge {
   display: inline-block;
   padding: 8px 16px;

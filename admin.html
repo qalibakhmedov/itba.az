@@ -16,7 +16,7 @@
   body{background:var(--paper);color:var(--ink);font-family:var(--sans);min-height:100vh}
   .hidden{display:none!important}
   header{background:var(--ink);color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  header .brand{font-family:var(--mono);font-size:14px;letter-spacing:.08em}
+  header .brand{font-family:var(--mono);font-size:14px;letter-spacing:.08em;color:inherit;text-decoration:none}
   header .brand b{color:#F0A196}
   header button{background:transparent;border:1px solid #3A4956;color:#C9D4DA;font-family:var(--mono);font-size:12px;padding:5px 12px;border-radius:4px;cursor:pointer}
   header button:hover{border-color:#F0A196;color:#fff}
@@ -72,7 +72,7 @@
 <body>
 
 <header>
-  <div class="brand">itba.az&nbsp;<b>ADMIN</b></div>
+  <a class="brand" href="/index.html">itba.az&nbsp;<b>ADMIN</b></a>
   <button id="logoutBtn" class="hidden">Çıxış</button>
 </header>
 
