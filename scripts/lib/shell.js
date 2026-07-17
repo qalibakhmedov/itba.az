@@ -80,7 +80,23 @@ function renderFooter({ common, footerLinks }) {
 </footer>`;
 }
 
-function page({ lang, title, description, canonical, ogImage, jsonLd, pathPart, header, content, footer, type }) {
+// M.1 (marketing --spec- köçürməsi, MIGRATION-PLAN.md): theme === "spec"
+// olanda yeni tokens-spec.css/marketing-spec.css qoşulur; defolt (theme
+// göndərilməyəndə) köhnə site.css dəyişmədən qalır. Heç bir mövcud
+// çağırış (homePage/academyPage/coursesPage/feedPage/articlePage/
+// placeholderPage) theme göndərmir — bu, sıfır-görünüş addımıdır.
+function cssLinksFor(theme) {
+  if (theme === "spec") {
+    return `<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens-spec.css">
+<link rel="stylesheet" href="/css/marketing-spec.css">`;
+  }
+  return `<link rel="stylesheet" href="/css/site.css">`;
+}
+
+function page({ lang, title, description, canonical, ogImage, jsonLd, pathPart, header, content, footer, type, theme }) {
   return `<!DOCTYPE html>
 <html lang="${lang}">
 <head>
@@ -97,7 +113,7 @@ ${hreflangTags(pathPart)}
 ${ogImage ? `<meta property="og:image" content="${esc(ogImage)}">\n` : ""}<meta name="twitter:card" content="${ogImage ? "summary_large_image" : "summary"}">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(description || "")}">
-<link rel="stylesheet" href="/css/site.css">
+${cssLinksFor(theme)}
 ${jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>\n` : ""}</head>
 <body>
 <div class="animated-bg"><canvas id="particle-bg" aria-hidden="true"></canvas></div>
