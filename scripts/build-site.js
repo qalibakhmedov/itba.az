@@ -508,6 +508,7 @@ function academyPage(lang, saved) {
     header,
     content: content + "\n" + script,
     footer,
+    theme: "spec",
   });
 }
 

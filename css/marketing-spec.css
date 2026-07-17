@@ -30,6 +30,11 @@ body {
 a { color: inherit; }
 .container { max-width: var(--spec-maxw); margin: 0 auto; padding: 0 24px; }
 
+/* Çılpaq <section> tag-ları (academyPage()-in #about/#who/#services/
+   benefits/#program/#faq bölmələri) buna güvənir — .hero/#explore kimi
+   xüsusi seçicilər daha yüksək spesifiklik ilə bunu üstələyir. */
+section { padding: 80px 0; }
+
 /* --- Header / naviqasiya --- */
 header {
   border-bottom: 1px solid var(--spec-line);
@@ -116,6 +121,93 @@ nav[aria-label="Primary"] a:hover { color: var(--spec-signal); }
 .card h3 { font-family: var(--spec-ff-d); font-size: 18px; font-weight: 600; color: var(--spec-chalk); margin: 0 0 10px; line-height: 1.3; }
 .card p { font-family: var(--spec-ff-b); font-size: 14px; color: var(--spec-muted); line-height: 1.6; margin: 0; }
 
+/* --- Section alt-başlığı (academy: about/who/apply) --- */
+.section-subtitle { text-align: center; font-family: var(--spec-ff-b); font-size: 16px; color: var(--spec-muted); max-width: 60ch; margin: 0 auto 40px; }
+
+/* --- Hero-nun ✓-işarəli siyahısı (academy) --- */
+.bullet-points { list-style: none; margin: 0 0 28px; padding: 0; }
+.bullet-points li { padding: 10px 0 10px 28px; position: relative; font-family: var(--spec-ff-b); font-size: 14.5px; color: var(--spec-soft); }
+.bullet-points li::before { content: "✓"; position: absolute; left: 0; color: var(--spec-signal); font-weight: 700; }
+
+/* --- Hero-card-dakı statistika (academy) --- */
+.hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+.stat-item { background: var(--spec-ink-3); border-radius: var(--spec-r-sm); padding: 13px 14px; }
+.stat-item strong { display: block; font-family: var(--spec-ff-d); font-size: 18px; color: var(--spec-chalk); margin-bottom: 3px; }
+.stat-item span { font-family: var(--spec-ff-m); font-size: 11px; color: var(--spec-muted); }
+
+/* --- Xidmət kartlarının alt-sətri (academy #services) --- */
+.card-info { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--spec-line); font-family: var(--spec-ff-m); font-size: 12px; color: var(--spec-muted); }
+
+/* --- Üstünlük kafelləri (academy) --- */
+.benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+.benefit-tile { background: var(--spec-ink-2); border: 1px solid var(--spec-line); border-radius: var(--spec-r); padding: 22px; text-align: center; }
+.benefit-tile h4 { font-family: var(--spec-ff-d); font-size: 17px; font-weight: 600; color: var(--spec-signal); margin: 0 0 8px; }
+.benefit-tile p { font-family: var(--spec-ff-b); font-size: 13.5px; color: var(--spec-muted); margin: 0; }
+
+/* --- Proqram modulları (academy #program) --- */
+.modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.module-card { background: var(--spec-ink-2); border-left: 3px solid var(--spec-signal); border-radius: var(--spec-r-sm); padding: 22px; }
+.module-card h4 { font-family: var(--spec-ff-d); font-size: 16px; font-weight: 600; color: var(--spec-chalk); margin: 0 0 12px; }
+.module-card ul { list-style: none; margin: 0; padding: 0; }
+.module-card li { font-family: var(--spec-ff-b); font-size: 13.5px; color: var(--spec-muted); padding: 4px 0 4px 18px; position: relative; }
+.module-card li::before { content: "•"; position: absolute; left: 0; color: var(--spec-signal); }
+
+/* --- FAQ akkordeon (academy #faq) --- */
+/* JS (build-site.js-in homePage/academyPage script-i) .active class-ını
+   və .faq-answer-in inline max-height-ini idarə edir — burada yalnız
+   baza (bağlı) vəziyyət və vizual görünüş təyin olunur, JS-ə toxunulmur. */
+.faq-container { max-width: 800px; margin: 0 auto; }
+.faq-item { background: var(--spec-ink-2); border: 1px solid var(--spec-line); border-radius: var(--spec-r-sm); margin-bottom: 12px; overflow: hidden; }
+.faq-question {
+  width: 100%; padding: 18px 22px; cursor: pointer; display: flex; justify-content: space-between;
+  align-items: center; background: none; border: none; text-align: left; font: inherit; color: inherit;
+  transition: background .15s;
+}
+.faq-question:hover { background: var(--spec-ink-3); }
+.faq-question h4 { font-family: var(--spec-ff-b); font-size: 15px; font-weight: 600; color: var(--spec-chalk); margin: 0; }
+.faq-icon { color: var(--spec-signal); font-size: 18px; transition: transform .3s; flex-shrink: 0; margin-left: 12px; }
+.faq-item.active .faq-icon { transform: rotate(45deg); }
+.faq-answer { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+.faq-answer-content { padding: 0 22px 18px; font-family: var(--spec-ff-b); font-size: 14px; color: var(--spec-muted); line-height: 1.7; }
+
+/* --- Müraciət forması (academy #apply) --- */
+/* fetch/payload/feedback-className məntiqi (academyPage()-in script-i)
+   toxunulmayıb — burada yalnız görünüş. */
+.apply-section { background: var(--spec-ink-3); }
+.apply-content { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: start; }
+
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; margin-bottom: 7px; font-family: var(--spec-ff-m); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--spec-muted); font-weight: 500; }
+.form-group .required { color: var(--spec-red); }
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%; padding: 11px 13px; background: var(--spec-ink-2); border: 1px solid var(--spec-line);
+  border-radius: var(--spec-r-sm); color: var(--spec-chalk); font-family: var(--spec-ff-b); font-size: 14px;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus { outline: 2px solid var(--spec-signal); outline-offset: 1px; border-color: transparent; }
+.form-group textarea { resize: vertical; min-height: 100px; }
+
+.consent-note { font-family: var(--spec-ff-m); font-size: 11.5px; color: var(--spec-muted); margin-top: 14px; line-height: 1.55; }
+
+.apply-info { background: var(--spec-ink-2); border: 1px solid var(--spec-line); border-radius: var(--spec-r); padding: 26px; position: sticky; top: 24px; }
+.apply-info h4 { font-family: var(--spec-ff-d); font-size: 18px; font-weight: 600; color: var(--spec-chalk); margin: 0 0 18px; }
+.info-section { margin-bottom: 22px; }
+.info-section h5 { font-family: var(--spec-ff-d); font-size: 14px; font-weight: 600; color: var(--spec-signal); margin: 0 0 10px; }
+.info-section ul { list-style: none; margin: 0; padding: 0; }
+.info-section li { font-family: var(--spec-ff-b); font-size: 13.5px; color: var(--spec-muted); padding: 4px 0 4px 18px; position: relative; }
+.info-section li::before { content: "→"; position: absolute; left: 0; color: var(--spec-signal); }
+
+/* JS feedback.className-i 'form-feedback show success' / '... error'
+   olaraq təyin edir — buradakı .show/.success/.error yalnız bunun
+   görünüşüdür, JS-ə toxunulmayıb. */
+.form-feedback { margin-top: 16px; padding: 13px 15px; border-radius: var(--spec-r-sm); font-family: var(--spec-ff-b); font-size: 13.5px; line-height: 1.5; display: none; }
+.form-feedback.show { display: block; }
+.form-feedback.success { background: var(--spec-teal-wash); border: 1px solid var(--spec-teal); color: var(--spec-teal); }
+.form-feedback.error { background: var(--spec-red-wash); border: 1px solid var(--spec-red); color: var(--spec-red); }
+
 /* --- Footer --- */
 footer { border-top: 1px solid var(--spec-line); padding: 32px 0; margin-top: 40px; }
 footer p { font-family: var(--spec-ff-b); font-size: 13px; color: var(--spec-muted); margin: 0; }
@@ -129,4 +221,10 @@ footer a:hover { color: var(--spec-signal); }
   .mobile-menu-btn { display: block; }
   .hero-content { grid-template-columns: 1fr; }
   .cards-grid { grid-template-columns: 1fr; }
+  .apply-content { grid-template-columns: 1fr; }
+  .apply-info { position: static; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
 }
