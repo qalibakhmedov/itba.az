@@ -96,6 +96,19 @@ function cssLinksFor(theme) {
   return `<link rel="stylesheet" href="/css/site.css">`;
 }
 
+// cssLinksFor-un davamı: theme === "spec" olanda particle-bg (narıncı,
+// köhnə temaya bağlı rənglər) söndürülür — yoxsa Preview 1-in seçilmiş
+// istiqamətindən (particle-bg-siz) fərqli, uyğunsuz nəticə çıxardı.
+// Defolt (theme göndərilməyəndə) dəyişmir.
+function animatedBgFor(theme) {
+  if (theme === "spec") return "";
+  return `<div class="animated-bg"><canvas id="particle-bg" aria-hidden="true"></canvas></div>`;
+}
+function particleScriptFor(theme) {
+  if (theme === "spec") return "";
+  return `<script src="/js/particle-bg.js"></script>`;
+}
+
 function page({ lang, title, description, canonical, ogImage, jsonLd, pathPart, header, content, footer, type, theme }) {
   return `<!DOCTYPE html>
 <html lang="${lang}">
@@ -116,11 +129,11 @@ ${ogImage ? `<meta property="og:image" content="${esc(ogImage)}">\n` : ""}<meta 
 ${cssLinksFor(theme)}
 ${jsonLd ? `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>\n` : ""}</head>
 <body>
-<div class="animated-bg"><canvas id="particle-bg" aria-hidden="true"></canvas></div>
+${animatedBgFor(theme)}
 ${header}
 ${content}
 ${footer}
-<script src="/js/particle-bg.js"></script>
+${particleScriptFor(theme)}
 <script>
 (function () {
   var mobileBtn = document.getElementById('mobileMenuBtn');

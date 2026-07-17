@@ -199,6 +199,7 @@ function homePage(lang, saved) {
     header,
     content: content + "\n" + script,
     footer,
+    theme: "spec",
   });
 }
 
