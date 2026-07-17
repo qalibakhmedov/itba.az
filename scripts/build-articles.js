@@ -195,6 +195,7 @@ function articlePage(lang, a) {
     content,
     footer: chromeFooter(lang),
     type: "article",
+    theme: "spec",
   });
 }
 

@@ -257,6 +257,34 @@ nav[aria-label="Primary"] a:hover { color: var(--spec-signal); }
 /* --- Məqalə kartları grid-i (articles feed) --- */
 .article-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
 
+/* --- Fərdi məqalə səhifəsi (articlePage()) --- */
+/* .article-detail h1 səhifənin öz başlığıdır (a.title) — .article-body h1
+   isə müəllifin MƏQALƏ DAXİLİNDƏ yazdığı başlıqdır, ayrı, kiçik ölçüdə. */
+.article-detail h1 { font-family: var(--spec-ff-d); font-size: clamp(28px, 4vw, 40px); font-weight: 700; line-height: 1.15; letter-spacing: -.02em; color: var(--spec-chalk); margin: 0 0 14px; text-wrap: balance; }
+.article-meta { font-family: var(--spec-ff-m); font-size: 12px; color: var(--spec-muted); margin-bottom: 24px; }
+.article-cover { width: 100%; max-height: 360px; object-fit: cover; border-radius: var(--spec-r); border: 1px solid var(--spec-line); box-shadow: var(--spec-sh-xs); margin-bottom: 30px; }
+
+/* .article-body — DOMPurify/sanitize-html-dən keçən müəllif məzmunu.
+   Yalnız scripts/build-articles.js-in SANITIZE_OPTIONS.allowedTags-ında
+   olan taqlar buraya çatır. */
+.article-body { font-family: var(--spec-ff-b); font-size: 16px; line-height: 1.8; color: var(--spec-soft); }
+.article-body h1 { font-family: var(--spec-ff-d); font-size: 28px; font-weight: 600; color: var(--spec-chalk); margin: 32px 0 14px; }
+.article-body h2 { font-family: var(--spec-ff-d); font-size: 24px; font-weight: 600; color: var(--spec-chalk); margin: 32px 0 14px; }
+.article-body h3 { font-family: var(--spec-ff-d); font-size: 20px; font-weight: 600; color: var(--spec-chalk); margin: 32px 0 14px; }
+.article-body h4 { font-family: var(--spec-ff-d); font-size: 17px; font-weight: 600; color: var(--spec-chalk); margin: 32px 0 14px; }
+.article-body p { margin: 0 0 18px; }
+.article-body a { color: var(--spec-signal); }
+.article-body a:hover { text-decoration: underline; }
+.article-body ul,
+.article-body ol { margin: 0 0 18px; padding-left: 24px; }
+.article-body li { margin-bottom: 8px; }
+.article-body blockquote { border-left: 3px solid var(--spec-signal); padding: 4px 0 4px 20px; margin: 0 0 18px; color: var(--spec-muted); }
+.article-body pre,
+.article-body code { font-family: var(--spec-ff-m); background: var(--spec-ink-3); border-radius: var(--spec-r-xs); }
+.article-body code { padding: 2px 6px; font-size: .9em; }
+.article-body pre { padding: 16px 18px; overflow-x: auto; margin: 0 0 18px; border: 1px solid var(--spec-line); }
+.article-body pre code { background: none; padding: 0; border: none; }
+
 /* --- Footer --- */
 footer { border-top: 1px solid var(--spec-line); padding: 32px 0; margin-top: 40px; }
 footer p { font-family: var(--spec-ff-b); font-size: 13px; color: var(--spec-muted); margin: 0; }
