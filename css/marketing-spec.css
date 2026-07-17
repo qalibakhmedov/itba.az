@@ -244,6 +244,19 @@ nav[aria-label="Primary"] a:hover { color: var(--spec-signal); }
 .state-note.warn { background: var(--spec-red-wash); border-color: var(--spec-red); color: var(--spec-red); }
 .state-note .retry-link { display: inline-block; margin-top: 8px; color: var(--spec-signal); font-weight: 600; cursor: pointer; }
 
+/* --- Kateqoriya pill-ləri (articles feed) --- */
+.category-pills { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+.cat-pill {
+  padding: 7px 16px; border-radius: 20px; border: 1px solid var(--spec-line);
+  color: var(--spec-muted); font-family: var(--spec-ff-b); font-size: 13px;
+  text-decoration: none; transition: border-color .15s, color .15s, background .15s;
+}
+.cat-pill:hover { border-color: var(--spec-signal); color: var(--spec-signal-ink); }
+.cat-pill.active { background: var(--spec-signal); border-color: var(--spec-signal); color: #fff; }
+
+/* --- Məqalə kartları grid-i (articles feed) --- */
+.article-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+
 /* --- Footer --- */
 footer { border-top: 1px solid var(--spec-line); padding: 32px 0; margin-top: 40px; }
 footer p { font-family: var(--spec-ff-b); font-size: 13px; color: var(--spec-muted); margin: 0; }

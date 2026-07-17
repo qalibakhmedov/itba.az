@@ -153,7 +153,7 @@ function feedPage(lang, { activeCategory, articles }) {
 })();
 </script>`;
 
-  return page({ lang, title, description, canonical, pathPart, header: chromeHeader(lang), content, footer: chromeFooter(lang) });
+  return page({ lang, title, description, canonical, pathPart, header: chromeHeader(lang), content, footer: chromeFooter(lang), theme: "spec" });
 }
 
 function articlePage(lang, a) {
@@ -217,6 +217,7 @@ function placeholderPage(lang) {
     header: chromeHeader(lang),
     content,
     footer: chromeFooter(lang),
+    theme: "spec",
   });
 }
 

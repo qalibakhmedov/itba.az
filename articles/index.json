@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "slug": "test-meqale",
+    "title": "Test Məqaləsi",
+    "dek": "Bu, M.6 tipoqrafiya testi üçün nümunə məqalədir.",
+    "category": "ai",
+    "tags": [],
+    "published_at": "2026-07-17T19:07:22.181749+00:00"
+  }
+]
