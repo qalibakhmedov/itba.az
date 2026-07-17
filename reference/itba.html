@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ITBA — IT Business Analysis icması</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#F3F5F9;--ink-2:#FFFFFF;--ink-3:#EBEEF4;
+  --line:#E2E7EF;--line-2:#CFD6E1;
+  --chalk:#0F1729;--soft:#3A4658;--muted:#6A7688;
+  --signal:#4F46E5;--signal-ink:#4338CA;--signal-wash:#EEF0FE;
+  --teal:#0D9488;--teal-wash:#E4F5F1;
+  --amber:#C2760A;--amber-wash:#FCF2E1;
+  --red:#E11D48;--red-wash:#FDE8EE;
+  --r:14px;--r-sm:9px;--r-xs:6px;--maxw:1180px;
+  --sh-xs:0 1px 2px rgba(15,23,41,.05);
+  --sh-sm:0 2px 6px rgba(15,23,41,.06),0 1px 2px rgba(15,23,41,.04);
+  --sh-md:0 14px 32px -12px rgba(15,23,41,.16),0 4px 10px -4px rgba(15,23,41,.06);
+  --sh-lg:0 30px 70px -20px rgba(15,23,41,.24);
+  --ff-d:"Space Grotesk",system-ui,sans-serif;
+  --ff-b:"Inter",system-ui,sans-serif;
+  --ff-m:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--chalk);font-family:var(--ff-b);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(90% 60% at 50% -12%,rgba(79,70,229,.07),transparent 62%)}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.narrow{max-width:520px;margin:0 auto}
+section{padding:72px 0;border-top:1px solid var(--line)}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:4px}
+[hidden]{display:none!important}
+.eyebrow{font-family:var(--ff-m);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--signal);font-weight:500}
+h1{font-family:var(--ff-d);font-weight:600;line-height:1.04;letter-spacing:-.025em;color:var(--chalk)}
+h2{font-family:var(--ff-d);font-size:clamp(24px,3vw,36px);line-height:1.1;letter-spacing:-.025em;margin:12px 0;font-weight:600;color:var(--chalk)}
+h3{font-size:16px;font-weight:600;margin-bottom:6px;letter-spacing:-.01em}
+.lede{color:var(--muted);max-width:64ch}
+.mono{font-family:var(--ff-m)}
+code{font-family:var(--ff-m);color:var(--signal-ink);font-size:.86em;background:var(--signal-wash);padding:1px 6px;border-radius:5px}
+.grid{display:grid;gap:20px}
+.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:920px){.g3,.g2{grid-template-columns:1fr}}
+.card{background:var(--ink-2);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--sh-sm);transition:.2s}
+.card.hov{cursor:pointer}
+.card.hov:hover{border-color:var(--line-2);box-shadow:var(--sh-md);transform:translateY(-3px)}
+.tag{font-family:var(--ff-m);font-size:11px;color:var(--teal);letter-spacing:.05em;text-transform:uppercase;font-weight:500}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:600;font-size:14px;padding:11px 18px;border-radius:11px;border:1px solid transparent;cursor:pointer;transition:.18s;font-family:var(--ff-b);background:none;color:var(--chalk);line-height:1}
+.btn-primary{background:var(--signal);color:#fff;box-shadow:var(--sh-sm)}
+.btn-primary:hover{background:var(--signal-ink);box-shadow:var(--sh-md);transform:translateY(-1px)}
+.btn-ghost{border-color:var(--line);background:var(--ink-2);color:var(--chalk)}
+.btn-ghost:hover{border-color:var(--line-2);background:var(--ink-3)}
+.btn[disabled]{opacity:.55;cursor:not-allowed;border-color:var(--line);background:var(--ink-3);color:var(--muted);box-shadow:none;transform:none}
+.btn-sm{padding:8px 13px;font-size:13px}
+.btn-full{width:100%}
+.btn-ok{border-color:var(--teal);color:var(--teal);background:var(--teal-wash)}
+.btn-ok:hover{box-shadow:var(--sh-sm);transform:translateY(-1px)}
+.btn-no{border-color:var(--red);color:var(--red);background:var(--red-wash)}
+.btn-no:hover{box-shadow:var(--sh-sm);transform:translateY(-1px)}
+.lock{font-family:var(--ff-m);font-size:10px}
+
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.82);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:22px;height:66px}
+.logo{font-family:var(--ff-d);font-weight:700;letter-spacing:-.01em;font-size:19px;cursor:pointer;color:var(--chalk)}
+.logo span{color:var(--signal)}
+.nav ul{display:flex;gap:4px;list-style:none;font-size:14px;color:var(--muted);margin-left:auto;font-weight:500}
+.nav ul a{cursor:pointer;padding:8px 12px;border-radius:9px;transition:.15s;display:block}
+.nav ul a:hover{color:var(--chalk);background:var(--ink-3)}
+.nav ul li[data-nav]{display:none}
+.nav ul li.on{display:block}
+.authbar{display:flex;align-items:center;gap:10px}
+.pill{display:flex;align-items:center;gap:9px;font-family:var(--ff-b);font-size:13px;color:var(--muted);border:1px solid var(--line);padding:4px 12px 4px 5px;border-radius:30px;cursor:pointer;background:var(--ink-2);transition:.15s}
+.pill b{color:var(--signal-ink);font-weight:600}
+.pill:hover{border-color:var(--line-2);box-shadow:var(--sh-xs)}
+.burger{display:none;background:var(--ink-2);border:1px solid var(--line);color:var(--chalk);padding:8px 12px;border-radius:9px;font-size:16px;cursor:pointer}
+@media(max-width:1080px){
+  .nav ul{display:none;position:absolute;top:66px;left:0;right:0;background:var(--ink-2);flex-direction:column;padding:14px 24px;border-bottom:1px solid var(--line);margin-left:0;box-shadow:var(--sh-md)}
+  .nav ul.open{display:flex}
+  .nav ul.open li[data-nav]{display:none}
+  .nav ul.open li.on{display:block}
+  .burger{display:block;margin-left:auto}
+  .authbar{margin-left:0}
+}
+
+/* forms */
+.field{margin-bottom:16px}
+.field label{display:block;font-family:var(--ff-m);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;font-weight:500}
+.field label .req{color:var(--signal)}
+.field label .opt{color:var(--muted);text-transform:none;letter-spacing:0;font-family:var(--ff-b)}
+.field input,.field textarea,.field select{width:100%;background:var(--ink-2);border:1px solid var(--line);color:var(--chalk);padding:11px 13px;border-radius:10px;font-family:var(--ff-b);font-size:14px;transition:.15s}
+.field input::placeholder,.field textarea::placeholder{color:#9AA5B6}
+.field textarea{min-height:82px;resize:vertical}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--signal);outline:none;box-shadow:0 0 0 4px var(--signal-wash)}
+.field .hint{font-family:var(--ff-m);font-size:11px;color:var(--muted);margin-top:6px}
+.err{color:var(--red);font-weight:500;font-size:13px;margin-bottom:14px;display:none;background:var(--red-wash);border:1px solid #F6CAD5;padding:10px 13px;border-radius:9px}
+.err.on{display:block}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.two{grid-template-columns:1fr}}
+fieldset{border:0}
+.legend{font-family:var(--ff-m);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--signal);margin:24px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line);font-weight:500}
+
+/* role choose */
+.rolepick{display:grid;gap:14px;margin-top:26px}
+.rolecard{text-align:left;background:var(--ink-2);border:1px solid var(--line);border-radius:var(--r);padding:20px;cursor:pointer;transition:.18s;color:var(--chalk);font-family:var(--ff-b);box-shadow:var(--sh-xs)}
+.rolecard:hover{border-color:var(--signal);box-shadow:var(--sh-md);transform:translateY(-3px)}
+.rolecard b{font-size:17px;display:block;margin-bottom:4px}
+.rolecard p{color:var(--muted);font-size:14px;margin:0}
+.rolecard .meta{font-family:var(--ff-m);font-size:11px;color:var(--teal);margin-top:10px;display:block}
+.rolecard.dim{opacity:.62;cursor:not-allowed}
+.rolecard.dim:hover{border-color:var(--line);box-shadow:var(--sh-xs);transform:none}
+.rolecard.dim .meta{color:var(--muted)}
+
+/* banners */
+.banner{border:1px solid var(--line);border-left:3px solid var(--signal);background:var(--ink-2);border-radius:var(--r);padding:15px 18px;margin:18px 0;display:flex;gap:14px;align-items:center;flex-wrap:wrap;box-shadow:var(--sh-xs)}
+.banner p{font-size:14px;color:var(--soft);margin:0;flex:1;min-width:220px}
+.banner b{color:var(--chalk)}
+.banner.tealb{border-left-color:var(--teal);background:var(--teal-wash)}
+.banner.redb{border-left-color:var(--red);background:var(--red-wash)}
+
+/* dashboard */
+.dash-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.dash-head h1{font-size:clamp(26px,3.2vw,38px)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
+@media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--ink-2);padding:20px;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh-xs)}
+.kpi b{display:block;font-family:var(--ff-d);font-size:30px;color:var(--signal);line-height:1.05;letter-spacing:-.02em;font-weight:600}
+.kpi span{font-family:var(--ff-m);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-top:5px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);font-size:14px;align-items:center}
+.row:last-child{border-bottom:0}
+.row small{font-family:var(--ff-m);font-size:11px;color:var(--muted);display:block}
+.st{font-family:var(--ff-m);font-size:10px;padding:4px 9px;border-radius:20px;border:1px solid var(--line);color:var(--muted);white-space:nowrap;background:var(--ink-3);font-weight:500}
+.st.ok{border-color:var(--teal);color:var(--teal);background:var(--teal-wash)}
+.st.warn{border-color:#E7B25E;color:var(--amber);background:var(--amber-wash)}
+.st.bad{border-color:#F0B7C4;color:var(--red);background:var(--red-wash)}
+
+/* progress */
+.prog{height:8px;background:var(--ink-3);border-radius:20px;overflow:hidden;margin:12px 0 6px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--signal),#7A6FF0);border-radius:20px;transition:width .6s}
+.prog.teal i{background:var(--teal)}
+
+/* timeline */
+.tl{list-style:none;margin-top:14px}
+.tl li{position:relative;padding:0 0 18px 24px;border-left:2px solid var(--line);font-size:14px}
+.tl li:last-child{border-left-color:transparent;padding-bottom:0}
+.tl li:before{content:'';position:absolute;left:-6px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--ink-2);border:2px solid var(--line)}
+.tl li.done:before{background:var(--teal);border-color:var(--teal)}
+.tl li.now:before{background:var(--signal);border-color:var(--signal);box-shadow:0 0 0 4px var(--signal-wash)}
+.tl li small{font-family:var(--ff-m);font-size:11px;color:var(--muted);display:block}
+
+/* feed */
+.feed{border:1px solid var(--line);background:var(--ink-2);border-radius:var(--r);box-shadow:var(--sh-sm);overflow:hidden}
+.feed-head{display:flex;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--line);font-family:var(--ff-m);font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--teal);margin-right:6px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.feed-item{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);transition:.15s}
+.feed-item:hover{background:var(--ink)}
+.feed-item:last-child{border-bottom:0}
+.kind{font-family:var(--ff-m);font-size:9px;padding:4px 7px;border:1px solid var(--line);border-radius:6px;color:var(--muted);height:fit-content;white-space:nowrap;font-weight:500;background:var(--ink-3)}
+.kind.q{color:var(--signal-ink);border-color:var(--signal);background:var(--signal-wash)}
+.kind.a{color:var(--teal);border-color:var(--teal);background:var(--teal-wash)}
+.feed-item b{font-size:14px;display:block}
+.feed-item small{font-family:var(--ff-m);font-size:11px;color:var(--muted)}
+
+.hero-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:44px;align-items:start;margin-top:30px}
+@media(max-width:980px){.hero-grid{grid-template-columns:1fr;gap:28px}}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--ink-2);padding:20px 16px;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh-xs)}
+.stat b{display:block;font-family:var(--ff-d);font-size:28px;color:var(--signal);line-height:1;letter-spacing:-.02em;font-weight:600}
+.stat span{font-family:var(--ff-m);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-top:6px}
+.note{font-family:var(--ff-m);font-size:12px;color:var(--muted);margin-top:14px;line-height:1.55}
+
+/* q&a */
+.q-item{background:var(--ink-2);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;gap:18px;box-shadow:var(--sh-xs);transition:.18s}
+.q-item:hover{box-shadow:var(--sh-md);border-color:var(--line-2)}
+.votes{text-align:center;font-family:var(--ff-m);flex-shrink:0;min-width:52px}
+.votes b{display:block;font-size:18px;color:var(--chalk);font-weight:600}
+.votes small{font-size:10px;color:var(--muted);text-transform:uppercase}
+.votes .ok{color:var(--teal)}
+.q-meta{font-family:var(--ff-m);font-size:11px;color:var(--muted);margin-top:9px}
+.q-actions{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+
+.res{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--ink-2);box-shadow:var(--sh-xs);transition:.18s}
+.res:hover{border-color:var(--signal);box-shadow:var(--sh-sm);transform:translateY(-2px)}
+.res .file{font-family:var(--ff-m);font-size:11px;color:var(--teal)}
+.dl{font-family:var(--ff-m);font-size:12px;color:var(--muted);font-weight:500}
+
+/* mentors */
+.mentor-top{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.av{width:42px;height:42px;border-radius:12px;background:var(--signal-wash);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--ff-d);font-size:14px;font-weight:600;color:var(--signal-ink);flex-shrink:0}
+.av.lg{width:56px;height:56px;font-size:18px}
+.role{font-family:var(--ff-m);font-size:11px;color:var(--muted)}
+.badge{font-family:var(--ff-m);font-size:9px;padding:3px 7px;border-radius:6px;border:1px solid var(--teal);color:var(--teal);background:var(--teal-wash);font-weight:500}
+.badge.rep{border-color:var(--signal);color:var(--signal-ink);background:var(--signal-wash)}
+.badge.grey{border-color:var(--line);color:var(--muted);background:var(--ink-3)}
+.mstats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-sm);margin-top:14px;overflow:hidden}
+.mstats div{background:var(--ink-2);padding:11px;text-align:center}
+.mstats b{font-family:var(--ff-d);font-size:15px;color:var(--chalk);display:block;font-weight:600}
+.mstats small{font-family:var(--ff-m);font-size:9px;color:var(--muted);text-transform:uppercase}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.chip{font-family:var(--ff-m);font-size:10px;color:var(--muted);border:1px solid var(--line);padding:4px 9px;border-radius:20px;background:var(--ink-2)}
+
+.path{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:24px}
+@media(max-width:920px){.path{grid-template-columns:repeat(2,1fr)}}
+.step{background:var(--ink-2);border:1px solid var(--line);border-radius:var(--r);padding:15px 13px;box-shadow:var(--sh-xs);transition:.15s}
+.step small{font-family:var(--ff-m);font-size:10px;color:var(--muted);display:block;margin-bottom:3px}
+.step b{font-size:14px}
+.step.done{border-color:var(--teal);background:var(--teal-wash)}
+.step.done small{color:var(--teal)}
+
+.quiz{border:1px solid var(--line);background:var(--ink-2);border-radius:var(--r);padding:26px;max-width:720px;box-shadow:var(--sh-sm)}
+.qtext{font-size:19px;font-weight:600;margin:8px 0 16px;letter-spacing:-.01em}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;background:var(--ink-2);border:1px solid var(--line);color:var(--chalk);padding:13px 16px;border-radius:10px;cursor:pointer;font-size:14px;font-family:var(--ff-b);transition:.15s;font-weight:500}
+.opt:hover{border-color:var(--signal);background:var(--signal-wash);transform:translateX(4px)}
+.bar{height:4px;background:var(--ink-3);border-radius:20px;overflow:hidden;margin-bottom:18px}
+.bar i{display:block;height:100%;background:var(--signal);width:0;transition:width .4s;border-radius:20px}
+.score{font-family:var(--ff-d);font-size:48px;color:var(--signal);line-height:1;font-weight:700;letter-spacing:-.02em}
+.next li{list-style:none;color:var(--soft);font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)}
+.next li:before{content:"→ ";color:var(--teal);font-family:var(--ff-m)}
+
+.tbl-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh-sm)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px;background:var(--ink-2)}
+th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--ff-m);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--ink);font-weight:500}
+tbody tr:hover{background:var(--ink)}
+tr:last-child td{border-bottom:0}
+.promo{font-family:var(--ff-m);font-size:9px;color:#fff;background:var(--muted);padding:2px 6px;border-radius:5px;font-weight:500}
+
+.queue-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--ink-2);margin-bottom:10px;flex-wrap:wrap;box-shadow:var(--sh-xs)}
+.queue-actions{margin-left:auto;display:flex;gap:8px}
+.done-msg{font-family:var(--ff-m);font-size:12px;color:var(--teal);font-weight:500}
+
+/* demo creds */
+.creds{border:1px solid var(--line);border-radius:var(--r);background:var(--ink-2);padding:20px;margin-top:24px;box-shadow:var(--sh-sm)}
+.creds h4{font-family:var(--ff-m);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--signal);margin-bottom:4px}
+.creds .warn{font-family:var(--ff-m);font-size:11px;color:var(--muted);margin-bottom:12px}
+.cred{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-family:var(--ff-m);font-size:11px;flex-wrap:wrap}
+.cred:last-child{border-bottom:0}
+.cred .r{color:var(--teal);min-width:112px}
+.cred .e{color:var(--chalk)}
+.cred .p{color:var(--muted)}
+.cred button{margin-left:auto;font-family:var(--ff-m);font-size:10px;background:var(--ink-3);border:1px solid var(--line);color:var(--muted);padding:5px 9px;border-radius:6px;cursor:pointer;transition:.15s}
+.cred button:hover{border-color:var(--signal);color:var(--signal)}
+
+/* jobs */
+.jfilters{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:24px 0 4px;padding:16px;border:1px solid var(--line);border-radius:var(--r);background:var(--ink-2);box-shadow:var(--sh-xs)}
+.fgroup{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{font-family:var(--ff-m);font-size:11px;background:var(--ink-2);border:1px solid var(--line);color:var(--muted);padding:6px 12px;border-radius:20px;cursor:pointer;transition:.15s;font-weight:500}
+.fchip:hover{border-color:var(--line-2);color:var(--chalk);background:var(--ink-3)}
+.fchip[aria-pressed="true"]{background:var(--signal);color:#fff;border-color:var(--signal);box-shadow:var(--sh-xs)}
+.switchbox{display:flex;align-items:center;gap:7px;font-family:var(--ff-m);font-size:11px;color:var(--muted);cursor:pointer}
+.switchbox input{accent-color:var(--signal);width:15px;height:15px}
+.job{display:flex;gap:16px;align-items:flex-start;background:var(--ink-2);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;transition:.18s;box-shadow:var(--sh-xs)}
+.job:hover{border-color:var(--line-2);box-shadow:var(--sh-md);transform:translateY(-2px)}
+.job.fresh{border-left:3px solid var(--teal)}
+.jlogo{width:42px;height:42px;border-radius:11px;background:var(--ink-3);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--ff-d);font-size:12px;font-weight:600;color:var(--chalk);flex-shrink:0}
+.job h3{margin-bottom:2px;font-size:15px}
+.jmeta{font-family:var(--ff-m);font-size:11px;color:var(--muted)}
+.jtags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.jt{font-family:var(--ff-m);font-size:10px;border:1px solid var(--line);color:var(--muted);padding:3px 9px;border-radius:20px;background:var(--ink-2)}
+.jt.lvl{border-color:var(--teal);color:var(--teal);background:var(--teal-wash)}
+.jt.rem{border-color:var(--signal);color:var(--signal-ink);background:var(--signal-wash)}
+.jt.new{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:600}
+.jright{margin-left:auto;text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.jsal{font-family:var(--ff-d);font-size:15px;color:var(--teal);white-space:nowrap;font-weight:600}
+.jsal.none{color:var(--muted);font-size:11px;font-family:var(--ff-m);font-weight:400}
+.jsrc{font-family:var(--ff-m);font-size:10px;color:var(--muted);border:1px solid var(--line);padding:3px 8px;border-radius:6px;background:var(--ink-3)}
+@media(max-width:720px){.job{flex-wrap:wrap}.jright{margin-left:0;width:100%;flex-direction:row;justify-content:space-between;align-items:center;text-align:left}}
+
+/* alert configurator */
+.cfg{border:1px solid var(--line);border-radius:var(--r);background:var(--ink-2);padding:22px;box-shadow:var(--sh-sm)}
+.cfg-row{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.cfg-row:last-of-type{border-bottom:0}
+.cfg-row .lbl b{font-size:14px;display:block}
+.cfg-row .lbl small{font-family:var(--ff-m);font-size:11px;color:var(--muted)}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.slide{position:absolute;inset:0;background:var(--ink-3);border:1px solid var(--line);border-radius:20px;cursor:pointer;transition:.2s}
+.slide:before{content:'';position:absolute;width:16px;height:16px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.2s;box-shadow:var(--sh-xs)}
+.toggle input:checked+.slide{background:var(--signal);border-color:var(--signal)}
+.toggle input:checked+.slide:before{transform:translateX(18px);background:#fff}
+.toggle input:focus-visible+.slide{outline:2px solid var(--signal);outline-offset:2px}
+.cfg-body{transition:opacity .2s}
+.cfg-body.off{opacity:.4;pointer-events:none}
+.preview{border:1px solid var(--line);border-radius:var(--r);background:var(--ink-2);margin-top:18px;overflow:hidden;box-shadow:var(--sh-xs)}
+.pv-head{padding:11px 15px;border-bottom:1px solid var(--line);font-family:var(--ff-m);font-size:11px;color:var(--muted);background:var(--ink)}
+.pv-head b{color:var(--chalk);font-weight:500}
+.pv-body{padding:16px}
+.pv-body h4{font-family:var(--ff-d);font-size:16px;margin-bottom:4px;font-weight:600}
+.pv-job{padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.pv-job:last-child{border-bottom:0}
+.pv-job small{font-family:var(--ff-m);font-size:11px;color:var(--muted);display:block}
+.pv-foot{font-family:var(--ff-m);font-size:10px;color:var(--muted);padding:11px 15px;border-top:1px solid var(--line);background:var(--ink)}
+.pv-foot a{color:var(--teal)}
+.saved{font-family:var(--ff-m);font-size:12px;color:var(--teal);display:none;font-weight:500}
+.saved.on{display:inline}
+
+footer{border-top:1px solid var(--line);padding:56px 0 28px;font-size:14px;background:var(--ink-2)}
+.fgrid{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:24px}
+@media(max-width:920px){.fgrid{grid-template-columns:1fr 1fr}}
+footer h4{font-family:var(--ff-m);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--signal);margin-bottom:10px}
+footer li{list-style:none;color:var(--muted);padding:4px 0}
+footer li a{cursor:pointer}
+footer li a:hover{color:var(--chalk)}
+.fbot{border-top:1px solid var(--line);margin-top:32px;padding-top:18px;display:flex;justify-content:space-between;color:var(--muted);font-family:var(--ff-m);font-size:12px;flex-wrap:wrap;gap:8px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" onclick="go('home')">IT<span>BA</span>.AZ</a>
+    <button class="burger" id="burger" aria-label="Menyu" aria-expanded="false">≡</button>
+    <ul id="menu">
+      <li data-nav="dashboard"><a onclick="go('dashboard')">Panel</a></li>
+      <li data-nav="feed"><a onclick="go('home','feed')">Lent</a></li>
+      <li data-nav="qa"><a onclick="go('home','qa')">Suallar</a></li>
+      <li data-nav="resources"><a onclick="go('home','resources')">Resurslar</a></li>
+      <li data-nav="mentors"><a onclick="go('home','mentors')">Mentorlar</a></li>
+      <li data-nav="jobs"><a onclick="go('home','jobs')">Vakansiyalar</a></li>
+      <li data-nav="roadmap"><a onclick="go('home','roadmap')">Yol xəritəsi</a></li>
+      <li data-nav="assess"><a onclick="go('home','assess')">Qiymətləndirmə</a></li>
+      <li data-nav="courses"><a onclick="go('home','courses')">Kurslar</a></li>
+    </ul>
+    <div class="authbar" id="authbar"></div>
+  </div>
+</header>
+
+<!-- ============ HOME ============ -->
+<main id="v-home">
+<div class="wrap" style="padding-top:44px;padding-bottom:56px">
+  <div id="homeBanner"></div>
+  <span class="eyebrow" id="heroEyebrow">İcma</span>
+  <h1 id="heroTitle" style="font-size:clamp(28px,4.2vw,46px);margin:10px 0 12px;max-width:20ch"></h1>
+  <p class="lede" id="heroLede"></p>
+  <div class="hero-grid">
+    <div>
+      <div class="stats">
+        <div class="stat"><b data-count="1240">0</b><span>İştirakçı</span></div>
+        <div class="stat"><b data-count="380">0</b><span>Məqalə</span></div>
+        <div class="stat"><b data-count="1900">0</b><span>Cavab</span></div>
+        <div class="stat"><b data-count="210">0</b><span>Şablon</span></div>
+      </div>
+      <p class="note">Bu rəqəmlər satışı yox, icmanın sağlamlığını ölçür. Həftəlik aktiv: 41%.</p>
+      <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap" id="heroCta"></div>
+    </div>
+    <div class="feed">
+      <div class="feed-head"><span><span class="dot"></span>Canlı lent</span><span id="feedCount">bu gün 24</span></div>
+      <div id="feedList"></div>
+    </div>
+  </div>
+</div>
+
+<section id="feed">
+  <div class="wrap">
+    <span class="eyebrow">İcmadan</span><h2>Bu həftə ən çox oxunanlar</h2>
+    <div class="grid g3" style="margin-top:22px">
+      <div class="card hov"><span class="tag">Keys · Banking</span><h3>Kredit prosesini 14 gündən 3 günə endirdik</h3><p class="lede">As-is modeldə 9 əl əməliyyatı vardı. Hansını sildik və niyə.</p><div class="q-meta">Nigar A. · Lead BA · 142 like</div></div>
+      <div class="card hov"><span class="tag">Best practice</span><h3>Acceptance criteria yazmağın 4 üsulu</h3><p class="lede">Gherkin həmişə doğru cavab deyil. Nə vaxt cədvəl, nə vaxt siyahı.</p><div class="q-meta">Rəşad M. · Data Analyst · 118 like</div></div>
+      <div class="card hov"><span class="tag">AI alətləri</span><h3>AI tələb yazmır — tələbi yoxlayır</h3><p class="lede">3 ayın praktik nəticəsi: harada kömək etdi, harada zərər verdi.</p><div class="q-meta">Leyla H. · Senior BA · 96 like</div></div>
+    </div>
+    <div id="publishZone" style="margin-top:18px"></div>
+  </div>
+</section>
+
+<section id="qa">
+  <div class="wrap">
+    <span class="eyebrow">Sual — cavab</span><h2>Praktikada ilişən yerlər</h2>
+    <p class="lede">Orta cavab müddəti 2 saat. Qəbul edilmiş cavab bilik bazasına düşür.</p>
+    <div id="askZone" style="margin-top:18px"></div>
+    <div class="grid g2" style="margin-top:14px" id="qList"></div>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="wrap">
+    <span class="eyebrow">Resurs kitabxanası</span><h2>İcmanın yığdığı hazır artefaktlar</h2>
+    <div id="resZone" style="margin-top:18px"></div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="res"><div><b>BRD şablonu — bank layihəsi</b><div class="file">brd-banking-v3.docx</div></div><span class="dl">↓ 1 840</span></div>
+      <div class="res"><div><b>BPMN: ödəniş axını (as-is / to-be)</b><div class="file">payment-flow.bpmn</div></div><span class="dl">↓ 1 210</span></div>
+      <div class="res"><div><b>SQL — BA-nın gündəlik 40 sorğusu</b><div class="file">ba-daily-queries.sql</div></div><span class="dl">↓ 2 305</span></div>
+      <div class="res"><div><b>UML sequence — OTP təsdiqi</b><div class="file">otp-sequence.puml</div></div><span class="dl">↓ 760</span></div>
+      <div class="res"><div><b>API sənədləşmə checklist-i</b><div class="file">api-doc-checklist.md</div></div><span class="dl">↓ 980</span></div>
+      <div class="res"><div><b>Stakeholder xəritəsi (RACI)</b><div class="file">stakeholder-raci.xlsx</div></div><span class="dl">↓ 1 415</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="mentors">
+  <div class="wrap">
+    <span class="eyebrow">Mentor kataloqu</span><h2>Reputasiya ilə tapılır, reklamla yox</h2>
+    <p class="lede">Sıralama töhfəyə görədir: qəbul edilən cavablar, məqalələr, cavab sürəti. Ödənişli yer yoxdur.</p>
+    <div class="grid g3" style="margin-top:22px" id="mentorList"></div>
+  </div>
+</section>
+
+<section id="jobs">
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+      <div>
+        <span class="eyebrow">Vakansiyalar</span><h2>Azərbaycanda açıq IT BA elanları</h2>
+        <p class="lede">Yerli saytlardan toplanır: boss.az, hh.az, jobsearch.az, djinni, LinkedIn, banco.az. ITBA vasitəçi deyil — müraciət mənbə saytda gedir.</p>
+      </div>
+      <div class="mono" style="font-size:11px;color:var(--muted);text-align:right">
+        <div><span id="jobCount">0</span> aktiv elan</div>
+        <div>son yeniləmə: bu gün 09:40</div>
+      </div>
+    </div>
+
+    <div class="jfilters" id="jFilters">
+      <div class="fgroup" id="fLevel"></div>
+      <div class="fgroup" id="fSource"></div>
+      <label class="switchbox"><input type="checkbox" id="fRemote"> <span>Yalnız remote / hibrid</span></label>
+      <label class="switchbox"><input type="checkbox" id="fSalary"> <span>Yalnız maaşı göstərilən</span></label>
+      <button class="btn btn-ghost btn-sm" onclick="resetJobs()">Sıfırla</button>
+    </div>
+
+    <div id="jobAlertZone"></div>
+    <div class="grid" style="margin-top:14px" id="jobList"></div>
+    <div id="jobEmpty" class="banner" hidden><p>Bu filtrlərə uyğun elan yoxdur. <b>Bildiriş qur</b> — uyğun elan çıxanda email gəlsin.</p></div>
+    <p class="note">Elanlar mənbə saytların açıq səhifələrindən toplanır və gündə 2 dəfə yenilənir. Maaş göstərilmirsə, mənbədə də göstərilməyib — ITBA rəqəm uydurmur.</p>
+  </div>
+</section>
+
+<section id="roadmap">
+  <div class="wrap">
+    <span class="eyebrow">Yol xəritəsi</span><h2>BA karyerası necə qurulur</h2>
+    <div class="path">
+      <div class="step done"><small>01</small><b>Başlanğıc</b></div>
+      <div class="step"><small>02</small><b>Junior BA</b></div>
+      <div class="step"><small>03</small><b>Middle BA</b></div>
+      <div class="step"><small>04</small><b>Senior BA</b></div>
+      <div class="step"><small>05</small><b>Lead BA</b></div>
+      <div class="step"><small>06</small><b>PO / PM</b></div>
+    </div>
+    <div class="grid g3" style="margin-top:20px">
+      <div class="card"><h3>BA nə iş görür</h3><p class="lede">Bir iş gününün saat-saat təsviri — 6 fərqli şirkətdən.</p></div>
+      <div class="card"><h3>Praktik tapşırıqlar</h3><p class="lede">Brief ver, model çək, icmadan rəy al.</p></div>
+      <div class="card"><h3>Müsahibəyə hazırlıq</h3><p class="lede">Bakı bazarında verilən suallar və BA-ların qeydləri.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="assess">
+  <div class="wrap">
+    <span class="eyebrow">Özünü qiymətləndir</span><h2>Nə qədər hazırsan?</h2>
+    <p class="lede" style="margin-bottom:18px">5 sual, konkret nəticə və növbəti addımlar. Qeydiyyat lazım deyil.</p>
+    <div class="quiz"><div class="bar"><i id="bar"></i></div><div id="qBody"></div></div>
+  </div>
+</section>
+
+<section id="courses">
+  <div class="wrap">
+    <span class="eyebrow">Kurs kataloqu</span><h2>Kurslar bir moduldur — mərkəz deyil</h2>
+    <p class="lede" style="margin-bottom:20px">Burada heç nə satılmır. Bu, seçim üçün müqayisə cədvəlidir.</p>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Proqram</th><th>Səviyyə</th><th>Müddət</th><th>Mentor</th><th>Sillabus</th><th>Nəticə</th></tr></thead>
+        <tbody>
+          <tr><td><b>IT BA əsasları</b><br><small style="color:var(--muted)">ITBA Academy</small></td><td>Başlanğıc</td><td>12 həftə</td><td>Nigar Əliyeva<br><small style="color:var(--muted)">Lead BA, 9 il</small></td><td><a style="color:var(--teal)">8 modul ↗</a></td><td>Tələb toplama, user story, BRD</td></tr>
+          <tr><td><b>BA üçün SQL</b><br><small style="color:var(--muted)">DataLab</small></td><td>Orta</td><td>8 həftə</td><td>Rəşad Məmmədov<br><small style="color:var(--muted)">Data Analyst, 6 il</small></td><td><a style="color:var(--teal)">5 modul ↗</a></td><td>JOIN, aggregation, window</td></tr>
+          <tr><td><b>BPMN və UML</b><br><small style="color:var(--muted)">Process School</small> <span class="promo">SPONSOR</span></td><td>Orta</td><td>6 həftə</td><td>Leyla Həsənova<br><small style="color:var(--muted)">Senior BA, 7 il</small></td><td><a style="color:var(--teal)">6 modul ↗</a></td><td>Proses modelləşdirmə</td></tr>
+          <tr><td><b>API və inteqrasiya</b><br><small style="color:var(--muted)">ITBA Academy</small></td><td>Orta / Yüksək</td><td>5 həftə</td><td>Elvin Quliyev<br><small style="color:var(--muted)">Solution Analyst, 8 il</small></td><td><a style="color:var(--teal)">4 modul ↗</a></td><td>REST, Swagger, Postman</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">ITBA kurs satmır və komissiya almır. "SPONSOR" ödənişli yerləşdirmədir — sıralamaya təsir etmir.</p>
+  </div>
+</section>
+</main>
+
+<!-- ============ LOGIN ============ -->
+<main id="v-login" hidden>
+  <div class="wrap" style="padding:56px 0 72px">
+    <div class="narrow">
+      <span class="eyebrow">Giriş</span>
+      <h1 style="font-size:30px;margin:8px 0 6px">Xoş gəldin</h1>
+      <p class="lede" style="margin-bottom:24px">Panelin rolundan asılıdır. Hesabın yoxdursa <a onclick="go('register')" style="color:var(--signal);cursor:pointer">qeydiyyatdan keç</a>.</p>
+      <div class="card">
+        <div class="err" id="loginErr"></div>
+        <div class="field"><label>Email <span class="req">*</span></label><input id="lgEmail" type="email" placeholder="ad@sirket.az" autocomplete="username"></div>
+        <div class="field"><label>Şifrə <span class="req">*</span></label><input id="lgPass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+        <button class="btn btn-primary btn-full" onclick="doLogin()">Daxil ol</button>
+        <p class="hint mono" style="text-align:center;margin-top:12px;color:var(--muted);font-size:11px">Şifrəni unutmusan? · Email ilə bərpa</p>
+      </div>
+
+      <div class="creds">
+        <h4>Test hesabları</h4>
+        <p class="warn">Prototip üçün. Real sistemdə Supabase Auth — şifrələr heç vaxt client tərəfdə saxlanmır.</p>
+        <div id="credList"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============ REGISTER ============ -->
+<main id="v-register" hidden>
+  <div class="wrap" style="padding:56px 0 72px">
+    <div class="narrow">
+      <div id="regStep1">
+        <span class="eyebrow">Qeydiyyat</span>
+        <h1 style="font-size:30px;margin:8px 0 6px">Sən kimsən?</h1>
+        <p class="lede">Seçim qeydiyyat formunu və panelini müəyyən edir. Sonradan Professional BA-ya keçmək olar.</p>
+        <div class="rolepick">
+          <button class="rolecard" onclick="regForm('potential')">
+            <b>Potential BA</b><p>BA olmaq istəyirəm, öyrənirəm.</p>
+            <span class="meta">3 sahə · dərhal aktiv · təsdiq lazım deyil</span>
+          </button>
+          <button class="rolecard" onclick="regForm('pro')">
+            <b>Professional BA</b><p>Hazırda BA kimi işləyirəm, bilik bölüşmək istəyirəm.</p>
+            <span class="meta">8 sahə · dərhal aktiv · məqalə dərci üçün admin təsdiqi</span>
+          </button>
+          <button class="rolecard dim" onclick="alert('Sinifdə oxumaq rol deyil — vəziyyətdir (v3.0 §3).\n\nSən Potential BA və ya Professional BA kimi qeydiyyatdan keçirsən. Mentor səni sinfə əlavə edəndə classroom_enrolled flag-ı açılır: panelinə Sinif bloku gəlir, qalan hər şey yerində qalır.\n\nKurs bitəndə flag sönür — hesabın, reputasiyan və sualların qalır.')">
+            <b>Sinifdə oxuyuram</b><p>Kurs proqramına qəbul olunmuşam.</p>
+            <span class="meta">🔒 Rol deyil — flag. Yuxarıdan birini seç</span>
+          </button>
+        </div>
+        <p class="note">Mentor da ayrıca rol deyil: <code>Professional BA + verified + mentor_enabled</code>.</p>
+      </div>
+
+      <div id="regStep2" hidden>
+        <span class="eyebrow" id="regKind"></span>
+        <h1 style="font-size:28px;margin:8px 0 6px" id="regTitle"></h1>
+        <p class="lede" id="regSub" style="margin-bottom:22px"></p>
+        <div class="card">
+          <div class="err" id="regErr"></div>
+          <div id="regFields"></div>
+          <button class="btn btn-primary btn-full" style="margin-top:16px" onclick="doRegister()" id="regBtn">Qeydiyyatı tamamla</button>
+          <button class="btn btn-ghost btn-full btn-sm" style="margin-top:8px" onclick="regBack()">← Geri</button>
+        </div>
+      </div>
+
+      <div id="regDone" hidden></div>
+    </div>
+  </div>
+</main>
+
+<!-- ============ INVITE ACCEPT ============ -->
+<main id="v-newpass" hidden>
+  <div class="wrap" style="padding:56px 0 72px">
+    <div class="narrow">
+      <span class="eyebrow">Sinif dəvəti</span>
+      <h1 style="font-size:28px;margin:8px 0 6px">Sinfə dəvət olunmusan</h1>
+      <p class="lede" style="margin-bottom:22px" id="invText"></p>
+      <div class="card">
+        <div class="row"><div><b>Sinif</b><small>IT BA əsasları · Batch 7</small></div><span class="st">12 həftə</span></div>
+        <div class="row"><div><b>Mentor</b><small>Nigar Əliyeva · Lead BA · Kapital Bank</small></div><span class="st ok">8 420 rep</span></div>
+        <div class="row"><div><b>Rolun</b><small>dəyişmir — sadəcə flag açılır</small></div><span class="st ok">classroom_enrolled</span></div>
+        <button class="btn btn-primary btn-full" style="margin-top:16px" onclick="acceptInvite()">Dəvəti qəbul et</button>
+        <p class="hint mono" style="text-align:center;margin-top:10px;color:var(--muted);font-size:11px">Müvəqqəti şifrə yoxdur — dəvət linki birdəfəlikdir (v3.0 B3)</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============ DASHBOARD ============ -->
+<main id="v-dashboard" hidden>
+  <div class="wrap" style="padding:44px 0 72px">
+    <div class="dash-head">
+      <div>
+        <span class="eyebrow" id="dsKind"></span>
+        <h1 id="dsHi"></h1>
+        <p class="lede" id="dsSub"></p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="dsCta"></div>
+    </div>
+    <div id="dsBanner"></div>
+    <div class="kpis" id="dsKpis"></div>
+    <div id="dsBody"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <div class="logo" style="margin-bottom:10px">IT<span>BA</span>.AZ</div>
+        <p style="color:var(--muted);max-width:34ch">Azərbaycanın IT Business Analysis icması. Bilik bölüşən peşəkarların platforması.</p>
+      </div>
+      <div><h4>İcma</h4><ul><li><a onclick="go('home','feed')">Lent</a></li><li><a onclick="go('home','qa')">Suallar</a></li><li><a onclick="go('home','mentors')">Mentorlar</a></li></ul></div>
+      <div><h4>Bilik</h4><ul><li><a onclick="go('home','resources')">Resurslar</a></li><li><a>Şablonlar</a></li><li><a>Xəbərlər</a></li></ul></div>
+      <div><h4>Karyera</h4><ul><li><a onclick="go('home','jobs')">Vakansiyalar</a></li><li><a onclick="go('home','roadmap')">Yol xəritəsi</a></li><li><a onclick="go('home','assess')">Qiymətləndirmə</a></li><li><a onclick="go('home','courses')">Kurs kataloqu</a></li></ul></div>
+      <div><h4>Platforma</h4><ul><li><a>Haqqımızda</a></li><li><a>Qaydalar</a></li><li><a>Moderasiya</a></li></ul></div>
+    </div>
+    <div class="fbot"><span>© 2026 ITBA.AZ</span><span>Prototip v4 · auth axını · şifrələr demo üçündür</span></div>
+  </div>
+</footer>
+
+<script>
+/* ================= ROLE MODEL (spec v3.0) =================
+   Kimlik roldan gəlir. İmkanlar flagdan gəlir. */
+const ROLE_NAME={potential:'Potential BA',professional:'Professional BA',moderator:'Moderator',admin:'Admin'};
+
+/* identity = role + flags */
+function identity(u){
+  if(!u) return 'Qonaq';
+  const f=u.flags||{};
+  if(u.role==='professional'){
+    if(f.mentor_enabled) return 'Mentor';
+    if(!f.verified) return 'Professional BA · pending';
+    return 'Professional BA ✓';
+  }
+  if(u.role==='potential') return f.classroom_enrolled?'Potential BA · sinifdə':'Potential BA';
+  return ROLE_NAME[u.role];
+}
+/* capabilities computed from role + flags — heç bir hardcoded rol paneli yoxdur */
+function caps(){
+  const u=ME; if(!u) return {browse:1};
+  const f=u.flags||{}, r=u.role;
+  const staff=r==='moderator'||r==='admin';
+  let publish=false;
+  if(staff||f.trusted_author) publish='direct';
+  else if(r==='potential') publish='review';
+  else if(r==='professional'&&f.verified) publish='review';
+  return {browse:1,comment:1,ask:1,answer:1,download:1,publish,
+    mentor:!!f.mentor_enabled,moderate:staff,admin:r==='admin',
+    cls_student:!!f.classroom_enrolled,cls_owner:!!f.classroom_owner,
+    jobs_alert:r==='potential'};
+}
+const can=k=>!!caps()[k];
+const NAV_ALL=['dashboard','feed','qa','resources','mentors','jobs','roadmap','assess','courses'];
+function navFor(){
+  if(!ME) return NAV_ALL.filter(n=>n!=='dashboard');
+  if(ME.role==='potential') return NAV_ALL;
+  return NAV_ALL.filter(n=>n!=='assess');
+}
+const HERO={
+  guest:['İcma','Azərbaycanın BA-ları burada <em style="font-style:normal;color:var(--signal)">bilik bölüşür</em>.','Oxu pulsuzdur. Sual vermək, cavablamaq və şablon endirmək üçün qeydiyyatdan keç.'],
+  potential:['Sənin yolun','IT Business Analyst olmaq — <em style="font-style:normal;color:var(--signal)">haradan başlamalı?</em>','Hazırlığını yoxla, yol xəritəsini al, mentorlardan soruş.'],
+  pending:['İcma','Cavab verməyə <em style="font-style:normal;color:var(--signal)">indi başla</em>.','Təsdiq gözlənilir — iştirak gözləmir.'],
+  pro:['İcma','Bir dəfə həll etdiyini <em style="font-style:normal;color:var(--signal)">bir dəfə yaz</em>.','Məqalə dərc et, sual cavabla, şablon paylaş.'],
+  mentor:['Mentor','Kataloqda <em style="font-style:normal;color:var(--signal)">reputasiyanla</em> görünürsən.','Sual cavabla, məqalə yaz, istəsən sinif apar.'],
+  staff:['Platforma','Növbə <em style="font-style:normal;color:var(--signal)">supply-ın limitidir</em>.','Təsdiq, moderasiya, mentor aktivasiyası.']
+};
+function heroKey(){
+  if(!ME) return 'guest';
+  if(ME.role==='potential') return 'potential';
+  if(ME.role==='professional') return ME.flags.mentor_enabled?'mentor':(ME.flags.verified?'pro':'pending');
+  return 'staff';
+}
+
+/* ================= SEEDED ACCOUNTS ================= */
+const NOFLAG={verified:false,mentor_enabled:false,trusted_author:false,classroom_enrolled:false,classroom_owner:false};
+const mk=(o)=>Object.assign({},NOFLAG,o);
+const USERS=[
+ {email:'potential@itba.az', pass:'Potential123!', role:'potential',    name:'Aysel Səfərova', title:'Marketinq mütəxəssisi · BA-ya keçid', rep:40,   init:'AS', flags:mk({})},
+ {email:'student@itba.az',   pass:'Student123!',   role:'potential',    name:'Günel Rzayeva',  title:'Batch 7 · IT BA əsasları',           rep:95,   init:'GR', flags:mk({classroom_enrolled:true})},
+ {email:'pending@itba.az',   pass:'Pending123!',   role:'professional', name:'Kamran Əliyev',  title:'Senior BA · Bolt · 5 il',            rep:0,    init:'KƏ', flags:mk({})},
+ {email:'pro@itba.az',       pass:'Verified123!',  role:'professional', name:'Tural Babayev',  title:'BA · Umico · 4 il',                  rep:340,  init:'TB', flags:mk({verified:true})},
+ {email:'mentor@itba.az',    pass:'Mentor123!',    role:'professional', name:'Nigar Əliyeva',  title:'Lead BA · Kapital Bank · 9 il',      rep:8420, init:'NA', flags:mk({verified:true,mentor_enabled:true,trusted_author:true,classroom_owner:true})},
+ {email:'moderator@itba.az', pass:'Moderator123!', role:'moderator',    name:'Elvin Quliyev',  title:'Solution Analyst · Azercell',        rep:4310, init:'EQ', flags:mk({verified:true,trusted_author:true})},
+ {email:'admin@itba.az',     pass:'Admin123!',     role:'admin',        name:'ITBA Admin',     title:'Platforma administratoru',           rep:0,    init:'AD', flags:mk({})}
+];
+let ME=null, VIEW='home', PENDING_INVITE=null;
+
+/* ================= ROUTER ================= */
+function go(v,anchor){
+  VIEW=v;
+  ['home','login','register','dashboard','newpass'].forEach(x=>document.getElementById('v-'+x).hidden=(x!==v));
+  document.getElementById('menu').classList.remove('open');
+  render();
+  if(anchor){const el=document.getElementById(anchor);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth'}),40)}
+  else window.scrollTo(0,0);
+}
+
+/* ================= AUTH ================= */
+function doLogin(){
+  const e=document.getElementById('lgEmail').value.trim().toLowerCase();
+  const p=document.getElementById('lgPass').value;
+  const err=document.getElementById('loginErr');
+  const u=USERS.find(u=>u.email===e);
+  if(!u||u.pass!==p){err.textContent='Email və ya şifrə yanlışdır.';err.classList.add('on');return}
+  err.classList.remove('on');
+  ME=JSON.parse(JSON.stringify(u));
+  if(PENDING_INVITE===ME.email){go('newpass');return}
+  go('dashboard');
+}
+function fill(e,p){document.getElementById('lgEmail').value=e;document.getElementById('lgPass').value=p;document.getElementById('loginErr').classList.remove('on')}
+function logout(){ME=null;go('home')}
+function acceptInvite(){ME.flags.classroom_enrolled=true;PENDING_INVITE=null;go('dashboard')}
+
+document.getElementById('credList').innerHTML=USERS.map(u=>{
+  const fl=Object.keys(u.flags).filter(k=>u.flags[k]);
+  return `<div class="cred"><span class="r">${identity(u)}</span><span class="e">${u.email}</span><span class="p">${u.pass}</span>
+  <button onclick="fill('${u.email}','${u.pass}')">doldur</button>
+  ${fl.length?`<div style="flex-basis:100%;color:var(--muted);font-size:10px;padding-left:0">${ROLE_NAME[u.role]} + ${fl.join(' + ')}</div>`:`<div style="flex-basis:100%;color:var(--muted);font-size:10px">${ROLE_NAME[u.role]} · flag yoxdur</div>`}</div>`}).join('');
+
+/* ================= REGISTRATION ================= */
+const F={
+  potential:{kind:'Potential BA',title:'Öyrənməyə başla',sub:'3 sahə. Təsdiq yoxdur — hesabın dərhal aktivdir və dərhal sual verə bilərsən.',
+    fields:[['legend','Tələb olunan'],['Tam ad','text',1],['Email','email',1],['Şifrə','password',1,'Minimum 8 simvol'],
+            ['legend','Opsional — sonra da doldura bilərsən'],['Telefon','tel',0],['Hazırkı vəzifə','text',0],['LinkedIn','url',0],['Ölkə','text',0],['Təcrübə (il)','number',0]]},
+  pro:{kind:'Professional BA',title:'Bilik bölüşməyə başla',sub:'8 tələb olunan sahə. Hesabın dərhal aktivdir — sual verə və cavablaya bilərsən. Məqalə dərci və mentor namizədliyi admin təsdiqindən sonra açılır.',
+    fields:[['legend','Tələb olunan'],['Tam ad','text',1],['Email','email',1],['Şifrə','password',1,'Minimum 8 simvol'],['Şirkət','text',1],['Vəzifə','text',1],['BA təcrübəsi (il)','number',1],['LinkedIn','url',1,'Təsdiq üçün yoxlanılır'],['Bio','textarea',1,'2–3 cümlə: nə üzərində işləyirsən'],
+            ['legend','Opsional — təsdiqi sürətləndirir'],['CV (link)','url',0],['Sertifikatlar','text',0],['Portfolio','url',0],['Bacarıqlar','text',0,'Vergüllə: BPMN, SQL, Agile'],['Şəxsi sayt','url',0]]}
+};
+let regRole=null;
+function regForm(role){
+  regRole=role;const f=F[role];
+  document.getElementById('regStep1').hidden=true;
+  document.getElementById('regStep2').hidden=false;
+  document.getElementById('regKind').textContent=f.kind;
+  document.getElementById('regTitle').textContent=f.title;
+  document.getElementById('regSub').textContent=f.sub;
+  document.getElementById('regFields').innerHTML=f.fields.map(x=>{
+    if(x[0]==='legend')return `<div class="legend">${x[1]}</div>`;
+    const [lab,type,req,hint]=x;
+    const inp=type==='textarea'?`<textarea data-req="${req}" data-l="${lab}"></textarea>`:`<input type="${type}" data-req="${req}" data-l="${lab}">`;
+    return `<div class="field"><label>${lab} ${req?'<span class="req">*</span>':'<span class="opt">opsional</span>'}</label>${inp}${hint?`<div class="hint">${hint}</div>`:''}</div>`;
+  }).join('');
+  window.scrollTo(0,0);
+}
+function regBack(){document.getElementById('regStep2').hidden=true;document.getElementById('regStep1').hidden=false;window.scrollTo(0,0)}
+function doRegister(){
+  const err=document.getElementById('regErr');
+  const inputs=[...document.querySelectorAll('#regFields [data-req]')];
+  const missing=inputs.filter(i=>i.dataset.req==='1'&&!i.value.trim());
+  if(missing.length){err.textContent='Tələb olunan sahələr boşdur: '+missing.map(i=>i.dataset.l).join(', ');err.classList.add('on');missing[0].focus();return}
+  const pw=inputs.find(i=>i.dataset.l==='Şifrə');
+  if(pw&&pw.value.length<8){err.textContent='Şifrə minimum 8 simvol olmalıdır.';err.classList.add('on');pw.focus();return}
+  err.classList.remove('on');
+  const name=inputs.find(i=>i.dataset.l==='Tam ad').value.trim();
+  const email=inputs.find(i=>i.dataset.l==='Email').value.trim();
+  const init=name.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const role=regRole==='potential'?'potential':'professional';
+  ME={email,pass:pw.value,role,name,title:'Yeni iştirakçı',rep:0,init,flags:mk({})};
+  document.getElementById('regStep2').hidden=true;
+  const done=document.getElementById('regDone');done.hidden=false;
+  done.innerHTML = role==='potential' ? `
+    <span class="eyebrow">Hazırdır</span>
+    <h1 style="font-size:28px;margin:8px 0 6px">Xoş gəldin, ${name.split(' ')[0]}</h1>
+    <p class="lede" style="margin-bottom:20px">Hesabın <b style="color:var(--teal)">aktivdir</b>. Heç nə gözləmirsən.</p>
+    <ul class="tl">
+      <li class="done"><b>Qeydiyyat</b><small>${email} · role: potential · status: Active</small></li>
+      <li class="now"><b>Qiymətləndirmədən keç</b><small>5 sual · 6 dəqiqə · yol xəritəni müəyyən edir</small></li>
+      <li><b>İlk sualını ver</b><small>Mentorlara teq ilə bildiriş gedir</small></li>
+    </ul>
+    <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="go('home','assess')">Qiymətləndirməyə başla</button>
+      <button class="btn btn-ghost" onclick="go('dashboard')">Panelə keç</button>
+    </div>` : `
+    <span class="eyebrow">Hazırdır</span>
+    <h1 style="font-size:28px;margin:8px 0 6px">Ərizən qeydə alındı</h1>
+    <p class="lede" style="margin-bottom:20px">Hesabın <b style="color:var(--teal)">aktivdir</b> — təsdiq yalnız məqalə dərcinə və mentor namizədliyinə aiddir. Cavab vermək üçün gözləmə yoxdur.</p>
+    <ul class="tl">
+      <li class="done"><b>Ərizə göndərildi</b><small>${email} · role: professional · verified = false</small></li>
+      <li class="now"><b>Admin yoxlaması</b><small>LinkedIn və vəzifə yoxlanılır · 1–2 iş günü</small></li>
+      <li><b>verified = true</b><small>məqalə dərci açılır</small></li>
+      <li><b>mentor_enabled</b><small>500 rep + tam profil → kataloqa düşürsən</small></li>
+    </ul>
+    <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="go('home','qa')">İndi sual cavabla</button>
+      <button class="btn btn-ghost" onclick="go('dashboard')">Panelə keç</button>
+    </div>`;
+  window.scrollTo(0,0);
+}
+
+/* ================= RENDER ================= */
+function render(){
+  const nav=navFor();
+  document.querySelectorAll('#menu li[data-nav]').forEach(li=>li.classList.toggle('on',nav.includes(li.dataset.nav)));
+  const ab=document.getElementById('authbar');
+  ab.innerHTML = ME
+   ? `<div class="pill" onclick="go('dashboard')"><span class="av" style="width:22px;height:22px;font-size:9px">${ME.init}</span> <b>${identity(ME)}</b></div>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Çıxış</button>`
+   : `<button class="btn btn-ghost btn-sm" onclick="go('login')">Daxil ol</button>
+      <button class="btn btn-primary btn-sm" onclick="go('register')">Qeydiyyat</button>`;
+  if(VIEW==='home') renderHome();
+  if(VIEW==='dashboard') renderDash();
+  if(VIEW==='newpass'&&ME) document.getElementById('invText').textContent=`${ME.name}, Nigar Əliyeva səni sinfə əlavə etdi. Rolun dəyişmir — hesabın Potential BA olaraq qalır, sadəcə panelinə Sinif bloku gəlir.`;
+}
+
+function renderHome(){
+  const h=HERO[heroKey()];
+  document.getElementById('heroEyebrow').textContent=h[0];
+  document.getElementById('heroTitle').innerHTML=h[1];
+  document.getElementById('heroLede').textContent=h[2];
+  const hb=document.getElementById('homeBanner');
+  hb.innerHTML = !ME ? `<div class="banner tealb"><p><b>Oxumaq üçün qeydiyyat lazım deyil.</b> Sual vermək, cavablamaq və şablon endirmək üçün lazımdır.</p><button class="btn btn-primary btn-sm" onclick="go('register')">Qeydiyyat</button></div>`
+    : (ME.role==='professional'&&!ME.flags.verified) ? `<div class="banner"><p><b>Təsdiq gözlənilir.</b> Hesabın aktivdir — cavab verə bilərsən. Məqalə dərci təsdiqdən sonra.</p><button class="btn btn-ghost btn-sm" onclick="go('dashboard')">Statusa bax</button></div>` : '';
+  document.getElementById('heroCta').innerHTML = !ME
+    ? `<button class="btn btn-primary" onclick="go('register')">Qeydiyyatdan keç</button><button class="btn btn-ghost" onclick="go('login')">Daxil ol</button>`
+    : `<button class="btn btn-primary" onclick="go('dashboard')">Panelə keç</button><button class="btn btn-ghost" onclick="go('home','qa')">Suallara bax</button>`;
+  document.getElementById('publishZone').innerHTML=(()=>{const p=caps().publish;
+    if(!ME) return `<div class="banner"><p>Məqalə yazmaq üçün qeydiyyat lazımdır.</p><button class="btn btn-ghost btn-sm" onclick="go('register')">Qeydiyyat</button></div>`;
+    if(!p) return `<div class="banner"><p>Məqalə dərci <code>verified = true</code> tələb edir. <b>Cavablamaq isə etmir.</b></p></div>`;
+    if(p==='review') return `<div class="banner"><p><b>Məqalə yaza bilərsən.</b> Draft → Submit → Pending review → Published. 3 təsdiqdən sonra <code>trusted_author</code> açılır.</p><button class="btn btn-primary btn-sm" onclick="alert('Draft yaradıldı → Pending review')">Draft yarat</button></div>`;
+    return `<div class="banner tealb"><p><b>trusted_author = true.</b> Məqalələrin dərhal dərc olunur, moderasiya sonradan.</p><button class="btn btn-primary btn-sm" onclick="alert('Dərc olundu')">Dərc et</button></div>`})();
+  document.getElementById('askZone').innerHTML = can('ask')
+    ? `<div class="banner"><p><b>Sual ver.</b> Teq-lərinə uyğun töhfəçilərə bildiriş gedir. Cavabı sən qəbul edirsən.</p><button class="btn btn-primary btn-sm" onclick="alert('Sual formu: Başlıq · Detal · Teqlər')">Sual ver</button></div>`
+    : `<div class="banner tealb"><p>Sual vermək üçün qeydiyyat lazımdır.</p><button class="btn btn-primary btn-sm" onclick="go('register')">Qeydiyyat</button></div>`;
+  document.getElementById('resZone').innerHTML = can('download')
+    ? `<div class="banner tealb"><p><b>Endirmə açıqdır.</b> Şablonlar iş vaxtı lazım olur — kurs bitəndən sonra yox.</p></div>`
+    : `<div class="banner"><p>Şablonları endirmək üçün qeydiyyat lazımdır. Siyahını görmək üçün yox.</p><button class="btn btn-ghost btn-sm" onclick="go('register')">Qeydiyyat</button></div>`;
+  qList();mentorList();jChips();jobList();jobAlertZone();
+}
+
+const QS=[
+ ['12','7',1,'Stakeholder sprint ortasında tələbi dəyişməkdə israrlıdırsa nə edirsiniz?','Change request prosesi olmayan komandada praktik yanaşmalar.','Aysel S. · Potential BA · 3 saat'],
+ ['5','3',0,'BPMN-də exception flow-u ayrıca pool-da göstərmək düzgündürmü?','Notasiya icazə verir, oxunaqlılıq mübahisəlidir.','Tural B. · Professional BA · 1 gün'],
+ ['21','12',1,'BRD və SRS-i ayrı saxlamağın real faydası varmı?','Kiçik komandalarda birləşdirmək nə itirir.','Elvin Q. · Moderator · 2 gün'],
+ ['8','5',0,'Legacy sistemdə sənəd yoxdursa, as-is modeli necə çıxarırsınız?','Reverse engineering üsulları.','Nigar A. · Mentor · 4 saat']
+];
+function qList(){
+  document.getElementById('qList').innerHTML=QS.map(([v,a,ok,t,d,m])=>`
+   <div class="q-item">
+     <div class="votes"><b>${v}</b><small>səs</small><b class="${ok?'ok':''}" style="margin-top:8px">${a}</b><small>${ok?'qəbul ✓':'cavab'}</small></div>
+     <div style="flex:1"><h3>${t}</h3><p class="lede">${d}</p><div class="q-meta">${m}</div>
+       <div class="q-actions">
+         ${can('answer')?`<button class="btn btn-primary btn-sm" onclick="alert('Cavab yazılır — qəbul olunsa +10 reputasiya')">Cavabla</button>`:`<button class="btn btn-sm" disabled title="Qeydiyyat tələb olunur">Cavabla <span class="lock">🔒</span></button>`}
+         ${can('comment')?`<button class="btn btn-ghost btn-sm" onclick="alert('Şərh')">Şərh</button>`:`<button class="btn btn-sm" disabled>Şərh <span class="lock">🔒</span></button>`}
+         ${can('moderate')?`<button class="btn btn-sm btn-no" onclick="alert('Sual gizlədildi')">Gizlə</button>`:''}
+       </div></div></div>`).join('');
+}
+const MS=[
+ ['NA','Nigar Əliyeva','Lead BA · Kapital Bank · 9 il','8 420',['34','186','2 saat'],['Banking','BPMN','Requirements']],
+ ['LH','Leyla Həsənova','Senior BA · PASHA Bank · 7 il','5 940',['12','204','4 saat'],['Fintech','UML','Agile']],
+ ['EQ','Elvin Quliyev','Solution Analyst · Azercell · 8 il','4 310',['9','141','6 saat'],['API','İnteqrasiya','SQL']]
+];
+function mentorList(){
+  document.getElementById('mentorList').innerHTML=MS.map(([i,n,r,rep,st,ch])=>`
+   <div class="card">
+     <div class="mentor-top"><div class="av">${i}</div><div><b style="display:block;font-size:15px">${n}</b><span class="role">${r}</span></div></div>
+     <div style="display:flex;gap:6px"><span class="badge">mentor_enabled</span><span class="badge rep">${rep} rep</span></div>
+     <div class="mstats"><div><b>${st[0]}</b><small>məqalə</small></div><div><b>${st[1]}</b><small>cavab</small></div><div><b>${st[2]}</b><small>orta cavab</small></div></div>
+     <div class="chips">${ch.map(c=>`<span class="chip">${c}</span>`).join('')}</div>
+     <div style="margin-top:12px">${can('ask')?`<button class="btn btn-ghost btn-sm" onclick="alert('Sual bu mentora teqlənəcək')">Sual ünvanla</button>`:`<button class="btn btn-sm" disabled>Sual ünvanla <span class="lock">🔒</span></button>`}</div>
+   </div>`).join('');
+}
+
+/* ================= JOBS ================= */
+/* [company, title, level, city, remote, salaryMin, salaryMax, source, postedDaysAgo, tags] */
+const JOBS=[
+ ['Kapital Bank','Business Analyst (Digital Banking)','Middle','Bakı',0,2800,3800,'boss.az',0,['Banking','BPMN','SQL']],
+ ['PASHA Bank','Senior IT Business Analyst','Senior','Bakı',1,4000,5200,'banco.az',0,['Fintech','API','Requirements']],
+ ['Umico','Junior Business Analyst','Junior','Bakı',0,1400,1900,'jobsearch.az',1,['E-commerce','Analytics']],
+ ['Azercell','Solution Analyst','Middle','Bakı',1,3200,4200,'hh.az',1,['Telekom','İnteqrasiya','UML']],
+ ['ABB Innovation','IT Business Analyst','Middle','Bakı',0,null,null,'boss.az',2,['Banking','Agile']],
+ ['Bolt (Baltic HQ)','Business Analyst — Rides','Middle','Remote',1,null,null,'djinni.co',2,['Product','SQL','A/B']],
+ ['SOCAR Digital','Business Analyst (ERP)','Senior','Bakı',0,3600,4800,'linkedin.com',3,['ERP','SAP','Process']],
+ ['Bakcell','Junior BA / Data Analyst','Junior','Bakı',0,1500,2100,'jobsearch.az',3,['Telekom','SQL']],
+ ['Yelo Bank','Business Analyst (Core Banking)','Middle','Bakı',0,2600,3400,'banco.az',4,['Banking','BRD']],
+ ['Emerging Europe Tech','BA / Product Owner','Senior','Remote',1,null,null,'djinni.co',5,['Product','Discovery']],
+ ['Birbank','Product Business Analyst','Middle','Bakı',1,3000,4000,'boss.az',5,['Fintech','Mobile','Analytics']],
+ ['PASHA Holding','Junior Business Analyst (Graduate)','Junior','Bakı',0,1300,1800,'hh.az',6,['Graduate','Excel','BPMN']]
+];
+const LEVELS=['Junior','Middle','Senior'];
+const SOURCES=['boss.az','hh.az','jobsearch.az','banco.az','djinni.co','linkedin.com'];
+let JF={level:[],source:[],remote:false,salary:false};
+
+function jChips(){
+  document.getElementById('fLevel').innerHTML=LEVELS.map(l=>
+    `<button class="fchip" aria-pressed="${JF.level.includes(l)}" onclick="tog('level','${l}')">${l}</button>`).join('');
+  document.getElementById('fSource').innerHTML=SOURCES.map(s=>
+    `<button class="fchip" aria-pressed="${JF.source.includes(s)}" onclick="tog('source','${s}')">${s}</button>`).join('');
+  document.getElementById('fRemote').checked=JF.remote;
+  document.getElementById('fSalary').checked=JF.salary;
+}
+window.tog=(k,v)=>{JF[k]=JF[k].includes(v)?JF[k].filter(x=>x!==v):[...JF[k],v];jChips();jobList()};
+window.resetJobs=()=>{JF={level:[],source:[],remote:false,salary:false};jChips();jobList()};
+document.getElementById('fRemote').addEventListener('change',e=>{JF.remote=e.target.checked;jobList()});
+document.getElementById('fSalary').addEventListener('change',e=>{JF.salary=e.target.checked;jobList()});
+
+const matchJob=j=>(!JF.level.length||JF.level.includes(j[2]))&&(!JF.source.length||JF.source.includes(j[7]))
+  &&(!JF.remote||j[4])&&(!JF.salary||j[5]!==null);
+const ago=d=>d===0?'bu gün':d===1?'dünən':d+' gün əvvəl';
+const sal=(a,b)=>a===null?`<span class="jsal none">maaş göstərilməyib</span>`:`<span class="jsal">${a}–${b} ₼</span>`;
+
+function jobList(){
+  const rows=JOBS.filter(matchJob);
+  document.getElementById('jobCount').textContent=rows.length;
+  document.getElementById('jobEmpty').hidden=rows.length>0;
+  document.getElementById('jobList').innerHTML=rows.map(j=>{
+    const [co,t,lvl,city,rem,a,b,src,d,tags]=j;
+    const init=co.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+    return `<div class="job ${d<=1?'fresh':''}">
+      <div class="jlogo">${init}</div>
+      <div style="flex:1;min-width:200px">
+        <h3>${t}</h3>
+        <div class="jmeta">${co} · ${city} · ${ago(d)}</div>
+        <div class="jtags">
+          ${d===0?'<span class="jt new">YENİ</span>':''}
+          <span class="jt lvl">${lvl}</span>
+          ${rem?'<span class="jt rem">remote / hibrid</span>':''}
+          ${tags.map(x=>`<span class="jt">${x}</span>`).join('')}
+        </div>
+      </div>
+      <div class="jright">
+        ${sal(a,b)}
+        <span class="jsrc">${src}</span>
+        <button class="btn btn-ghost btn-sm" onclick="alert('${src} saytına yönləndirilir.\\n\\nITBA vasitəçi deyil — müraciət mənbədə gedir.')">Mənbədə bax ↗</button>
+      </div></div>`;
+  }).join('');
+}
+function jobAlertZone(){
+  const z=document.getElementById('jobAlertZone');
+  if(!ME) z.innerHTML=`<div class="banner tealb"><p><b>Hər yeni elan üçün email bildirişi qura bilərsən.</b> Filtrləri seç, qeydiyyatdan keç — uyğun elan çıxanda xəbərin olsun.</p><button class="btn btn-primary btn-sm" onclick="go('register')">Qeydiyyat</button></div>`;
+  else if(caps().jobs_alert) z.innerHTML=`<div class="banner"><p><b>Bildirişlər panelində konfiqurasiya olunur.</b> ${ALERT.on?`Hazırda: <b style="color:var(--teal)">aktiv</b> · ${FREQ[ALERT.freq]}`:'Hazırda: söndürülüb'}</p><button class="btn btn-ghost btn-sm" onclick="go('dashboard')">Bildirişləri idarə et</button></div>`;
+  else z.innerHTML='';
+}
+
+/* ================= JOB ALERT CONFIG (student) ================= */
+const FREQ={instant:'dərhal',daily:'gündəlik yığcam',weekly:'həftəlik yığcam'};
+let ALERT={on:true,freq:'daily',level:['Junior'],remote:false,salary:false,sources:[...SOURCES],digestDay:'Bazar ertəsi'};
+function alertPreview(){
+  const rows=JOBS.filter(j=>(!ALERT.level.length||ALERT.level.includes(j[2]))&&(!ALERT.remote||j[4])&&(!ALERT.salary||j[5]!==null)&&ALERT.sources.includes(j[7]));
+  const shown=ALERT.freq==='instant'?rows.slice(0,1):rows.slice(0,3);
+  const subj=ALERT.freq==='instant'?`Yeni IT BA elanı: ${shown[0]?shown[0][1]:'—'}`
+    :ALERT.freq==='daily'?`ITBA · bu gün ${rows.length} uyğun IT BA elanı`
+    :`ITBA · bu həftə ${rows.length} uyğun IT BA elanı`;
+  return `<div class="preview">
+    <div class="pv-head"><b>Kimə:</b> ${ME?ME.email:'student@itba.az'} &nbsp;·&nbsp; <b>Mövzu:</b> ${subj}</div>
+    <div class="pv-body">
+      <h4>${ALERT.freq==='instant'?'Filtrlərinə uyğun yeni elan':'Filtrlərinə uyğun elanlar'}</h4>
+      <p class="mono" style="font-size:11px;color:var(--muted);margin-bottom:10px">${ALERT.level.length?ALERT.level.join(' / '):'bütün səviyyələr'}${ALERT.remote?' · remote':''}${ALERT.salary?' · maaşlı':''}</p>
+      ${shown.length?shown.map(j=>`<div class="pv-job"><b>${j[1]}</b><small>${j[0]} · ${j[3]} · ${j[5]===null?'maaş göstərilməyib':j[5]+'–'+j[6]+' ₼'} · ${j[7]}</small></div>`).join('')
+        :'<div class="pv-job"><small>Bu filtrlərə uyğun elan yoxdur — email göndərilmir.</small></div>'}
+      ${rows.length>shown.length?`<p class="mono" style="font-size:11px;color:var(--teal);margin-top:8px">+ ${rows.length-shown.length} elan daha →</p>`:''}
+    </div>
+    <div class="pv-foot">${ALERT.freq==='instant'?'Hər uyğun elanda dərhal göndərilir':ALERT.freq==='daily'?'Hər gün 09:00-da · uyğun elan yoxdursa email getmir':'Hər '+ALERT.digestDay+' 09:00-da · uyğun elan yoxdursa email getmir'} · <a>bildirişləri dayandır</a></div>
+  </div>`;
+}
+function renderAlertCfg(){
+  const w=document.getElementById('alertCfg'); if(!w)return;
+  const rows=JOBS.filter(j=>(!ALERT.level.length||ALERT.level.includes(j[2]))&&(!ALERT.remote||j[4])&&(!ALERT.salary||j[5]!==null)&&ALERT.sources.includes(j[7]));
+  const perWeek=ALERT.freq==='instant'?Math.round(rows.length/2):ALERT.freq==='daily'?7:1;
+  w.innerHTML=`
+   <div class="cfg-row">
+     <div class="lbl"><b>Email bildirişləri</b><small>${ME?ME.email:'student@itba.az'}</small></div>
+     <label class="toggle"><input type="checkbox" id="aOn" ${ALERT.on?'checked':''} aria-label="Bildirişləri aç"><span class="slide"></span></label>
+   </div>
+   <div class="cfg-body ${ALERT.on?'':'off'}">
+     <div class="cfg-row">
+       <div class="lbl"><b>Tezlik</b><small>${ALERT.freq==='instant'?'hər elan üçün ayrı email':'bir emailda yığcam'}</small></div>
+       <div class="fgroup">${Object.keys(FREQ).map(f=>`<button class="fchip" aria-pressed="${ALERT.freq===f}" onclick="setA('freq','${f}')">${FREQ[f]}</button>`).join('')}</div>
+     </div>
+     ${ALERT.freq==='weekly'?`<div class="cfg-row"><div class="lbl"><b>Hansı gün</b><small>səhər 09:00</small></div>
+       <div class="fgroup">${['Bazar ertəsi','Cümə'].map(d=>`<button class="fchip" aria-pressed="${ALERT.digestDay===d}" onclick="setA('digestDay','${d}')">${d}</button>`).join('')}</div></div>`:''}
+     <div class="cfg-row">
+       <div class="lbl"><b>Səviyyə</b><small>boş buraxsan — hamısı</small></div>
+       <div class="fgroup">${LEVELS.map(l=>`<button class="fchip" aria-pressed="${ALERT.level.includes(l)}" onclick="togA('level','${l}')">${l}</button>`).join('')}</div>
+     </div>
+     <div class="cfg-row">
+       <div class="lbl"><b>Mənbələr</b><small>${ALERT.sources.length} / ${SOURCES.length} seçilib</small></div>
+       <div class="fgroup">${SOURCES.map(s=>`<button class="fchip" aria-pressed="${ALERT.sources.includes(s)}" onclick="togA('sources','${s}')">${s}</button>`).join('')}</div>
+     </div>
+     <div class="cfg-row">
+       <div class="lbl"><b>Yalnız remote / hibrid</b><small>Bakı xaricindən də işləmək olar</small></div>
+       <label class="toggle"><input type="checkbox" id="aRem" ${ALERT.remote?'checked':''} aria-label="Remote"><span class="slide"></span></label>
+     </div>
+     <div class="cfg-row">
+       <div class="lbl"><b>Yalnız maaşı göstərilən</b><small>elanların ~55%-i maaş yazmır</small></div>
+       <label class="toggle"><input type="checkbox" id="aSal" ${ALERT.salary?'checked':''} aria-label="Maaş"><span class="slide"></span></label>
+     </div>
+     <p class="note" style="margin:14px 0 0">Bu filtrlərlə: <b style="color:var(--chalk)">${rows.length}</b> uyğun elan · təxminən <b style="color:var(--chalk)">həftədə ${perWeek} email</b>.${perWeek>5?' <span style="color:var(--signal)">Bu çoxdur — gündəlik yığcam seç.</span>':''}</p>
+     ${alertPreview()}
+     <div style="display:flex;gap:10px;margin-top:16px;align-items:center;flex-wrap:wrap">
+       <button class="btn btn-primary btn-sm" onclick="saveAlert()">Yadda saxla</button>
+       <button class="btn btn-ghost btn-sm" onclick="go('home','jobs')">Elanlara bax</button>
+       <span class="saved" id="savedMsg">✓ Yadda saxlanıldı</span>
+     </div>
+   </div>`;
+  const on=document.getElementById('aOn');
+  if(on) on.onchange=e=>{ALERT.on=e.target.checked;renderAlertCfg()};
+  const rem=document.getElementById('aRem'); if(rem) rem.onchange=e=>{ALERT.remote=e.target.checked;renderAlertCfg()};
+  const sl=document.getElementById('aSal'); if(sl) sl.onchange=e=>{ALERT.salary=e.target.checked;renderAlertCfg()};
+}
+window.setA=(k,v)=>{ALERT[k]=v;renderAlertCfg()};
+window.togA=(k,v)=>{ALERT[k]=ALERT[k].includes(v)?ALERT[k].filter(x=>x!==v):[...ALERT[k],v];renderAlertCfg()};
+window.saveAlert=()=>{const m=document.getElementById('savedMsg');m.classList.add('on');setTimeout(()=>m.classList.remove('on'),2200)};
+
+/* ================= DASHBOARD — BLOCK COMPOSITION =================
+   Panel rola görə seçilmir. Bloklar flaglara görə yığılır. */
+const VERIFY=[['Kamran Əliyev','Senior BA · Bolt · 5 il · LinkedIn ✓ · CV yoxdur'],['Günel Rzayeva','BA · SOCAR Digital · 3 il · LinkedIn ✓']];
+const ARTS=[['AI tələb yazmır — tələbi yoxlayır','Leyla H. · Mentor · trusted_author · post-hoc'],['KYC axınında 6 addımı 2-yə endirmək','Aysel S. · Potential BA · ilk məqalə'],['Legacy migrasiyada tələb idarəsi','Kamran Ə. · pending BA · 2-ci məqalə']];
+
+const BLOCKS={
+  roadmap:()=>`<div class="card"><h3>Yol xəritən</h3><p class="lede">Junior BA-ya qədər: 3 mərhələ.</p>
+    <div class="prog"><i style="width:62%"></i></div><small class="mono" style="color:var(--muted)">62% · növbəti: BPMN əsasları</small>
+    <ul class="tl" style="margin-top:14px">
+      <li class="done"><b>Başlanğıc</b><small>tamamlandı</small></li>
+      <li class="now"><b>Junior BA</b><small>BPMN · SQL · user story — 4 tapşırıqdan 2-si</small></li>
+      <li><b>Middle BA</b><small>bağlıdır</small></li>
+    </ul></div>`,
+  myQuestions:()=>`<div class="card"><h3>Sənin sualların</h3>
+    <div class="row"><div><b>Stakeholder tələbi dəyişir...</b><small>7 cavab</small></div><span class="st ok">qəbul edildi ✓</span></div>
+    <div class="row"><div><b>Legacy sistemdə as-is model?</b><small>5 cavab</small></div><span class="st warn">açıq</span></div>
+    <h3 style="margin-top:18px">Sənə uyğun mentorlar</h3>
+    <div class="row"><div style="display:flex;gap:10px;align-items:center"><span class="av" style="width:30px;height:30px;font-size:11px">NA</span><div><b>Nigar Əliyeva</b><small>Banking · BPMN · 2 saat cavab</small></div></div><span class="st ok">8 420</span></div>
+    <div class="row"><div style="display:flex;gap:10px;align-items:center"><span class="av" style="width:30px;height:30px;font-size:11px">LH</span><div><b>Leyla Həsənova</b><small>Fintech · Agile · 4 saat cavab</small></div></div><span class="st ok">5 940</span></div></div>`,
+  verification:()=>`<div class="card"><h3>Təsdiq statusu</h3>
+    <ul class="tl">
+      <li class="done"><b>Ərizə göndərildi</b><small>16 iyul · status: Active</small></li>
+      <li class="now"><b>Admin yoxlaması</b><small>LinkedIn və vəzifə yoxlanılır</small></li>
+      <li><b>verified = true</b><small>məqalə dərci açılır</small></li>
+      <li><b>mentor_enabled</b><small>500 rep + tam profil</small></li>
+    </ul>
+    <h3 style="margin-top:18px">Profil tamlığı</h3><div class="prog"><i style="width:64%"></i></div>
+    <div class="row"><div><b>Bio</b><small>2 cümlə</small></div><span class="st ok">✓</span></div>
+    <div class="row"><div><b>LinkedIn</b><small>yoxlanılır</small></div><span class="st warn">gözləyir</span></div>
+    <div class="row"><div><b>CV</b><small>təsdiqi sürətləndirir</small></div><span class="st bad">yoxdur</span></div></div>`,
+  answerNow:()=>`<div class="card"><h3>Bunları indi cavablaya bilərsən</h3><p class="lede">Bacarıqlarına uyğun açıq suallar.</p>
+    <div class="row"><div><b>BPMN-də exception flow ayrıca pool?</b><small>3 cavab · 1 gün</small></div><button class="btn btn-sm btn-ok" onclick="alert('Cavab yazılır')">Cavabla</button></div>
+    <div class="row"><div><b>Legacy sistemdə as-is model?</b><small>5 cavab · 4 saat</small></div><button class="btn btn-sm btn-ok" onclick="alert('Cavab yazılır')">Cavabla</button></div>
+    <div class="row"><div><b>Change request prosesi necə qurulur?</b><small>0 cavab · 20 dəq</small></div><button class="btn btn-sm btn-ok" onclick="alert('Cavab yazılır')">Cavabla</button></div>
+    <p class="note">Qəbul edilən cavab +10. 500-ə çatanda mentor namizədi olursan.</p></div>`,
+  mentorPath:()=>`<div class="card"><h3>Mentor yolu</h3><div class="prog"><i style="width:68%"></i></div>
+    <small class="mono" style="color:var(--muted)">340 / 500</small>
+    <div class="row" style="margin-top:12px"><div><b>verified = true</b><small>təsdiqlənib</small></div><span class="st ok">✓</span></div>
+    <div class="row"><div><b>Tam profil</b><small>bio, LinkedIn, bacarıqlar</small></div><span class="st ok">✓</span></div>
+    <div class="row"><div><b>Qaydalar qəbul edilib</b></div><span class="st ok">✓</span></div>
+    <div class="row"><div><b>500 reputasiya</b><small>340 var</small></div><span class="st warn">68%</span></div></div>`,
+  myArticles:()=>`<div class="card"><h3>Məqalələrin</h3>
+    <div class="row"><div><b>Umico-da qaytarma prosesi</b><small>dərc olunub · 41 like</small></div><span class="st ok">Published</span></div>
+    <div class="row"><div><b>User story anti-pattern-ləri</b><small>göndərilib · 6 saat</small></div><span class="st warn">Pending review</span></div>
+    <div class="row"><div><b>SQL-də window funksiyaları</b><small>son redaktə 2 gün</small></div><span class="st">Draft</span></div>
+    <p class="note"><code>trusted_author</code>: 3 təsdiqdən sonra dərhal dərc. Sənin: 1 / 3.</p></div>`,
+  mentorInbox:()=>`<div class="card"><h3>Sənə ünvanlanan suallar</h3><p class="lede">Teq-lərinə uyğun: Banking, BPMN, Requirements.</p>
+    <div class="row"><div><b>Change request prosesi necə qurulur?</b><small>0 cavab · 20 dəq · Banking</small></div><button class="btn btn-sm btn-ok" onclick="alert('Cavab yazılır')">Cavabla</button></div>
+    <div class="row"><div><b>Legacy sistemdə as-is model?</b><small>5 cavab · 4 saat · BPMN</small></div><button class="btn btn-sm btn-ok" onclick="alert('Cavab yazılır')">Cavabla</button></div>
+    <h3 style="margin-top:18px">Reputasiya mənbəyi</h3>
+    <div class="row"><div><b>Qəbul edilən cavablar</b><small>91 × 10</small></div><span class="st ok">+910</span></div>
+    <div class="row"><div><b>Məqalələr</b><small>34 × 20</small></div><span class="st ok">+680</span></div>
+    <div class="row"><div><b>Featured məqalələr</b><small>4 × 50</small></div><span class="st ok">+200</span></div></div>`,
+  clsStudent:()=>`<div class="card"><h3>Sinif · <code>classroom_enrolled</code></h3><p class="lede">IT BA əsasları · Batch 7 · Mentor: Nigar Əliyeva</p>
+    <div class="row"><div><b>Tapşırıq 5 — Stakeholder xəritəsi</b><small>təhvil verilməyib</small></div><span class="st warn">2 gün qalıb</span></div>
+    <div class="row"><div><b>Tapşırıq 4 — User story</b><small>mentor rəyi var</small></div><span class="st ok">92</span></div>
+    <div class="row"><div><b>Quiz 3 — BPMN əsasları</b><small>tamamlanıb</small></div><span class="st ok">84</span></div>
+    <div class="row"><div><b>Həftə 5 — Stakeholder analizi</b><small>slides.pdf · 2.4 MB</small></div><span class="st warn">yeni material</span></div>
+    <div style="margin-top:14px"><button class="btn btn-primary btn-sm" onclick="alert('Fayl yüklənir')">Tapşırığı təhvil ver</button></div>
+    <p class="note">Bu blok flag-dandır. Dekabrda kurs bitir, flag sönür — yuxarıdakı bloklar yerində qalır.</p></div>`,
+  clsOwner:()=>`<div class="card"><h3>Sinif idarəsi · <code>classroom_owner</code></h3><p class="lede">IT BA əsasları · Batch 7 · 18 tələbə</p>
+    <div class="row"><div><b>Tapşırıq 5 — Stakeholder xəritəsi</b><small>12 / 18 təhvil verilib</small></div><span class="st warn">6 yoxlanılmayıb</span></div>
+    <div class="row"><div><b>Quiz 3 — BPMN əsasları</b><small>orta bal 78</small></div><span class="st ok">bitib</span></div>
+    <div class="row"><div><b>Aralıq imtahan</b><small>planlaşdırılıb</small></div><span class="st">24 iyul</span></div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="alert('Tapşırıq yaradılır')">Tapşırıq yarat</button>
+      <button class="btn btn-ghost btn-sm" onclick="inviteFlow()">Sinfə tələbə əlavə et</button></div>
+    <p class="note">Sinif icmadan ayrıdır. mentor_enabled ≠ classroom_owner — hər mentor sinif aparmır.</p></div>`,
+  moderation:()=>`<div class="card"><h3>Məqalə moderasiyası</h3><div id="artList" style="margin-top:12px"></div>
+    <p class="note">Rədd səbəbsiz olmamalıdır. Səbəbsiz rədd — daimi churn hadisəsidir.</p></div>`,
+  adminVerify:()=>`<div class="card"><h3>Professional BA təsdiqi</h3><div id="verifyList" style="margin-top:12px"></div></div>`,
+  adminMentor:()=>`<div class="card"><h3>Mentor aktivasiyası</h3><div id="mentorQueue" style="margin-top:12px"></div>
+    <h3 style="margin-top:20px">Məqalə moderasiyası</h3><div id="artList" style="margin-top:12px"></div></div>`
+};
+
+function dashMeta(){
+  const c=caps(),f=ME.flags,r=ME.role;
+  if(r==='admin') return {kind:'Admin paneli',sub:'Təsdiq, moderasiya, mentor aktivasiyası.',
+    cta:`<button class="btn btn-primary" onclick="alert('Analitika')">Analitika</button>`,
+    banner:`<div class="banner"><p><b>Cold-start riski.</b> Həftəlik aktiv 41% — sağlamdır. Amma məqalə supply-ı 3 nəfərdən gəlir. Əsl risk budur.</p></div>`,
+    kpis:[['2','Təsdiq gözləyir'],['3','Məqalə növbədə'],['1','Mentor namizədi'],['1 240','İştirakçı']],
+    blocks:['adminVerify','adminMentor']};
+  if(r==='moderator') return {kind:'Moderasiya',sub:'Növbənin uzunluğu supply-ın sürət limitidir.',
+    cta:`<button class="btn btn-primary" onclick="alert('Növbə')">Növbəni aç</button>`,
+    banner:`<div class="banner"><p><b>Növbə 3 gündür uzanır.</b> Problem moderatorda deyil — qaydadadır. <code>trusted_author</code> həddini 3-dən 2-yə endirmək növbəni ~40% azaldır.</p></div>`,
+    kpis:[['3','Məqalə növbədə'],['1','Şikayət'],['14 saat','Orta gözləmə'],['92%','Təsdiq nisbəti']],
+    blocks:['moderation']};
+  if(r==='professional'){
+    if(f.mentor_enabled) return {kind:'Mentor paneli',sub:'Kataloqda görünürsən. Sinif opsionaldır.',
+      cta:`<button class="btn btn-primary" onclick="alert('Dərhal dərc olundu — post-hoc moderasiya')">Məqalə dərc et</button>`,
+      banner:`<div class="banner tealb"><p><b>Professional BA + verified + mentor_enabled + trusted_author + classroom_owner.</b> Beş flag, bir rol. Kataloqdakı yerin reputasiyandan asılıdır.</p></div>`,
+      kpis:[['8 420','Reputasiya'],['34','Məqalə'],['186','Cavab'],['2 saat','Orta cavab']],
+      blocks:['mentorInbox','clsOwner']};
+    if(!f.verified) return {kind:'Professional BA · pending',sub:'Təsdiq gözlənilir. İştirak gözləmir.',
+      cta:`<button class="btn btn-primary" onclick="go('home','qa')">Sual cavabla</button><button class="btn btn-ghost" disabled>Məqalə yaz 🔒</button>`,
+      banner:`<div class="banner"><p><b>verified = false.</b> Bu yalnız məqalə dərcini və mentor namizədliyini bağlayır. Sual, cavab, şərh, endirmə — hamısı açıqdır.</p></div>`,
+      kpis:[['—','Reputasiya'],['0','Cavab'],['64%','Profil'],['1-2 gün','Gözlənilən']],
+      blocks:['verification','answerNow']};
+    return {kind:'Professional BA ✓',sub:'Təsdiqlənmisən. Reputasiya yığmağa başla.',
+      cta:`<button class="btn btn-primary" onclick="alert('Draft → Submit → Pending review')">Məqalə yaz</button><button class="btn btn-ghost" onclick="alert('Resurs yüklənir')">Şablon paylaş</button>`,
+      banner:`<div class="banner"><p><b>Mentor namizədliyi:</b> 340 / 500 reputasiya. Qalan 160 — təxminən 16 qəbul edilən cavab və ya 8 məqalə.</p></div>`,
+      kpis:[['340','Reputasiya'],['2','Məqalə'],['31','Cavab'],['9','Qəbul edilən']],
+      blocks:['mentorPath','myArticles']};
+  }
+  /* potential — flag olsun ya olmasın, eyni kimlik */
+  const enrolled=f.classroom_enrolled;
+  return {kind:enrolled?'Potential BA · sinifdə':'Potential BA',
+    sub:enrolled?'Sinif blok kimi əlavə olunub. Qalan hər şey yerində.':'Yol xəritən, sualların, tövsiyə olunan mentorlar.',
+    cta:`<button class="btn btn-primary" onclick="go('home','assess')">Qiymətləndirməni yenilə</button><button class="btn btn-ghost" onclick="go('home','qa')">Sual ver</button>`,
+    banner:enrolled
+      ? `<div class="banner tealb"><p><b>role: potential · classroom_enrolled: true</b> — v3.0-da "Student" rolu yoxdur. Kursa yazılmaq kimliyini dəyişmir: yol xəritən, reputasiyan və sualların yerindədir, sadəcə aşağıya Sinif bloku gəldi.</p></div>`
+      : `<div class="banner"><p><b>Sən də cavab verə bilərsən (A1).</b> Cavab vermək mentor imtiyazı deyil — 6 ay öndə olan adam çox vaxt daha yaxşı izah edir.</p></div>`,
+    kpis:[[enrolled?'85%':'62%','Hazırlıq'],['3','Verdiyin sual'],[ME.rep,'Reputasiya'],[JOBS.filter(j=>ALERT.level.includes(j[2])).length,'Sənə uyğun elan']],
+    blocks:enrolled?['roadmap','myQuestions','clsStudent']:['roadmap','myQuestions']};
+}
+
+function renderDash(){
+  if(!ME){go('login');return}
+  const d=dashMeta();
+  document.getElementById('dsKind').textContent=d.kind;
+  document.getElementById('dsHi').textContent=`Salam, ${ME.name.split(' ')[0]}`;
+  document.getElementById('dsSub').textContent=d.sub;
+  document.getElementById('dsCta').innerHTML=d.cta;
+  document.getElementById('dsBanner').innerHTML=d.banner||'';
+  document.getElementById('dsKpis').innerHTML=d.kpis.map(([b,s])=>`<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('');
+  const blocks=d.blocks.map(k=>BLOCKS[k]());
+  let html=`<div class="grid g2">${blocks.slice(0,2).join('')}</div>`;
+  if(blocks.length>2) html+=`<div style="margin-top:18px">${blocks.slice(2).join('')}</div>`;
+  html+=`<div style="margin-top:18px" class="card"><h3>Aktiv flaglar</h3><p class="lede">Bu panel roldan seçilmir — bloklar bu flaglara görə yığılır.</p>
+    <div class="chips" style="margin-top:10px">
+      <span class="chip" style="border-color:var(--teal);color:var(--teal)">role: ${ME.role}</span>
+      ${Object.keys(ME.flags).map(k=>`<span class="chip" style="${ME.flags[k]?'border-color:var(--signal);color:var(--signal)':'opacity:.4'}">${k}: ${ME.flags[k]}</span>`).join('')}
+    </div></div>`;
+  if(caps().jobs_alert) html+=`<div style="margin-top:18px">
+      <span class="eyebrow">Vakansiya bildirişləri</span>
+      <h3 style="font-family:var(--ff-d);font-size:22px;margin:6px 0 4px">Uyğun elan çıxanda email gəlsin</h3>
+      <p class="lede" style="margin-bottom:12px">boss.az, hh.az, jobsearch.az, banco.az, djinni və LinkedIn izlənilir.</p>
+      <div class="cfg" id="alertCfg"></div>
+      <p class="note">Bu blok <code>role: potential</code> üçündür. İş axtaran əsl kütlə budur — sinifdə olub-olmaması fərq etmir.</p></div>`;
+  document.getElementById('dsBody').innerHTML=html;
+  renderAlertCfg();
+  const vl=document.getElementById('verifyList');
+  if(vl) vl.innerHTML=VERIFY.map((v,i)=>`<div class="row" id="v${i}"><div><b>${v[0]}</b><small>${v[1]}</small></div>
+    <div style="display:flex;gap:6px"><button class="btn btn-sm btn-ok" onclick="resolve('v${i}','verified = true')">Təsdiqlə</button>
+    <button class="btn btn-sm btn-no" onclick="resolve('v${i}','Rədd — səbəbli')">Rədd</button></div></div>`).join('');
+  const al=document.getElementById('artList');
+  if(al) al.innerHTML=ARTS.map((a,i)=>`<div class="row" id="a${i}"><div><b>${a[0]}</b><small>${a[1]}</small></div>
+    <div style="display:flex;gap:6px"><button class="btn btn-sm btn-ok" onclick="resolve('a${i}','Published')">Təsdiqlə</button>
+    <button class="btn btn-sm btn-no" onclick="resolve('a${i}','Rejected — səbəbli')">Rədd</button></div></div>`).join('');
+  const mq=document.getElementById('mentorQueue');
+  if(mq) mq.innerHTML=`<div class="row" id="m0"><div><b>Rəşad Məmmədov</b><small>verified ✓ · 6 180 rep · profil tam · qaydalar ✓</small></div>
+    <button class="btn btn-sm btn-ok" onclick="resolve('m0','mentor_enabled = true')">Aktivləşdir</button></div>`;
+}
+window.resolve=(id,msg)=>{const el=document.getElementById(id);if(!el)return;el.lastElementChild.outerHTML=`<span class="done-msg">${msg}</span>`;el.style.opacity='.55'};
+window.inviteFlow=()=>{
+  const e=prompt('Sinfə əlavə etmək üçün email:\n\nHesab varsa → classroom_enrolled = true (yeni hesab YOX)\nHesab yoxdursa → dəvət emaili','potential@itba.az');
+  if(!e)return;
+  const u=USERS.find(x=>x.email===e.trim().toLowerCase());
+  if(u){PENDING_INVITE=u.email;alert(`✓ ${u.name} tapıldı.\n\nrole: ${u.role} — DƏYİŞMİR\nclassroom_enrolled → true\n\nDəvət emaili göndərildi. ${u.email} ilə daxil ol və dəvəti gör.`)}
+  else alert(`${e} üçün hesab yoxdur.\n\nDəvət linki göndərildi → qeydiyyat (Potential BA) → classroom_enrolled = true.\n\nMüvəqqəti şifrə yaradılmır (v3.0 B3).`);
+};
+
+/* ================= MISC ================= */
+const burger=document.getElementById('burger'),menu=document.getElementById('menu');
+burger.addEventListener('click',()=>{const o=menu.classList.toggle('open');burger.setAttribute('aria-expanded',o)});
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;io.unobserve(e.target);
+  const el=e.target,to=+el.dataset.count;let t0=null;
+  const step=ts=>{if(!t0)t0=ts;const p=Math.min((ts-t0)/1000,1);
+    el.textContent=Math.floor(to*(1-Math.pow(1-p,3))).toLocaleString('az')+(p===1?'+':'');
+    if(p<1)requestAnimationFrame(step)};requestAnimationFrame(step)}),{threshold:.5});
+document.querySelectorAll('[data-count]').forEach(el=>io.observe(el));
+
+const items=[
+ ['M','Nigar A. məqalə dərc etdi','Kredit prosesini 14 gündən 3 günə endirdik','4 dəq əvvəl'],
+ ['q','Aysel S. sual verdi','Legacy sistemdə as-is modeli necə çıxarmalı?','11 dəq əvvəl'],
+ ['a','Rəşad M. cavab yazdı','BRD və SRS-i ayrı saxlamağın faydası varmı?','18 dəq əvvəl'],
+ ['R','Elvin Q. şablon paylaşdı','api-doc-checklist.md','26 dəq əvvəl'],
+ ['K','Leyla H. keys dərc etdi','KYC axınında 6 addımı 2-yə endirmək','41 dəq əvvəl'],
+ ['a','Tural B. cavabı qəbul edildi','Sprint ortasında tələb dəyişikliyi','52 dəq əvvəl']
+];
+const list=document.getElementById('feedList');
+const kl=k=>({q:'SUAL',a:'CAVAB',R:'RESURS',K:'KEYS'}[k]||'MƏQALƏ');
+function renderFeed(){list.innerHTML=items.slice(0,6).map(([k,who,what,when])=>
+  `<div class="feed-item"><span class="kind ${k==='q'?'q':k==='a'?'a':''}">${kl(k)}</span><div><b>${what}</b><small>${who} · ${when}</small></div></div>`).join('')}
+renderFeed();
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){let n=0;
+  setInterval(()=>{items.unshift(items.pop());renderFeed();document.getElementById('feedCount').textContent='bu gün '+(24+(++n))},4500)}
+
+const Q=[
+ ['Tələbi stakeholder-dən aldın. İlk addımın nədir?',[['Dərhal user story yazıram',1],['"Niyə?" sualını verib problemi aydınlaşdırıram',3],['Developer-dən qiymətləndirmə istəyirəm',1],['Backlog-a əlavə edirəm',0]]],
+ ['BPMN-də "gateway" nəyi ifadə edir?',[['Prosesin başlanğıcı',0],['Qərar və ya axının bölünməsi',3],['Xarici sistem',1],['Sənəd',0]]],
+ ['İki cədvəldən uyğun sətirləri necə birləşdirirsən?',[['UNION',1],['INNER JOIN',3],['GROUP BY',0],['Bilmirəm',0]]],
+ ['Acceptance criteria nə üçün lazımdır?',[['Sənəd tələb olunduğu üçün',0],['"Hazır" sözünün mənasını razılaşdırmaq üçün',3],['Test komandası istədiyi üçün',1],['Sprint planlamaq üçün',1]]],
+ ['Real layihə təcrübən varmı?',[['Bəli, işləyən məhsulda',3],['Təhsil layihəsi səviyyəsində',2],['Yalnız nəzəri bilik',1],['Hələ yox',0]]]
+];
+let qi=0,score=0;
+const bar=document.getElementById('bar'),qBody=document.getElementById('qBody');
+function drawQ(){
+  bar.style.width=(qi/Q.length*100)+'%';
+  qBody.innerHTML=`<span class="tag">Sual ${qi+1} / ${Q.length}</span><div class="qtext">${Q[qi][0]}</div><div class="opts"></div>`;
+  const o=qBody.querySelector('.opts');
+  Q[qi][1].forEach(([t,v])=>{const b=document.createElement('button');b.className='opt';b.textContent=t;
+    b.onclick=()=>{score+=v;qi++;qi<Q.length?drawQ():result()};o.appendChild(b)});
+}
+function result(){
+  bar.style.width='100%';
+  const pct=Math.round(score/15*100);
+  let lvl='Başlanğıc',next=['"BA nə iş görür" bölməsini oxu','Yol xəritəsinin 01 mərhələsindən başla','İcmada ilk sualını ver'];
+  if(pct>=75){lvl='Junior BA-ya hazırsan';next=['Portfolio üçün bir keys yaz','Müsahibə suallarını nəzərdən keçir','Banking üzrə mentora sual ünvanla']}
+  else if(pct>=45){lvl='Yaxınsan';next=['BPMN praktik tapşırıqlarını et','SQL bölməsindəki 40 sorğunu keç','Bir real keysi icmada müzakirə et']}
+  qBody.innerHTML=`<span class="tag">Nəticə</span><div class="score">${pct}%</div>
+    <h3 style="margin:10px 0 4px">${lvl}</h3>
+    <p class="lede" style="margin-bottom:14px">Bu diaqnostikadır — imtahan deyil. Növbəti addımlar:</p>
+    <ul class="next">${next.map(n=>`<li>${n}</li>`).join('')}</ul>
+    <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="go('home','roadmap')">Yol xəritəsinə keç</button>
+      ${ME?'':'<button class="btn btn-ghost" onclick="go(\'register\')">Nəticəni saxla</button>'}
+      <button class="btn btn-ghost" id="again">Yenidən</button></div>`;
+  document.getElementById('again').onclick=()=>{qi=0;score=0;drawQ()};
+}
+drawQ();
+render();
+</script>
+</body>
+</html>
