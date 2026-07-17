@@ -23,9 +23,9 @@ Mövcud 6 rol → SPEC-in 4 rol + 5 flag modelinə keçir. Mövcud istifadəçil
 **Cavablanmalı:** Sənin saytında `junior_ba` seçib qeydiyyatdan keçənlər adətən artıq BA
 vəzifəsində işləyirlər (→ professional), yoxsa hələ öyrənən/işaxtaran adamlardır (→ potential)?
 
-**Qərar (junior_ba):** _______________________________________________
+**Qərar (junior_ba): potential
 
-**Qərar (qalan xəritələmə təsdiqi — teacher & enrolled_student):** _______________________
+**Qərar (qalan xəritələmə təsdiqi — teacher & enrolled_student): təsdiqlənir
 
 ---
 
@@ -52,7 +52,7 @@ qeydiyyatsız qısa versiyası — bunlar fərqli məhsullardır.
 sonra qeydiyyata / 25-suallıq testə yönləndirir), 25-suallıq versiya giriş etmiş istifadəçilər
 üçün dərin diaqnostika kimi qalır.
 
-**Qərar:** _______________________________________________
+**Qərar:hər ikisi saxlanılır
 (Tövsiyəni qəbul edirsənsə sadəcə yaz: "hər ikisi saxlanılır")
 
 ---
