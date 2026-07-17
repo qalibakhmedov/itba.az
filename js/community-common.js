@@ -29,15 +29,6 @@ async function requireSession() {
   return session;
 }
 
-const ROLE_LABEL = {
-  admin: "Admin",
-  ba_professional: "IT BA professional",
-  potential_ba: "Exploring a career change",
-  junior_ba: "Junior BA / student",
-  teacher: "Teacher",
-  enrolled_student: "Enrolled student",
-};
-
 /**
  * Faza 1 — identity()/caps() adapter qatı.
  *
@@ -76,7 +67,7 @@ function caps({ role, flags }) {
     // 5-də, trusted_author sütunu DB-yə düşəndə aktivləşəcək.
     publish: (role === "professional" && flags.verified) ? "review" : false,
     mentor: !!flags.mentor_enabled,
-    moderate: role === "admin", // moderator hələ real istifadəçiyə təyin olunmayıb
+    moderate: role === "admin" || role === "moderator", // SPEC §6: staff (moderator/admin)
     admin: role === "admin",
     cls_student: !!flags.classroom_enrolled,
     cls_owner: !!flags.classroom_owner,

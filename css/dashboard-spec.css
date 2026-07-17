@@ -1,0 +1,103 @@
+/*
+ * community/dashboard.html — SPEC §14 (--spec- tokenləri) sisteminə
+ * köçürülmüş stil. css/tokens-spec.css-dən sonra qoşulur, ondan oxuyur.
+ *
+ * Bu, layihədə --spec- tokenlərini real istifadə edən İLK səhifədir
+ * (Faza 3). Digər community/*.html səhifələri (login, my-articles,
+ * write-article, test) hələ köhnə css/community.css tünd temasındadır —
+ * bu, bilərəkdən, keçid dövrünün gözlənilən nəticəsidir, sonrakı
+ * fazalarda həmin səhifələr də köçürülə bilər.
+ *
+ * Yalnız bu səhifə üçün lazım olan minimal komponent dəsti —
+ * reference/itba.html-in tam CSS-i deyil.
+ */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--spec-ink);
+  color: var(--spec-chalk);
+  font-family: var(--spec-ff-b);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page { max-width: 720px; margin: 0 auto; padding: 32px 20px 60px; }
+
+.site-brand {
+  font-family: var(--spec-ff-d);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--spec-chalk);
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: var(--spec-ink-2);
+  border: 1px solid var(--spec-line);
+  border-radius: var(--spec-r);
+  box-shadow: var(--spec-sh-xs);
+  padding: 22px 24px;
+}
+.card + .card { margin-top: 18px; }
+.stack { display: flex; flex-direction: column; gap: 18px; }
+
+h1 { font-family: var(--spec-ff-d); font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px; color: var(--spec-chalk); }
+h3 { font-family: var(--spec-ff-d); font-size: 17px; font-weight: 600; margin: 0 0 12px; color: var(--spec-chalk); }
+.subhead { font-family: var(--spec-ff-b); font-size: 14px; color: var(--spec-muted); margin: 0; }
+
+.row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--spec-line); }
+.row:first-of-type { border-top: none; }
+.row b { font-family: var(--spec-ff-b); font-size: 14px; font-weight: 600; color: var(--spec-chalk); }
+.row small { font-family: var(--spec-ff-m); font-size: 11px; color: var(--spec-muted); display: block; margin-top: 2px; }
+
+.st { font-family: var(--spec-ff-m); font-size: 10px; font-weight: 500; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--spec-line); color: var(--spec-muted); white-space: nowrap; }
+.st.ok   { border-color: var(--spec-teal);  color: var(--spec-teal);  background: var(--spec-teal-wash); }
+.st.warn { border-color: var(--spec-amber); color: var(--spec-amber); background: var(--spec-amber-wash); }
+.st.bad  { border-color: var(--spec-red);   color: var(--spec-red);   background: var(--spec-red-wash); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font-family: var(--spec-ff-m); font-size: 11px; color: var(--spec-muted);
+  border: 1px solid var(--spec-line); padding: 4px 11px; border-radius: 20px;
+  background: var(--spec-ink-3);
+}
+.chip.on { border-color: var(--spec-signal); color: var(--spec-signal-ink); background: var(--spec-signal-wash); }
+
+.path { display: flex; flex-wrap: wrap; gap: 8px; }
+.step {
+  flex: 1; min-width: 96px; background: var(--spec-ink-3);
+  border: 1px solid var(--spec-line); border-radius: var(--spec-r-sm); padding: 12px 14px;
+}
+.step small { font-family: var(--spec-ff-m); font-size: 10px; color: var(--spec-muted); display: block; margin-bottom: 4px; }
+.step b { font-family: var(--spec-ff-b); font-size: 13px; font-weight: 600; color: var(--spec-chalk); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  font-family: var(--spec-ff-b); font-weight: 600; font-size: 14px;
+  padding: 11px 18px; border-radius: var(--spec-r-sm); border: 1px solid transparent;
+  cursor: pointer; text-decoration: none;
+}
+.btn-primary { background: var(--spec-signal); color: #fff; }
+.btn-primary:hover { background: var(--spec-signal-ink); }
+.btn-primary:disabled { opacity: .5; cursor: default; }
+.btn-ghost { background: var(--spec-ink-2); border-color: var(--spec-line); color: var(--spec-chalk); }
+.btn-sm { padding: 7px 13px; font-size: 12.5px; }
+.btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.mini-link { font-family: var(--spec-ff-b); font-size: 13px; color: var(--spec-muted); }
+.mini-link a { color: var(--spec-signal); text-decoration: none; }
+.mini-link a:hover { text-decoration: underline; }
+
+.note { font-family: var(--spec-ff-m); font-size: 11.5px; color: var(--spec-muted); margin-top: 14px; line-height: 1.55; }
+
+:focus-visible { outline: 2px solid var(--spec-signal); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

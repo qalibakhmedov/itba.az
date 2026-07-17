@@ -1,58 +1,176 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="az">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
 <title>Dashboard — itba.az</title>
-<link rel="stylesheet" href="/css/community.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens-spec.css">
+<link rel="stylesheet" href="/css/dashboard-spec.css">
 </head>
 <body>
-<canvas id="particle-bg" aria-hidden="true"></canvas>
 <div class="page">
-  <div class="container">
-    <a href="/index.html" class="site-brand">← itba.az</a>
-    <div class="card" id="loadingCard">
-      <p class="subhead" style="margin:0">Loading…</p>
-    </div>
-    <div class="card" id="mainCard" style="display:none">
-      <h1 style="font-size:24px" id="welcomeTitle">Welcome</h1>
+  <a href="/index.html" class="site-brand">← itba.az</a>
+  <div class="card" id="loadingCard">
+    <p class="subhead">Yüklənir…</p>
+  </div>
+  <div class="stack" id="mainCard" style="display:none">
+    <div class="card">
+      <h1 id="welcomeTitle">Salam</h1>
+      <p class="subhead" id="identityLine"></p>
       <p class="subhead" id="emailLine"></p>
-
-      <div class="dashboard-row">
-        <span style="font-size:14px">Role</span>
-        <span id="roleValue">—</span>
-      </div>
-
-      <div class="dashboard-row" id="verifiedRow" style="display:none">
-        <span style="font-size:14px">Verification</span>
-        <span class="pill-status" id="verifiedPill">—</span>
-      </div>
-
-      <div class="dashboard-row">
-        <span style="font-size:14px">Career compatibility test</span>
-        <span id="testStatus" style="font-size:14px;color:var(--faint)">Not taken yet</span>
-      </div>
-
-      <div id="dashboardActions" style="margin-top:22px;display:flex;flex-direction:column;gap:12px">
-        <button class="btn btn-primary" id="testBtn">Take the career test</button>
-        <div id="articlesActions" style="display:none;gap:12px" class="btn-row">
-          <a href="write-article.html" class="btn btn-secondary" id="writeArticleBtn">Write an article</a>
-          <a href="my-articles.html" class="btn btn-ghost">My articles</a>
-        </div>
-        <p id="articlesLockedNote" class="mini-link" style="display:none;margin-top:4px">Article writing unlocks once an admin verifies your profile.</p>
-      </div>
-
-      <p class="mini-link" style="margin-top:24px">
-        <a href="#" id="logoutBtn">Log out</a>
-      </p>
+      <h3 style="margin-top:18px">Aktiv flaglar</h3>
+      <div class="chips" id="flagChips"></div>
     </div>
+
+    <div id="blockZone"></div>
+
+    <div class="card">
+      <h3>Karyera uyğunluq testi</h3>
+      <div class="row">
+        <div>
+          <b>Ətraflı test (25 sual)</b>
+          <small id="testStatus">Hələ verilməyib</small>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="testBtn">Testi ver</button>
+      </div>
+    </div>
+
+    <p class="mini-link"><a href="#" id="logoutBtn">Çıxış</a></p>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="/js/site-common.js"></script>
 <script src="/js/community-common.js"></script>
 <script>
+/*
+ * SPEC §9 blok reyestri. Hər blok üçün bir açar — dashMeta() yalnız
+ * real backing-i olan açarları qaytarır (aşağı bax). SPEC §9-da olan,
+ * amma bu fazada backing-i olmayan bloklar (myQuestions, answerNow,
+ * mentorPath, mentorInbox, clsOwner, clsStudent, moderation,
+ * adminMentor) qeydiyyata əlavə OLUNMAYIB — dashMeta() onları heç vaxt
+ * qaytarmır, ona görə boş/saxta kart göstərilmir.
+ */
+const BLOCKS = {
+  roadmap: () => `
+    <div class="card">
+      <h3>Yol xəritəsi</h3>
+      <p class="subhead" style="margin-bottom:14px">BA karyerası necə qurulur — 6 mərhələ.</p>
+      <div class="path">
+        <div class="step"><small>01</small><b>Başlanğıc</b></div>
+        <div class="step"><small>02</small><b>Junior BA</b></div>
+        <div class="step"><small>03</small><b>Middle BA</b></div>
+        <div class="step"><small>04</small><b>Senior BA</b></div>
+        <div class="step"><small>05</small><b>Lead BA</b></div>
+        <div class="step"><small>06</small><b>PO / PM</b></div>
+      </div>
+      <p class="note">Şəxsi irəliləyiş izləməsi hələ mövcud deyil — bu, struktur baxışıdır.</p>
+    </div>`,
+
+  verification: (ctx) => {
+    const fields = [
+      ["Vəzifə", ctx.pro && ctx.pro.current_title],
+      ["Sənaye", ctx.pro && ctx.pro.industry],
+      ["Təcrübə (il)", ctx.pro && ctx.pro.years_experience != null ? String(ctx.pro.years_experience) : null],
+      ["LinkedIn", ctx.pro && ctx.pro.linkedin_url],
+    ];
+    const filled = fields.filter(([, v]) => v).length;
+    const pct = Math.round((filled / fields.length) * 100);
+    return `
+    <div class="card">
+      <h3>Təsdiq statusu</h3>
+      <div class="row">
+        <div><b>Admin yoxlaması</b><small>Peşəkar profil hələ təsdiqlənməyib</small></div>
+        <span class="st warn">Gözləyir</span>
+      </div>
+      <h3 style="margin-top:18px">Profil tamlığı — ${pct}%</h3>
+      ${fields.map(([label, v]) => `
+        <div class="row">
+          <div><b>${esc(label)}</b></div>
+          <span class="st ${v ? "ok" : "bad"}">${v ? "✓" : "yoxdur"}</span>
+        </div>`).join("")}
+      <p class="note">Opsional sahələrin doldurulması admin yoxlamasını sürətləndirir.</p>
+    </div>`;
+  },
+
+  myArticles: (ctx) => {
+    const STATUS_LABEL = { draft: "Draft", pending_review: "Gözləyir", published: "Dərc olunub", rejected: "Rədd edilib" };
+    const STATUS_ST = { draft: "", pending_review: "warn", published: "ok", rejected: "bad" };
+    const list = ctx.articles || [];
+    return `
+    <div class="card">
+      <h3>Məqalələrin</h3>
+      ${list.length === 0
+        ? `<p class="subhead">Hələ məqalə yazmamısan.</p>`
+        : list.map(a => `
+          <div class="row">
+            <div><b>${esc(a.title)}</b></div>
+            <span class="st ${STATUS_ST[a.status]}">${STATUS_LABEL[a.status]}</span>
+          </div>`).join("")}
+      <div class="btn-row" style="margin-top:14px">
+        <a href="write-article.html" class="btn btn-primary btn-sm">Yeni məqalə</a>
+        ${list.length > 0 ? `<a href="my-articles.html" class="btn btn-ghost btn-sm">Hamısına bax</a>` : ``}
+      </div>
+    </div>`;
+  },
+
+  adminVerify: (ctx) => {
+    const pending = ctx.pending || [];
+    if (pending.length === 0) {
+      return `<div class="card"><h3>Professional BA təsdiqi</h3><p class="subhead">Gözləyən hesab yoxdur.</p></div>`;
+    }
+    return `
+    <div class="card">
+      <h3>Professional BA təsdiqi</h3>
+      <div id="verifyList">
+        ${pending.map(p => `
+          <div class="row" id="pv-${p.id}">
+            <div><b>${esc(p.full_name || p.email)}</b><small>${esc(p.email)}</small></div>
+            <button class="btn btn-primary btn-sm" data-verify-id="${p.id}">Təsdiqlə</button>
+          </div>`).join("")}
+      </div>
+    </div>`;
+  },
+};
+
+/*
+ * SPEC §9-un tam rol/flag budaqlanmasını güzgülənir (mentor_enabled/
+ * classroom_enrolled budaqları daxil), amma yalnız real backing-i olan
+ * blok açarlarını qaytarır. mentor_enabled/classroom_enrolled sütunları
+ * DB-də hələ yoxdur (bax js/community-common.js, mapLegacyRole) — ona
+ * görə həmin budaqlar strukturca mövcuddur, amma indi heç vaxt trigger
+ * olmur (flags.mentor_enabled/classroom_enrolled həmişə undefined).
+ */
+function dashMeta(me) {
+  const f = me.flags;
+  if (me.role === "admin") {
+    // SPEC §9: adminVerify, adminMentor. adminMentor gizli — mentor_enabled sütunu yoxdur.
+    return { blocks: ["adminVerify"] };
+  }
+  if (me.role === "moderator") {
+    // SPEC §9: moderation. Gizli — moderator roluna hələ RLS icazəsi verilməyib.
+    return { blocks: [] };
+  }
+  if (me.role === "professional") {
+    if (f.mentor_enabled) {
+      // SPEC §9: mentorInbox, clsOwner. Hər ikisi gizli — bu budaq hələ trigger olmur.
+      return { blocks: [] };
+    }
+    if (!f.verified) {
+      // SPEC §9: verification, answerNow. answerNow gizli — Q&A modulu yoxdur.
+      return { blocks: ["verification"] };
+    }
+    // SPEC §9: mentorPath, myArticles. mentorPath gizli — reputasiya sütunu/hadisələri yoxdur.
+    return { blocks: ["myArticles"] };
+  }
+  // potential — classroom_enrolled olsun-olmasın eyni kimlik (SPEC §17.5).
+  // SPEC §9: roadmap, myQuestions (+clsStudent sinifdə olsa). myQuestions/clsStudent gizli — Q&A/classroom yoxdur.
+  return { blocks: ["roadmap"] };
+}
+
 (async () => {
   const session = await requireSession();
   if (!session) return;
@@ -66,6 +184,71 @@
     .eq("id", userId)
     .maybeSingle();
 
+  if (!profile) { location.href = "login.html"; return; }
+
+  const me = mapLegacyRole(profile.role, profile.verified);
+  const meta = dashMeta(me);
+
+  document.getElementById("welcomeTitle").textContent = profile.full_name
+    ? "Salam, " + profile.full_name
+    : "Salam";
+  document.getElementById("identityLine").textContent = identity(me);
+  document.getElementById("emailLine").textContent = profile.email || session.user.email;
+
+  document.getElementById("flagChips").innerHTML =
+    `<span class="chip on">role: ${esc(me.role)}</span>` +
+    Object.keys(me.flags).map(k => `<span class="chip${me.flags[k] ? " on" : ""}">${k}: ${me.flags[k]}</span>`).join("");
+
+  const ctx = {};
+
+  if (meta.blocks.includes("verification")) {
+    const { data: pro } = await sbAuth
+      .from("professional_profiles")
+      .select("current_title, industry, years_experience, linkedin_url")
+      .eq("id", userId)
+      .maybeSingle();
+    ctx.pro = pro;
+  }
+
+  if (meta.blocks.includes("myArticles")) {
+    const { data: articles } = await sbAuth
+      .from("articles")
+      .select("id, title, status")
+      .eq("author_id", userId)
+      .order("updated_at", { ascending: false });
+    ctx.articles = articles || [];
+  }
+
+  if (meta.blocks.includes("adminVerify")) {
+    const { data: pending } = await sbAuth
+      .from("profiles")
+      .select("id, email, full_name")
+      .eq("role", "professional")
+      .eq("verified", false)
+      .order("created_at", { ascending: true });
+    ctx.pending = pending || [];
+  }
+
+  document.getElementById("blockZone").innerHTML = meta.blocks.map(k => BLOCKS[k](ctx)).join("");
+
+  if (meta.blocks.includes("adminVerify")) {
+    document.getElementById("blockZone").querySelectorAll("[data-verify-id]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.dataset.verifyId;
+        btn.disabled = true;
+        btn.textContent = "…";
+        const { error } = await sbAuth.from("profiles").update({ verified: true }).eq("id", id);
+        if (error) {
+          btn.disabled = false;
+          btn.textContent = "Təsdiqlə";
+          alert("Xəta: " + error.message);
+          return;
+        }
+        document.getElementById("pv-" + id).remove();
+      });
+    });
+  }
+
   const { data: lastAttempt } = await sbAuth
     .from("test_attempts")
     .select("id, overall_score, completed_at")
@@ -75,35 +258,11 @@
     .limit(1)
     .maybeSingle();
 
-  document.getElementById("welcomeTitle").textContent = profile && profile.full_name
-    ? "Welcome, " + profile.full_name
-    : "Welcome";
-  document.getElementById("emailLine").textContent = (profile && profile.email) || session.user.email;
-  document.getElementById("roleValue").textContent = profile ? (ROLE_LABEL[profile.role] || profile.role) : "—";
-
-  if (profile && profile.role === "ba_professional") {
-    const row = document.getElementById("verifiedRow");
-    const pill = document.getElementById("verifiedPill");
-    row.style.display = "flex";
-    pill.textContent = profile.verified ? "Verified" : "Pending review";
-    // Same status-pill color mapping used on my-articles.html, so
-    // "Pending review" reads as the same visual state everywhere it
-    // appears rather than one color here and another there.
-    pill.classList.toggle("verified", !!profile.verified);
-    pill.classList.toggle("pending_review", !profile.verified);
-
-    if (profile.verified) {
-      document.getElementById("articlesActions").style.display = "flex";
-    } else {
-      document.getElementById("articlesLockedNote").style.display = "block";
-    }
-  }
-
   const testBtn = document.getElementById("testBtn");
   if (lastAttempt) {
     document.getElementById("testStatus").innerHTML =
-      '<a href="test-results.html?attempt=' + lastAttempt.id + '" style="color:var(--accent)">View last result (' + lastAttempt.overall_score + ')</a>';
-    testBtn.textContent = "Retake the test";
+      '<a href="test-results.html?attempt=' + lastAttempt.id + '">Son nəticə (' + lastAttempt.overall_score + ')</a>';
+    testBtn.textContent = "Yenidən ver";
   }
   testBtn.addEventListener("click", () => { location.href = "test.html"; });
 
@@ -117,6 +276,5 @@
   document.getElementById("mainCard").style.display = "block";
 })();
 </script>
-<script src="/js/particle-bg.js"></script>
 </body>
 </html>
