@@ -1,0 +1,132 @@
+/*
+ * Marketing bölməsi (index, academy, courses, articles) üçün ortaq
+ * SPEC §14 (--spec- tokenləri) stili. css/tokens-spec.css-dən sonra
+ * qoşulur, ondan oxuyur.
+ *
+ * Faza M.0-da index-preview-1.html-in təcrübə CSS-indən çıxarılıb.
+ * Hələ heç bir real generatora (scripts/build-site.js, scripts/lib/
+ * shell.js) qoşulmayıb — tam inertdir, css/tokens-spec.css-i Faza 2-də
+ * necə inert yaratmışdıqsa, elə. M.1-dən etibarən shell.js buradan
+ * oxuyacaq (MIGRATION-PLAN.md).
+ *
+ * community-spec.css-in strukturunu təqlid edir, amma marketing-in öz,
+ * mövcud css/site.css-dəki sinif adlarına uyğunlaşdırılıb (hero,
+ * cards-grid, section-title və s.) ki, seçim təsdiqləndikdən sonra
+ * generatora birbaşa köçürülə bilsin — sinif adları dəyişmir, yalnız
+ * dəyərlər.
+ */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--spec-ink);
+  color: var(--spec-chalk);
+  font-family: var(--spec-ff-b);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+.container { max-width: var(--spec-maxw); margin: 0 auto; padding: 0 24px; }
+
+/* --- Header / naviqasiya --- */
+header {
+  border-bottom: 1px solid var(--spec-line);
+  background: var(--spec-ink-2);
+}
+.header-content { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 0; }
+.logo-link { display: flex; text-decoration: none; }
+.logo-section { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 34px; height: 34px; border-radius: 9px; background: var(--spec-signal);
+  color: #fff; font-family: var(--spec-ff-d); font-weight: 700; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-text h1 { font-family: var(--spec-ff-d); font-size: 17px; font-weight: 700; margin: 0; color: var(--spec-chalk); }
+.logo-text p { font-family: var(--spec-ff-m); font-size: 10px; color: var(--spec-muted); margin: 2px 0 0; }
+
+nav[aria-label="Primary"] { display: flex; gap: 26px; }
+nav[aria-label="Primary"] a { font-family: var(--spec-ff-b); font-size: 14px; font-weight: 500; color: var(--spec-soft); text-decoration: none; }
+nav[aria-label="Primary"] a:hover { color: var(--spec-signal); }
+
+.header-buttons { display: flex; align-items: center; gap: 12px; }
+
+.mobile-menu-btn { display: none; background: none; border: 1px solid var(--spec-line); border-radius: 8px; width: 38px; height: 38px; font-size: 16px; cursor: pointer; }
+.mobile-nav-panel { display: none; }
+.mobile-nav-panel.open { display: flex; flex-direction: column; gap: 4px; padding: 14px 0; border-top: 1px solid var(--spec-line); }
+.mobile-nav-panel a { padding: 10px 4px; font-family: var(--spec-ff-b); color: var(--spec-chalk); text-decoration: none; }
+
+/* --- Düymələr --- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  font-family: var(--spec-ff-b); font-weight: 600; font-size: 14px;
+  padding: 11px 20px; border-radius: var(--spec-r-sm); border: 1px solid transparent;
+  cursor: pointer; text-decoration: none; white-space: nowrap;
+}
+.btn-primary { background: var(--spec-signal); color: #fff; }
+.btn-primary:hover { background: var(--spec-signal-ink); }
+.btn-ghost { background: transparent; border-color: var(--spec-line); color: var(--spec-chalk); }
+.btn-ghost:hover { border-color: var(--spec-signal); color: var(--spec-signal-ink); }
+.btn-secondary { background: var(--spec-signal-wash); border-color: var(--spec-signal); color: var(--spec-signal-ink); }
+.btn-secondary:hover { background: var(--spec-signal); color: #fff; }
+
+/* --- Dil keçidi --- */
+.lang-switch { display: flex; gap: 2px; font-family: var(--spec-ff-m); font-size: 11px; }
+.lang-switch a { padding: 5px 8px; border-radius: 6px; color: var(--spec-muted); text-decoration: none; }
+.lang-switch a.active { background: var(--spec-signal-wash); color: var(--spec-signal-ink); font-weight: 600; }
+
+/* --- Hero --- */
+.hero { padding: 76px 0 88px; }
+.hero-content { display: grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: center; }
+.badge {
+  display: inline-block; padding: 6px 14px; background: var(--spec-signal-wash);
+  border: 1px solid var(--spec-signal); border-radius: 20px; color: var(--spec-signal-ink);
+  font-family: var(--spec-ff-m); font-size: 12px; margin-bottom: 20px;
+}
+.hero h2 { font-family: var(--spec-ff-d); font-size: clamp(30px, 4vw, 44px); font-weight: 700; line-height: 1.12; letter-spacing: -.02em; color: var(--spec-chalk); margin: 0 0 18px; text-wrap: balance; }
+.subheadline { font-family: var(--spec-ff-b); font-size: 17px; color: var(--spec-soft); line-height: 1.6; max-width: 46ch; margin: 0 0 30px; }
+.hero-buttons { display: flex; gap: 14px; flex-wrap: wrap; }
+.hero-card {
+  background: var(--spec-ink-2); border: 1px solid var(--spec-line); border-radius: var(--spec-r);
+  box-shadow: var(--spec-sh-md); padding: 28px;
+}
+.hero-card h3 { font-family: var(--spec-ff-d); font-size: 16px; font-weight: 600; margin: 0 0 16px; color: var(--spec-chalk); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font-family: var(--spec-ff-m); font-size: 11px; color: var(--spec-signal-ink);
+  border: 1px solid var(--spec-signal); padding: 5px 12px; border-radius: 20px;
+  background: var(--spec-signal-wash);
+}
+
+/* --- "Nə edə bilərsiniz" kartları --- */
+#explore { padding: 20px 0 90px; }
+.section-title { font-family: var(--spec-ff-d); font-size: 26px; font-weight: 700; color: var(--spec-chalk); margin: 0 0 32px; text-align: center; }
+.cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.card {
+  display: block; text-decoration: none; background: var(--spec-ink-2);
+  border: 1px solid var(--spec-line); border-radius: var(--spec-r); box-shadow: var(--spec-sh-xs);
+  padding: 26px; transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+.card:hover { border-color: var(--spec-signal); transform: translateY(-3px); box-shadow: var(--spec-sh-md); }
+.card-label {
+  display: inline-block; font-family: var(--spec-ff-m); font-size: 11px; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--spec-teal); margin-bottom: 12px;
+}
+.card h3 { font-family: var(--spec-ff-d); font-size: 18px; font-weight: 600; color: var(--spec-chalk); margin: 0 0 10px; line-height: 1.3; }
+.card p { font-family: var(--spec-ff-b); font-size: 14px; color: var(--spec-muted); line-height: 1.6; margin: 0; }
+
+/* --- Footer --- */
+footer { border-top: 1px solid var(--spec-line); padding: 32px 0; margin-top: 40px; }
+footer p { font-family: var(--spec-ff-b); font-size: 13px; color: var(--spec-muted); margin: 0; }
+footer a { font-family: var(--spec-ff-b); font-size: 13px; color: var(--spec-muted); text-decoration: none; margin-right: 18px; }
+footer a:hover { color: var(--spec-signal); }
+
+/* --- Responsive --- */
+@media (max-width: 860px) {
+  nav[aria-label="Primary"] { display: none; }
+  .header-buttons .btn, .header-buttons .lang-switch { display: none; }
+  .mobile-menu-btn { display: block; }
+  .hero-content { grid-template-columns: 1fr; }
+  .cards-grid { grid-template-columns: 1fr; }
+}
