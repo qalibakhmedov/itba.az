@@ -1,29 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="az">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Your results — itba.az</title>
-<link rel="stylesheet" href="/css/community.css">
+<title>Nəticəniz — itba.az</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens-spec.css">
+<link rel="stylesheet" href="/css/community-spec.css">
 </head>
 <body>
-<canvas id="particle-bg" aria-hidden="true"></canvas>
 <div class="page">
-  <div class="container">
-    <a href="/index.html" class="site-brand">← itba.az</a>
-    <div class="card" id="loadingCard">
-      <p class="subhead" style="margin:0">Loading your result…</p>
+  <a href="/index.html" class="site-brand">← itba.az</a>
+  <div class="card" id="loadingCard">
+    <p class="subhead">Nəticəniz yüklənir…</p>
+  </div>
+  <div class="card" id="resultCard" style="display:none">
+    <div class="score-hero">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-band" id="scoreBand"></div>
     </div>
-    <div class="card" id="resultCard" style="display:none">
-      <div class="score-hero">
-        <div class="score-num" id="scoreNum">0</div>
-        <div class="score-band" id="scoreBand"></div>
-      </div>
-      <p style="font-size:14.5px;color:var(--muted)" id="bandText"></p>
-      <div class="category-bars" id="categoryBars"></div>
-      <a href="dashboard.html" class="btn btn-primary">Go to dashboard</a>
-    </div>
+    <p class="subhead" id="bandText"></p>
+    <div class="category-bars" id="categoryBars"></div>
+    <a href="dashboard.html" class="btn btn-primary">Dashboard-a keç</a>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -32,22 +33,22 @@
 <script>
 const BAND_COPY = {
   early: {
-    label: "Early exploration",
-    text: "You're at the very beginning of this path, and that's completely fine — most successful BAs started exactly here. Focus first on the fundamentals: how requirements are gathered and how processes are documented, before worrying about specific tools.",
+    label: "İlkin araşdırma",
+    text: "Bu yolun lap əvvəlindəsiniz və bu tamamilə normaldır — uğurlu BA-ların çoxu məhz buradan başlayıb. Əvvəlcə əsaslara fokuslanın: tələblərin necə toplandığı və proseslərin necə sənədləşdirildiyi — konkret alətlər barədə narahat olmadan.",
   },
   promising: {
-    label: "Promising fit",
-    text: "You already show real aptitude for the core of this work — you just need structure and practice to turn it into job-ready skill. A guided program focused on your weaker category below would close the gap fastest.",
+    label: "Perspektivli uyğunluq",
+    text: "Bu işin əsasına artıq real bacarıq göstərirsiniz — iş üçün hazır bacarığa çevirmək üçün sadəcə struktur və məşq lazımdır. Aşağıdakı zəif kateqoriyanıza yönəlmiş bələdçili proqram boşluğu ən sürətli bağlayar.",
   },
   strong: {
-    label: "Strong fit",
-    text: "You show strong natural alignment with what IT Business Analysis actually demands day to day. You're a good candidate to fast-track toward interview-readiness rather than starting from the basics.",
+    label: "Güclü uyğunluq",
+    text: "IT Biznes Analitikasının gündəlik tələb etdiyi ilə güclü təbii uyğunluq göstərirsiniz. Əsaslardan başlamaq əvəzinə müsahibəyə hazırlığa sürətli keçid üçün yaxşı namizədsiniz.",
   },
 };
 const CATEGORY_LABEL = {
-  analytical: "Analytical thinking",
-  communication: "Stakeholder communication",
-  tooling: "Tooling familiarity",
+  analytical: "Analitik düşüncə",
+  communication: "Maraqlı tərəflərlə ünsiyyət",
+  tooling: "Alət bilikləri",
 };
 
 (async () => {
@@ -86,6 +87,5 @@ const CATEGORY_LABEL = {
   document.getElementById("resultCard").style.display = "block";
 })();
 </script>
-<script src="/js/particle-bg.js"></script>
 </body>
 </html>

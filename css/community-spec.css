@@ -3,10 +3,9 @@
  * css/tokens-spec.css-dən sonra qoşulur, ondan oxuyur.
  *
  * Faza 3-də dashboard.html üçün yaranıb (əvvəlki adı: dashboard-spec.css),
- * Faza 3.1-3.3 və Faza 4-də community/*.html-in ortaq --spec- bazasına
+ * Faza 3.1-3.4 və Faza 4-də community/*.html-in ortaq --spec- bazasına
  * genişləndirilib — community.css-in köhnə temada oynadığı rolun --spec-
- * ekvivalenti. Hələ köçürülməmiş səhifələr (test, test-results) köhnə
- * css/community.css-də qalır — MIGRATION-PLAN.md-yə görə.
+ * ekvivalenti. Faza 3.4-dən sonra bütün community/*.html bu sistemdədir.
  *
  * Bütün community səhifələri üçün lazım olan minimal, ortaq komponent
  * dəsti — reference/itba.html-in tam CSS-i deyil.
@@ -249,6 +248,37 @@ trix-editor:focus {
   outline-offset: 1px;
 }
 trix-editor a { color: var(--spec-signal); }
+
+/* --- Karyera testi (test.html / test-results.html üçün ortaq;
+   Faza 6-nın özünüqiymətləndirməsi də bal/kateqoriya göstərəcək,
+   ona görə bura, dashboard-a yox, ortaq fayla qoyulub) --- */
+.progress { font-family: var(--spec-ff-m); font-size: 12px; color: var(--spec-muted); margin-bottom: 16px; }
+
+.option-list { display: grid; gap: 10px; }
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border: 1px solid var(--spec-line);
+  border-radius: var(--spec-r-sm);
+  background: var(--spec-ink-2);
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.option:hover { border-color: var(--spec-signal); }
+.option:focus-within { outline: 2px solid var(--spec-signal); outline-offset: 1px; }
+.option input { width: auto; accent-color: var(--spec-signal); }
+.option.selected { border-color: var(--spec-signal); background: var(--spec-signal-wash); }
+
+.score-hero { text-align: center; padding: 12px 0 22px; }
+.score-num { font-family: var(--spec-ff-d); font-size: 56px; font-weight: 700; color: var(--spec-signal); line-height: 1; }
+.score-band { font-family: var(--spec-ff-b); font-size: 15px; color: var(--spec-muted); margin-top: 6px; }
+
+.category-bars { display: grid; gap: 14px; margin: 22px 0; }
+.category-bar .label { display: flex; justify-content: space-between; font-family: var(--spec-ff-m); font-size: 12px; color: var(--spec-muted); margin-bottom: 6px; }
+.category-bar .track { height: 8px; background: var(--spec-ink-3); border-radius: 4px; overflow: hidden; }
+.category-bar .fill { height: 100%; background: var(--spec-signal); border-radius: 4px; }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
