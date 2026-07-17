@@ -208,6 +208,42 @@ nav[aria-label="Primary"] a:hover { color: var(--spec-signal); }
 .form-feedback.success { background: var(--spec-teal-wash); border: 1px solid var(--spec-teal); color: var(--spec-teal); }
 .form-feedback.error { background: var(--spec-red-wash); border: 1px solid var(--spec-red); color: var(--spec-red); }
 
+/* --- Hero-suz səhifələr (courses; M.5-də articles də bunu istifadə
+   edəcək) --- */
+.content-page { padding: 56px 0 90px; }
+.section-title-left { font-family: var(--spec-ff-d); font-size: 26px; font-weight: 700; color: var(--spec-chalk); text-align: left; margin: 0 0 12px; }
+.subhead { font-family: var(--spec-ff-b); font-size: 15px; color: var(--spec-muted); margin: 0; }
+
+/* --- Filtr sətri (courses; M.5-də articles-in axtarışı da .article-search
+   istifadə edəcək) --- */
+.filters-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
+.filter-select,
+.article-search {
+  padding: 11px 13px; background: var(--spec-ink-2); border: 1px solid var(--spec-line);
+  border-radius: var(--spec-r-sm); color: var(--spec-chalk); font-family: var(--spec-ff-b); font-size: 14px;
+}
+.filter-select:focus,
+.article-search:focus { outline: 2px solid var(--spec-signal); outline-offset: 1px; border-color: transparent; }
+.article-search { width: 100%; max-width: 420px; display: block; margin-bottom: 26px; }
+.article-search.filter-search { max-width: none; width: auto; margin-bottom: 0; }
+
+/* --- "Bizim proqramımız" nişanı (courses) --- */
+.course-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 12px; margin-left: 8px;
+  font-family: var(--spec-ff-m); font-size: 11px; font-weight: 600; vertical-align: middle;
+  background: var(--spec-teal-wash); color: var(--spec-teal);
+}
+
+/* --- Yüklənmə/boş/xəta bildirişi (courses; community-spec.css-in
+   .err-i ilə eyni rəng semantikası: .warn faktiki XƏTA halı üçündür —
+   köhnə kodda da belə idi, "warn" adı davranışa uyğun deyildi). --- */
+.state-note {
+  font-family: var(--spec-ff-b); font-size: 14.5px; line-height: 1.6; color: var(--spec-muted);
+  padding: 15px 17px; border-radius: var(--spec-r-sm); background: var(--spec-ink-3); border: 1px solid var(--spec-line);
+}
+.state-note.warn { background: var(--spec-red-wash); border-color: var(--spec-red); color: var(--spec-red); }
+.state-note .retry-link { display: inline-block; margin-top: 8px; color: var(--spec-signal); font-weight: 600; cursor: pointer; }
+
 /* --- Footer --- */
 footer { border-top: 1px solid var(--spec-line); padding: 32px 0; margin-top: 40px; }
 footer p { font-family: var(--spec-ff-b); font-size: 13px; color: var(--spec-muted); margin: 0; }

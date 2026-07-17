@@ -661,6 +661,7 @@ function coursesPage(lang) {
     header,
     content: content + "\n" + script,
     footer,
+    theme: "spec",
   });
 }
 
