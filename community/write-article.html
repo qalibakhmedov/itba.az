@@ -114,14 +114,22 @@ async function init() {
     .eq("id", userId)
     .maybeSingle();
 
-  if (!profile || profile.role !== "ba_professional") {
+  if (!profile) {
     document.getElementById("notAllowedTitle").textContent = "Not available for your account";
     document.getElementById("notAllowedText").textContent = "Writing articles is limited to verified IT BA professional accounts.";
     document.getElementById("loadingCard").style.display = "none";
     document.getElementById("notAllowedCard").style.display = "block";
     return;
   }
-  if (!profile.verified) {
+  if (profile.role !== "professional") {
+    document.getElementById("notAllowedTitle").textContent = "Not available for your account";
+    document.getElementById("notAllowedText").textContent = "Writing articles is limited to verified IT BA professional accounts.";
+    document.getElementById("loadingCard").style.display = "none";
+    document.getElementById("notAllowedCard").style.display = "block";
+    return;
+  }
+  const me = mapLegacyRole(profile.role, profile.verified);
+  if (caps(me).publish !== "review") {
     document.getElementById("notAllowedTitle").textContent = "Your account is pending verification";
     document.getElementById("notAllowedText").textContent = "An admin needs to verify your professional profile before you can publish articles. You'll be able to write once that's done — check back soon.";
     document.getElementById("loadingCard").style.display = "none";

@@ -37,3 +37,49 @@ const ROLE_LABEL = {
   teacher: "Teacher",
   enrolled_student: "Enrolled student",
 };
+
+/**
+ * Faza 1 — identity()/caps() adapter qatı.
+ *
+ * Faza 1.5-dən (auth foundation) sonra `profiles.role` artıq birbaşa
+ * SPEC-in formatındadır (potential/professional/moderator/admin — bax
+ * supabase/schema-phase1.sql-də handle_new_user()) — tərcümə lazım deyil,
+ * sadəcə `verified`-i flags obyektinə bükür. Ad tarixi səbəbdən qalır
+ * (Faza 1-in ilkin, köhnə 6-rollu modeldən adaptasiya edən versiyasından).
+ * Digər flag-lar (mentor_enabled və s.) hələ öz sütunlarına malik deyil —
+ * defolt olaraq `undefined`/`false` qalır, sonrakı fazalarda əlavə olunacaq.
+ */
+function mapLegacyRole(role, verified) {
+  return { role, flags: { verified: !!verified } };
+}
+
+function identity({ role, flags }) {
+  if (role === "professional" && flags.mentor_enabled) return "Mentor";
+  if (role === "professional" && !flags.verified) return "Professional BA · pending";
+  if (role === "professional" && flags.verified) return "Professional BA ✓";
+  if (role === "potential" && flags.classroom_enrolled) return "Potential BA · sinifdə";
+  if (role === "potential") return "Potential BA";
+  if (role === "moderator" || role === "admin") return role;
+  return "Qonaq";
+}
+
+function caps({ role, flags }) {
+  return {
+    browse: true,
+    comment: true,
+    ask: true,
+    answer: true,
+    download: true, // Q&A/resurs modulları hələ yoxdur — bu bayraqları oxuyan kod yoxdur
+    // `role` artıq DB-nin özündə canonical dəyərdir (Faza 1.5), RLS də eyni
+    // dəyəri yoxlayır (supabase/schema-articles.sql: role='professional').
+    // SPEC-in tam publish matrisi (staff/trusted_author → 'direct') Faza
+    // 5-də, trusted_author sütunu DB-yə düşəndə aktivləşəcək.
+    publish: (role === "professional" && flags.verified) ? "review" : false,
+    mentor: !!flags.mentor_enabled,
+    moderate: role === "admin", // moderator hələ real istifadəçiyə təyin olunmayıb
+    admin: role === "admin",
+    cls_student: !!flags.classroom_enrolled,
+    cls_owner: !!flags.classroom_owner,
+    jobs_alert: role === "potential",
+  };
+}
