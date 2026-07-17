@@ -1,62 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="az">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Register — itba.az</title>
-<link rel="stylesheet" href="/css/community.css">
+<title>Qeydiyyat — itba.az</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens-spec.css">
+<link rel="stylesheet" href="/css/community-spec.css">
 </head>
 <body>
-<canvas id="particle-bg" aria-hidden="true"></canvas>
-<div class="page">
-  <div class="container">
-    <a href="/index.html" class="site-brand">← itba.az</a>
-    <div class="card" id="formCard">
-      <span class="badge">Working IT BA</span>
-      <h1 style="font-size:26px">Create your account</h1>
-      <p class="subhead">Your profile will be reviewed before you can publish articles — you can still register and browse right away.</p>
-      <form id="regForm">
-        <div class="field">
-          <label for="fullName">Full name <span class="required">*</span></label>
-          <input id="fullName" type="text" required autocomplete="name">
-        </div>
-        <div class="field">
-          <label for="email">Email <span class="required">*</span></label>
-          <input id="email" type="email" required autocomplete="email">
-        </div>
-        <div class="field">
-          <label for="password">Password <span class="required">*</span></label>
-          <input id="password" type="password" required minlength="8" autocomplete="new-password">
-          <p class="mini-link" style="text-align:left;margin-top:6px">At least 8 characters.</p>
-        </div>
-        <div class="field">
-          <label for="currentTitle">Current title (optional)</label>
-          <input id="currentTitle" type="text" placeholder="e.g. IT Business Analyst">
-        </div>
-        <div class="field">
-          <label for="yearsExperience">Years of experience (optional)</label>
-          <input id="yearsExperience" type="number" min="0">
-        </div>
-        <div class="field">
-          <label for="industry">Industry (optional)</label>
-          <input id="industry" type="text" placeholder="e.g. Banking, Telecom">
-        </div>
-        <div class="field">
-          <label for="linkedinUrl">LinkedIn URL (optional)</label>
-          <input id="linkedinUrl" type="url" placeholder="https://linkedin.com/in/…" autocomplete="url">
-        </div>
-        <button type="submit" class="btn btn-primary" id="submitBtn">Create account</button>
-        <div class="err" id="errBox" style="display:none" role="alert"></div>
-      </form>
-      <div class="mini-link"><a href="register.html">← Not the right description? Pick again</a></div>
-    </div>
-    <div class="card" id="doneCard" style="display:none;text-align:center">
-      <h1 style="font-size:24px">Check your email</h1>
-      <p class="subhead" style="margin:0 auto">We sent a confirmation link to <strong id="doneEmail"></strong>. Click it to activate your account, then log in.</p>
-      <p class="notice">Publishing rights are unlocked once an admin verifies your profile — you can browse the community in the meantime.</p>
-      <a href="login.html" class="btn btn-primary" style="margin-top:8px">Go to login</a>
-    </div>
+<div class="page wide">
+  <a href="/index.html" class="site-brand">← itba.az</a>
+  <div class="card" id="formCard">
+    <span class="badge">İşləyən IT BA</span>
+    <h1>Hesab yaradın</h1>
+    <p class="subhead">Məqalə dərc etmədən əvvəl profiliniz nəzərdən keçirilir — hazırda qeydiyyatdan keçib icmaya baxa bilərsiniz.</p>
+    <form id="regForm">
+      <div class="field">
+        <label for="fullName">Tam ad <span class="required">*</span></label>
+        <input id="fullName" type="text" required autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="email">Email <span class="required">*</span></label>
+        <input id="email" type="email" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="password">Şifrə <span class="required">*</span></label>
+        <input id="password" type="password" required minlength="8" autocomplete="new-password">
+        <p class="mini-link" style="margin-top:6px">Ən azı 8 simvol.</p>
+      </div>
+      <div class="field">
+        <label for="company">Şirkət <span class="required">*</span></label>
+        <input id="company" type="text" required placeholder="məs. Kapital Bank">
+      </div>
+      <div class="field">
+        <label for="currentTitle">Vəzifə <span class="required">*</span></label>
+        <input id="currentTitle" type="text" required placeholder="məs. IT Biznes Analitiki">
+      </div>
+      <div class="field">
+        <label for="yearsExperience">BA təcrübəsi, il <span class="required">*</span></label>
+        <input id="yearsExperience" type="number" min="0" required>
+      </div>
+      <div class="field">
+        <label for="linkedinUrl">LinkedIn <span class="required">*</span></label>
+        <input id="linkedinUrl" type="url" required placeholder="https://linkedin.com/in/…" autocomplete="url">
+      </div>
+      <div class="field">
+        <label for="bio">Bio <span class="required">*</span></label>
+        <textarea id="bio" required placeholder="Özünüz və BA təcrübəniz haqqında bir neçə cümlə"></textarea>
+      </div>
+      <div class="field">
+        <label for="industry">Sənaye (opsional)</label>
+        <input id="industry" type="text" placeholder="məs. Bankçılıq, Telekom">
+      </div>
+      <div class="field">
+        <label for="cvUrl">CV linki (opsional)</label>
+        <input id="cvUrl" type="url" placeholder="https://…">
+      </div>
+      <div class="field">
+        <label for="certificates">Sertifikatlar (opsional)</label>
+        <input id="certificates" type="text" placeholder="məs. PMI-PBA, CBAP">
+      </div>
+      <div class="field">
+        <label for="portfolioUrl">Portfolio (opsional)</label>
+        <input id="portfolioUrl" type="url" placeholder="https://…">
+      </div>
+      <div class="field">
+        <label for="skills">Bacarıqlar (opsional)</label>
+        <input id="skills" type="text" placeholder="məs. SQL, BPMN, Agile">
+      </div>
+      <div class="field">
+        <label for="personalWebsite">Şəxsi sayt (opsional)</label>
+        <input id="personalWebsite" type="url" placeholder="https://…">
+      </div>
+      <button type="submit" class="btn btn-primary" id="submitBtn">Hesab yarat</button>
+      <div class="err" id="errBox" style="display:none" role="alert"></div>
+    </form>
+    <p class="mini-link"><a href="register.html">← Uyğun təsvir deyil? Yenidən seçin</a></p>
+  </div>
+  <div class="card" id="doneCard" style="display:none;text-align:center">
+    <h1>Emailinizi yoxlayın</h1>
+    <p class="subhead" style="margin:0 auto">Təsdiq linkini <strong id="doneEmail"></strong> ünvanına göndərdik. Hesabınızı aktivləşdirmək üçün linkə klikləyin, sonra giriş edin.</p>
+    <p class="notice">Nəşr icazəsi yalnız admin profilinizi təsdiqlədikdən sonra açılır — bu müddətdə icmaya baxa bilərsiniz.</p>
+    <a href="login.html" class="btn btn-primary" style="margin-top:8px">Girişə keç</a>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -70,10 +99,18 @@ document.getElementById("regForm").addEventListener("submit", async (e) => {
   const errBox = document.getElementById("errBox");
   const btn = document.getElementById("submitBtn");
   errBox.style.display = "none";
-  btn.disabled = true; btn.textContent = "Creating account…";
+  btn.disabled = true; btn.textContent = "Hesab yaradılır…";
 
   const email = document.getElementById("email").value.trim().toLowerCase();
   const password = document.getElementById("password").value;
+  const linkedinUrl = document.getElementById("linkedinUrl").value.trim();
+
+  if (!linkedinUrl.toLowerCase().includes("linkedin.com")) {
+    errBox.textContent = "LinkedIn linki linkedin.com domenində olmalıdır.";
+    errBox.style.display = "block";
+    btn.disabled = false; btn.textContent = "Hesab yarat";
+    return;
+  }
 
   const { error } = await sbAuth.auth.signUp({
     email, password,
@@ -85,14 +122,21 @@ document.getElementById("regForm").addEventListener("submit", async (e) => {
         current_title: document.getElementById("currentTitle").value.trim(),
         years_experience: document.getElementById("yearsExperience").value,
         industry: document.getElementById("industry").value.trim(),
-        linkedin_url: document.getElementById("linkedinUrl").value.trim(),
+        linkedin_url: linkedinUrl,
+        company: document.getElementById("company").value.trim(),
+        bio: document.getElementById("bio").value.trim(),
+        cv_url: document.getElementById("cvUrl").value.trim(),
+        certificates: document.getElementById("certificates").value.trim(),
+        portfolio_url: document.getElementById("portfolioUrl").value.trim(),
+        skills: document.getElementById("skills").value.trim(),
+        personal_website: document.getElementById("personalWebsite").value.trim(),
       },
     },
   });
 
-  btn.disabled = false; btn.textContent = "Create account";
+  btn.disabled = false; btn.textContent = "Hesab yarat";
   if (error) {
-    errBox.textContent = error.message || "Registration failed. Please try again.";
+    errBox.textContent = error.message || "Qeydiyyat uğursuz oldu. Yenidən cəhd edin.";
     errBox.style.display = "block";
     return;
   }
@@ -101,6 +145,5 @@ document.getElementById("regForm").addEventListener("submit", async (e) => {
   document.getElementById("doneCard").style.display = "block";
 });
 </script>
-<script src="/js/particle-bg.js"></script>
 </body>
 </html>

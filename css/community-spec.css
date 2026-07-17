@@ -3,9 +3,9 @@
  * css/tokens-spec.css-dən sonra qoşulur, ondan oxuyur.
  *
  * Faza 3-də dashboard.html üçün yaranıb (əvvəlki adı: dashboard-spec.css),
- * Faza 3.1-3.3-də community/*.html-in ortaq --spec- bazasına
+ * Faza 3.1-3.3 və Faza 4-də community/*.html-in ortaq --spec- bazasına
  * genişləndirilib — community.css-in köhnə temada oynadığı rolun --spec-
- * ekvivalenti. Hələ köçürülməmiş səhifələr (register-*, test) köhnə
+ * ekvivalenti. Hələ köçürülməmiş səhifələr (test, test-results) köhnə
  * css/community.css-də qalır — MIGRATION-PLAN.md-yə görə.
  *
  * Bütün community səhifələri üçün lazım olan minimal, ortaq komponent
@@ -37,6 +37,39 @@ body {
   display: inline-block;
   margin-bottom: 20px;
 }
+
+.badge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: var(--spec-signal-wash);
+  border: 1px solid var(--spec-signal);
+  border-radius: 20px;
+  color: var(--spec-signal-ink);
+  font-family: var(--spec-ff-m);
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+.role-grid { display: grid; gap: 14px; }
+.role-card {
+  background: var(--spec-ink-2);
+  border: 1px solid var(--spec-line);
+  border-radius: var(--spec-r);
+  box-shadow: var(--spec-sh-xs);
+  padding: 20px 22px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s, transform .15s;
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+.role-card:hover { border-color: var(--spec-signal); transform: translateY(-2px); }
+.role-card:focus-visible { outline: 2px solid var(--spec-signal); outline-offset: 2px; }
+.role-card h3 { margin: 0 0 6px; font-family: var(--spec-ff-d); font-size: 16px; font-weight: 600; color: var(--spec-chalk); }
+.role-card p { margin: 0; font-family: var(--spec-ff-b); font-size: 13.5px; color: var(--spec-muted); }
+.role-card.disabled { cursor: default; opacity: .55; }
+.role-card.disabled:hover { border-color: var(--spec-line); transform: none; }
 
 .card {
   background: var(--spec-ink-2);

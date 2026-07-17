@@ -1,61 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="az">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Register — itba.az</title>
-<link rel="stylesheet" href="/css/community.css">
+<title>Qeydiyyat — itba.az</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens-spec.css">
+<link rel="stylesheet" href="/css/community-spec.css">
 </head>
 <body>
-<canvas id="particle-bg" aria-hidden="true"></canvas>
 <div class="page">
-  <div class="container">
-    <a href="/index.html" class="site-brand">← itba.az</a>
-    <div class="card" id="formCard">
-      <span class="badge">Exploring a career change</span>
-      <h1 style="font-size:26px">Create your account</h1>
-      <p class="subhead">A few questions help us tailor the career test and what we show you next.</p>
-      <form id="regForm">
-        <div class="field">
-          <label for="fullName">Full name <span class="required">*</span></label>
-          <input id="fullName" type="text" required autocomplete="name">
-        </div>
-        <div class="field">
-          <label for="email">Email <span class="required">*</span></label>
-          <input id="email" type="email" required autocomplete="email">
-        </div>
-        <div class="field">
-          <label for="password">Password <span class="required">*</span></label>
-          <input id="password" type="password" required minlength="8" autocomplete="new-password">
-          <p class="mini-link" style="text-align:left;margin-top:6px">At least 8 characters.</p>
-        </div>
-        <div class="field">
-          <label for="currentOccupation">Current occupation (optional)</label>
-          <input id="currentOccupation" type="text" placeholder="e.g. Customer support, Banking operations">
-        </div>
-        <div class="field">
-          <label for="motivation">Why IT Business Analysis? (optional)</label>
-          <textarea id="motivation" placeholder="What's drawing you toward this field?"></textarea>
-        </div>
-        <div class="field">
-          <label for="timeline">Timeline</label>
-          <select id="timeline">
-            <option value="exploring">Just exploring</option>
-            <option value="within_6_months">Within 6 months</option>
-            <option value="actively_looking">Actively looking now</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-primary" id="submitBtn">Create account</button>
-        <div class="err" id="errBox" style="display:none" role="alert"></div>
-      </form>
-      <div class="mini-link"><a href="register.html">← Not the right description? Pick again</a></div>
-    </div>
-    <div class="card" id="doneCard" style="display:none;text-align:center">
-      <h1 style="font-size:24px">Check your email</h1>
-      <p class="subhead" style="margin:0 auto">We sent a confirmation link to <strong id="doneEmail"></strong>. Click it to activate your account, then log in.</p>
-      <a href="login.html" class="btn btn-primary" style="margin-top:8px">Go to login</a>
-    </div>
+  <a href="/index.html" class="site-brand">← itba.az</a>
+  <div class="card" id="formCard">
+    <span class="badge">Karyera dəyişikliyi</span>
+    <h1>Hesab yaradın</h1>
+    <p class="subhead">Bir neçə sual karyera testini və növbəti addımları sizə uyğunlaşdırmağa kömək edir.</p>
+    <form id="regForm">
+      <div class="field">
+        <label for="fullName">Tam ad <span class="required">*</span></label>
+        <input id="fullName" type="text" required autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="email">Email <span class="required">*</span></label>
+        <input id="email" type="email" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="password">Şifrə <span class="required">*</span></label>
+        <input id="password" type="password" required minlength="8" autocomplete="new-password">
+        <p class="mini-link" style="margin-top:6px">Ən azı 8 simvol.</p>
+      </div>
+      <div class="field">
+        <label for="phone">Telefon (opsional)</label>
+        <input id="phone" type="tel" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label for="currentOccupation">Hazırkı vəzifə (opsional)</label>
+        <input id="currentOccupation" type="text" placeholder="məs. Müştəri xidməti, Bank əməliyyatları">
+      </div>
+      <div class="field">
+        <label for="linkedinUrl">LinkedIn (opsional)</label>
+        <input id="linkedinUrl" type="url" placeholder="https://linkedin.com/in/…" autocomplete="url">
+      </div>
+      <div class="field">
+        <label for="country">Ölkə (opsional)</label>
+        <input id="country" type="text" placeholder="məs. Azərbaycan">
+      </div>
+      <div class="field">
+        <label for="experienceYears">Təcrübə, il (opsional)</label>
+        <input id="experienceYears" type="number" min="0">
+      </div>
+      <div class="field">
+        <label for="motivation">Niyə IT Biznes Analitikası? (opsional)</label>
+        <textarea id="motivation" placeholder="Sizi bu sahəyə cəlb edən nədir?"></textarea>
+      </div>
+      <div class="field">
+        <label for="timeline">Zaman qrafiki</label>
+        <select id="timeline">
+          <option value="exploring">Hələ araşdırıram</option>
+          <option value="within_6_months">6 ay ərzində</option>
+          <option value="actively_looking">Hazırda aktiv axtarıram</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary" id="submitBtn">Hesab yarat</button>
+      <div class="err" id="errBox" style="display:none" role="alert"></div>
+    </form>
+    <p class="mini-link"><a href="register.html">← Uyğun təsvir deyil? Yenidən seçin</a></p>
+  </div>
+  <div class="card" id="doneCard" style="display:none;text-align:center">
+    <h1>Emailinizi yoxlayın</h1>
+    <p class="subhead" style="margin:0 auto">Təsdiq linkini <strong id="doneEmail"></strong> ünvanına göndərdik. Hesabınızı aktivləşdirmək üçün linkə klikləyin, sonra giriş edin.</p>
+    <a href="login.html" class="btn btn-primary" style="margin-top:8px">Girişə keç</a>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -69,7 +86,7 @@ document.getElementById("regForm").addEventListener("submit", async (e) => {
   const errBox = document.getElementById("errBox");
   const btn = document.getElementById("submitBtn");
   errBox.style.display = "none";
-  btn.disabled = true; btn.textContent = "Creating account…";
+  btn.disabled = true; btn.textContent = "Hesab yaradılır…";
 
   const email = document.getElementById("email").value.trim().toLowerCase();
   const password = document.getElementById("password").value;
@@ -84,13 +101,17 @@ document.getElementById("regForm").addEventListener("submit", async (e) => {
         current_occupation: document.getElementById("currentOccupation").value.trim(),
         motivation: document.getElementById("motivation").value.trim(),
         timeline: document.getElementById("timeline").value,
+        phone: document.getElementById("phone").value.trim(),
+        linkedin_url: document.getElementById("linkedinUrl").value.trim(),
+        country: document.getElementById("country").value.trim(),
+        experience_years: document.getElementById("experienceYears").value,
       },
     },
   });
 
-  btn.disabled = false; btn.textContent = "Create account";
+  btn.disabled = false; btn.textContent = "Hesab yarat";
   if (error) {
-    errBox.textContent = error.message || "Registration failed. Please try again.";
+    errBox.textContent = error.message || "Qeydiyyat uğursuz oldu. Yenidən cəhd edin.";
     errBox.style.display = "block";
     return;
   }
@@ -99,6 +120,5 @@ document.getElementById("regForm").addEventListener("submit", async (e) => {
   document.getElementById("doneCard").style.display = "block";
 });
 </script>
-<script src="/js/particle-bg.js"></script>
 </body>
 </html>
