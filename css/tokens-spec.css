@@ -1,0 +1,63 @@
+/*
+ * itba.az — SPEC-canonical design tokens (docs/ITBA-SPEC.md §14, Qərar 2).
+ *
+ * Bu, layihədəki 4 paralel dizayn sistemindən biridir (marketing:
+ * css/site.css, daxili alətlər: admin.html/exam.html-in inline <style>-i,
+ * bu fayl: SPEC §14 canonical). Hamısı bərə `--ink`/`--muted`/`--line`
+ * kimi adlardan istifadə edir, fərqli mənalarla — ona görə bu fayl
+ * `--spec-` prefiksi ilə namespace-lənib: `docs/ITBA-SPEC.md`-ə birbaşa
+ * işarə edir və heç bir mövcud sistemlə kolliziya etmir.
+ *
+ * Hazırda İNERT-dir — heç bir HTML səhifəsinə <link> edilməyib (MIGRATION-PLAN.md
+ * Faza 2). Gələcək modullar qoşulmaq üçün:
+ *   <link rel="stylesheet" href="/css/tokens-spec.css">
+ *
+ * QEYD (Faza 3 üçün): real səhifəyə qoşulanda şrift yükləməsini bu faylın
+ * @import-ına etibar etmədən, səhifənin öz <head>-ində ayrıca <link>
+ * kimi təkrarlayın (render performansı üçün — @import əlavə round-trip
+ * yaradır). Aşağıdakı @import yalnız faylın özü-özünə kifayət etməsi
+ * üçündür.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* səthlər — açıq tema */
+  --spec-ink:     #F3F5F9;   /* səhifə fonu */
+  --spec-ink-2:   #FFFFFF;   /* kart/panel fonu */
+  --spec-ink-3:   #EBEEF4;   /* dərin/ikinci səth */
+  --spec-line:    #E2E7EF;   /* sərhəd */
+  --spec-line-2:  #CFD6E1;   /* qabarıq sərhəd */
+
+  /* mətn */
+  --spec-chalk: #0F1729;   /* əsas mətn — tünd */
+  --spec-soft:  #3A4658;   /* yarı-qabarıq mətn */
+  --spec-muted: #6A7688;   /* ikinci dərəcəli mətn */
+
+  /* vurğu — indiqo */
+  --spec-signal:      #4F46E5;   /* əsas vurğu / CTA */
+  --spec-signal-ink:  #4338CA;   /* tünd variant — mətn/ikon */
+  --spec-signal-wash: #EEF0FE;   /* açıq fon variantı */
+
+  /* status rəngləri (hər biri wash ilə) */
+  --spec-teal:       #0D9488;   --spec-teal-wash:  #E4F5F1;   /* uğur / müsbət */
+  --spec-amber:      #C2760A;   --spec-amber-wash: #FCF2E1;   /* diqqət / gözləmə */
+  --spec-red:        #E11D48;   --spec-red-wash:   #FDE8EE;   /* xəta / rədd */
+
+  /* radius */
+  --spec-r:    14px;
+  --spec-r-sm: 9px;
+  --spec-r-xs: 6px;
+  --spec-maxw: 1180px;
+
+  /* kölgələr */
+  --spec-sh-xs: 0 1px 2px rgba(15,23,41,.05);
+  --spec-sh-sm: 0 2px 6px rgba(15,23,41,.06), 0 1px 2px rgba(15,23,41,.04);
+  --spec-sh-md: 0 14px 32px -12px rgba(15,23,41,.16), 0 4px 10px -4px rgba(15,23,41,.06);
+  --spec-sh-lg: 0 30px 70px -20px rgba(15,23,41,.24);
+
+  /* şriftlər */
+  --spec-ff-d: "Space Grotesk", system-ui, sans-serif;   /* başlıqlar, KPI, logo */
+  --spec-ff-b: "Inter", system-ui, sans-serif;            /* əsas mətn, düymələr, formalar */
+  --spec-ff-m: "JetBrains Mono", ui-monospace, monospace; /* etiket, meta, kod, status */
+}
