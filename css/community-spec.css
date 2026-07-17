@@ -26,6 +26,7 @@ body {
 }
 
 .page { max-width: 720px; margin: 0 auto; padding: 32px 20px 60px; }
+.page.wide { max-width: 960px; }
 
 .site-brand {
   font-family: var(--spec-ff-d);
@@ -93,6 +94,8 @@ h3 { font-family: var(--spec-ff-d); font-size: 17px; font-weight: 600; margin: 0
 .mini-link { font-family: var(--spec-ff-b); font-size: 13px; color: var(--spec-muted); }
 .mini-link a { color: var(--spec-signal); text-decoration: none; }
 .mini-link a:hover { text-decoration: underline; }
+
+.retry-link { cursor: pointer; color: var(--spec-signal); text-decoration: underline; }
 
 .note { font-family: var(--spec-ff-m); font-size: 11.5px; color: var(--spec-muted); margin-top: 14px; line-height: 1.55; }
 

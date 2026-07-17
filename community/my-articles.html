@@ -1,28 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="az">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>My articles — itba.az</title>
-<link rel="stylesheet" href="/css/community.css">
+<title>Məqalələrim — itba.az</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens-spec.css">
+<link rel="stylesheet" href="/css/community-spec.css">
 </head>
 <body>
-<canvas id="particle-bg" aria-hidden="true"></canvas>
-<div class="page">
-  <div class="container-wide">
-    <a href="/index.html" class="site-brand">← itba.az</a>
-    <p class="mini-link" style="text-align:left;margin:-10px 0 10px"><a href="dashboard.html">← Dashboard</a></p>
-    <div class="card" id="loadingCard">
-      <p class="subhead" style="margin:0">Loading…</p>
+<div class="page wide">
+  <a href="/index.html" class="site-brand">← itba.az</a>
+  <p class="mini-link" style="margin:-10px 0 16px"><a href="dashboard.html">← Dashboard</a></p>
+  <div class="card" id="loadingCard">
+    <p class="subhead">Yüklənir…</p>
+  </div>
+  <div class="card" id="mainCard" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <h1 style="margin:0">Məqalələrim</h1>
+      <a href="write-article.html" class="btn btn-primary">Yeni məqalə yaz</a>
     </div>
-    <div class="card" id="mainCard" style="display:none">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-        <h1 style="font-size:24px;margin:0">My articles</h1>
-        <a href="write-article.html" class="btn btn-primary" style="width:auto">Write a new article</a>
-      </div>
-      <div class="article-list" id="articleList" style="margin-top:20px"></div>
-    </div>
+    <div id="articleList" style="margin-top:18px"></div>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -31,10 +32,11 @@
 <script>
 const STATUS_LABEL = {
   draft: "Draft",
-  pending_review: "Pending review",
-  published: "Published",
-  rejected: "Rejected",
+  pending_review: "Gözləyir",
+  published: "Dərc olunub",
+  rejected: "Rədd edilib",
 };
+const STATUS_ST = { draft: "", pending_review: "warn", published: "ok", rejected: "bad" };
 
 async function loadArticles() {
   const session = await requireSession();
@@ -49,25 +51,25 @@ async function loadArticles() {
 
   const list = document.getElementById("articleList");
   if (error) {
-    list.innerHTML = '<p class="state-note warn" role="alert">Couldn\'t load your articles. Please check your connection. ' +
-      '<span class="retry-link" id="retryLoadArticles">Try again</span></p>';
+    list.innerHTML = '<div class="err" role="alert">Məqalələriniz yüklənmədi. İnternet bağlantınızı yoxlayın. ' +
+      '<span class="retry-link" id="retryLoadArticles">Yenidən cəhd edin</span></div>';
     document.getElementById("retryLoadArticles").addEventListener("click", loadArticles);
   } else if (!articles || articles.length === 0) {
-    list.innerHTML = '<p class="state-note" role="status">You haven\'t written anything yet — use "Write a new article" above to get started.</p>';
+    list.innerHTML = '<p class="subhead" role="status">Hələ heç nə yazmamısınız — yuxarıdakı "Yeni məqalə yaz" düyməsi ilə başlayın.</p>';
   } else {
     list.innerHTML = articles.map((a) => {
       const date = new Date(a.updated_at).toLocaleDateString();
       const note = a.status === "rejected" && a.rejection_note
-        ? '<div class="mini-link" style="margin:4px 0 0">Feedback: ' + esc(a.rejection_note) + '</div>'
+        ? '<br>Rəy: ' + esc(a.rejection_note)
         : "";
-      return '<div class="article-row">' +
+      return '<div class="row">' +
         '<div>' +
-          '<h3>' + esc(a.title) + '</h3>' +
-          '<div class="mini-link" style="margin:0">Updated ' + date + note + '</div>' +
+          '<b>' + esc(a.title) + '</b>' +
+          '<small>Yeniləndi ' + date + note + '</small>' +
         '</div>' +
         '<div style="display:flex;align-items:center;gap:10px">' +
-          '<span class="pill-status ' + a.status + '">' + STATUS_LABEL[a.status] + '</span>' +
-          '<a href="write-article.html?id=' + a.id + '" class="mini-link">Edit</a>' +
+          '<span class="st ' + STATUS_ST[a.status] + '">' + STATUS_LABEL[a.status] + '</span>' +
+          '<a href="write-article.html?id=' + a.id + '" class="mini-link">Redaktə et</a>' +
         '</div>' +
       '</div>';
     }).join("");
@@ -78,6 +80,5 @@ async function loadArticles() {
 }
 loadArticles();
 </script>
-<script src="/js/particle-bg.js"></script>
 </body>
 </html>
