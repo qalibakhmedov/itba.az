@@ -1,4 +1,4 @@
--- community/ — Phase 1 schema: registration, roles, career test.
+-- community/ — Auth foundation (Faza 1.5): registration, roles, career test.
 --
 -- Adds new tables to the same Supabase project schema.sql (in this same
 -- folder) already uses for exam_progress, applications, page_visits,
@@ -6,6 +6,12 @@
 --
 -- Run this file, then supabase/seed-test-questions.sql, in the Supabase
 -- SQL Editor before testing community/*.html.
+--
+-- Role model: potential/professional/moderator/admin (docs/ITBA-SPEC.md
+-- §3). The original build used a 6-role model (admin/ba_professional/
+-- potential_ba/junior_ba/teacher/enrolled_student); migrated to the SPEC
+-- model in Faza 1.5 (MIGRATION-PLAN.md) — `profiles` was empty at
+-- migration time, so no data backfill was needed.
 
 -- ============================================================
 -- profiles — one row per authenticated user, created ONLY by the
@@ -18,7 +24,7 @@
 create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email text not null,
-  role text not null check (role in ('admin','ba_professional','potential_ba','junior_ba','teacher','enrolled_student')),
+  role text not null check (role in ('potential','professional','moderator','admin')),
   full_name text,
   verified boolean not null default false,
   created_at timestamptz default now()
@@ -29,48 +35,45 @@ create policy "admin read" on profiles for select
   using (auth.jwt() ->> 'email' = 'qalib.akhmedov@gmail.com');
 create policy "admin update" on profiles for update
   using (auth.jwt() ->> 'email' = 'qalib.akhmedov@gmail.com');
--- admin update covers manually flipping `verified` for ba_professional
--- accounts via the Table Editor until Phase 2 builds a real verification
--- queue UI (see this repo's README, "Known, accepted tradeoffs").
+-- admin update covers manually flipping `verified` for professional
+-- accounts via the Table Editor until a real verification queue UI
+-- exists (see this repo's README, "Known, accepted tradeoffs").
 
 -- ============================================================
--- potential_ba_profiles / junior_ba_profiles / ba_professional_profiles
+-- potential_profiles / professional_profiles
 -- ============================================================
--- Same shape of reasoning for all three: rows are created only by the
+-- Same shape of reasoning for both: rows are created only by the
 -- trigger (security definer, bypasses RLS) — no INSERT policy on
--- purpose. Read is own-row + admin only; no self-edit UI in Phase 1.
-create table if not exists potential_ba_profiles (
+-- purpose. Read is own-row + admin only; no self-edit UI yet.
+--
+-- potential_profiles merges the original potential_ba_profiles and
+-- junior_ba_profiles shapes (both legacy roles map to `potential` —
+-- DECISIONS.md Qərar 1): every column is optional, populated by
+-- whichever registration form the user actually filled in.
+create table if not exists potential_profiles (
   id uuid primary key references profiles(id) on delete cascade,
   current_occupation text,
   motivation text,
-  timeline text
-);
-alter table potential_ba_profiles enable row level security;
-create policy "own read" on potential_ba_profiles for select using (auth.uid() = id);
-create policy "admin read" on potential_ba_profiles for select
-  using (auth.jwt() ->> 'email' = 'qalib.akhmedov@gmail.com');
-
-create table if not exists junior_ba_profiles (
-  id uuid primary key references profiles(id) on delete cascade,
+  timeline text,
   education_level text,
   experience_months int,
   interests text
 );
-alter table junior_ba_profiles enable row level security;
-create policy "own read" on junior_ba_profiles for select using (auth.uid() = id);
-create policy "admin read" on junior_ba_profiles for select
+alter table potential_profiles enable row level security;
+create policy "own read" on potential_profiles for select using (auth.uid() = id);
+create policy "admin read" on potential_profiles for select
   using (auth.jwt() ->> 'email' = 'qalib.akhmedov@gmail.com');
 
-create table if not exists ba_professional_profiles (
+create table if not exists professional_profiles (
   id uuid primary key references profiles(id) on delete cascade,
   current_title text,
   years_experience int,
   industry text,
   linkedin_url text
 );
-alter table ba_professional_profiles enable row level security;
-create policy "own read" on ba_professional_profiles for select using (auth.uid() = id);
-create policy "admin read" on ba_professional_profiles for select
+alter table professional_profiles enable row level security;
+create policy "own read" on professional_profiles for select using (auth.uid() = id);
+create policy "admin read" on professional_profiles for select
   using (auth.jwt() ->> 'email' = 'qalib.akhmedov@gmail.com');
 
 -- ============================================================
@@ -82,13 +85,14 @@ create policy "admin read" on ba_professional_profiles for select
 -- after signup, so a closed tab mid-registration can never leave an
 -- orphaned auth.users row with no profile.
 --
--- SECURITY: chosen_role is whitelisted to exactly the three self-serve
+-- SECURITY: chosen_role is whitelisted to exactly the two self-serve
 -- roles, unconditionally — never trust raw_user_meta_data->>'role'
 -- directly. A user can call Supabase's public signUp() API directly
 -- (the anon key is public by design) with arbitrary metadata, including
--- role:"admin". Restricting the UI to 3 choices only stops the UI path;
+-- role:"admin". Restricting the UI to 2 choices only stops the UI path;
 -- this whitelist is what actually closes the escalation path, regardless
--- of how signUp() was called.
+-- of how signUp() was called. admin/moderator are never self-serve —
+-- assigned only via the Table Editor.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -97,26 +101,33 @@ as $$
 declare
   meta jsonb := new.raw_user_meta_data;
   chosen_role text := case
-    when meta->>'role' in ('potential_ba','junior_ba','ba_professional') then meta->>'role'
-    else 'potential_ba'
+    when meta->>'role' in ('potential','professional') then meta->>'role'
+    else 'potential'
   end;
+  is_verified boolean := (chosen_role <> 'professional');
 begin
   insert into public.profiles (id, email, role, full_name, verified, created_at)
-  values (
-    new.id, new.email, chosen_role, meta->>'full_name',
-    (chosen_role <> 'ba_professional'), -- ba_professional starts unverified
-    now()
-  );
+  values (new.id, new.email, chosen_role, meta->>'full_name', is_verified, now());
 
-  if chosen_role = 'potential_ba' then
-    insert into public.potential_ba_profiles (id, current_occupation, motivation, timeline)
-    values (new.id, meta->>'current_occupation', meta->>'motivation', meta->>'timeline');
-  elsif chosen_role = 'junior_ba' then
-    insert into public.junior_ba_profiles (id, education_level, experience_months, interests)
-    values (new.id, meta->>'education_level', nullif(meta->>'experience_months','')::int, meta->>'interests');
-  elsif chosen_role = 'ba_professional' then
-    insert into public.ba_professional_profiles (id, current_title, years_experience, industry, linkedin_url)
-    values (new.id, meta->>'current_title', nullif(meta->>'years_experience','')::int, meta->>'industry', meta->>'linkedin_url');
+  if chosen_role = 'potential' then
+    insert into public.potential_profiles (
+      id, current_occupation, motivation, timeline,
+      education_level, experience_months, interests
+    )
+    values (
+      new.id,
+      meta->>'current_occupation', meta->>'motivation', meta->>'timeline',
+      meta->>'education_level', nullif(meta->>'experience_months', '')::int, meta->>'interests'
+    );
+  elsif chosen_role = 'professional' then
+    insert into public.professional_profiles (
+      id, current_title, years_experience, industry, linkedin_url
+    )
+    values (
+      new.id,
+      meta->>'current_title', nullif(meta->>'years_experience', '')::int,
+      meta->>'industry', meta->>'linkedin_url'
+    );
   end if;
 
   return new;

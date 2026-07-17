@@ -79,7 +79,7 @@ document.getElementById("regForm").addEventListener("submit", async (e) => {
     options: {
       emailRedirectTo: location.origin + "/community/auth-callback.html",
       data: {
-        role: "potential_ba",
+        role: "potential",
         full_name: document.getElementById("fullName").value.trim(),
         current_occupation: document.getElementById("currentOccupation").value.trim(),
         motivation: document.getElementById("motivation").value.trim(),

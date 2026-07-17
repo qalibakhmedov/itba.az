@@ -30,12 +30,12 @@ create policy "public read published" on articles for select using (status = 'pu
 create policy "own read" on articles for select using (auth.uid() = author_id);
 create policy "admin read" on articles for select using (is_admin());
 
--- INSERT: only verified ba_professional authors, and only ever as a
+-- INSERT: only verified professional authors, and only ever as a
 -- draft — nothing can be inserted pre-published.
 create policy "author insert" on articles for insert
   with check (
     auth.uid() = author_id and status = 'draft'
-    and exists (select 1 from profiles where id = auth.uid() and role = 'ba_professional' and verified = true)
+    and exists (select 1 from profiles where id = auth.uid() and role = 'professional' and verified = true)
   );
 
 -- UPDATE (own): `using` covers the OLD row (author may touch their own
