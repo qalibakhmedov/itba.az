@@ -1,15 +1,15 @@
 /*
- * community/dashboard.html — SPEC §14 (--spec- tokenləri) sisteminə
- * köçürülmüş stil. css/tokens-spec.css-dən sonra qoşulur, ondan oxuyur.
+ * community/*.html üçün ortaq SPEC §14 (--spec- tokenləri) stili.
+ * css/tokens-spec.css-dən sonra qoşulur, ondan oxuyur.
  *
- * Bu, layihədə --spec- tokenlərini real istifadə edən İLK səhifədir
- * (Faza 3). Digər community/*.html səhifələri (login, my-articles,
- * write-article, test) hələ köhnə css/community.css tünd temasındadır —
- * bu, bilərəkdən, keçid dövrünün gözlənilən nəticəsidir, sonrakı
- * fazalarda həmin səhifələr də köçürülə bilər.
+ * Faza 3-də dashboard.html üçün yaranıb (əvvəlki adı: dashboard-spec.css),
+ * Faza 3.1-də community/*.html-in ortaq --spec- bazasına genişləndirilib —
+ * community.css-in köhnə temada oynadığı rolun --spec- ekvivalenti.
+ * Hələ köçürülməmiş səhifələr (my-articles, write-article, test) köhnə
+ * css/community.css-də qalır — MIGRATION-PLAN.md-dəki Faza 3.2/3.3-ə görə.
  *
- * Yalnız bu səhifə üçün lazım olan minimal komponent dəsti —
- * reference/itba.html-in tam CSS-i deyil.
+ * Bütün community səhifələri üçün lazım olan minimal, ortaq komponent
+ * dəsti — reference/itba.html-in tam CSS-i deyil.
  */
 
 * { box-sizing: border-box; }
@@ -97,6 +97,53 @@ h3 { font-family: var(--spec-ff-d); font-size: 17px; font-weight: 600; margin: 0
 .note { font-family: var(--spec-ff-m); font-size: 11.5px; color: var(--spec-muted); margin-top: 14px; line-height: 1.55; }
 
 :focus-visible { outline: 2px solid var(--spec-signal); outline-offset: 2px; }
+
+/* --- Formalar (login, register, write-article və s. üçün ortaq) --- */
+label {
+  display: block;
+  font-family: var(--spec-ff-m);
+  font-size: 11px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--spec-muted);
+  margin-bottom: 7px;
+  font-weight: 500;
+}
+.field { margin-bottom: 16px; }
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="url"],
+select,
+textarea {
+  width: 100%;
+  background: var(--spec-ink-2);
+  border: 1px solid var(--spec-line);
+  color: var(--spec-chalk);
+  padding: 11px 13px;
+  border-radius: var(--spec-r-sm);
+  font-family: var(--spec-ff-b);
+  font-size: 14px;
+}
+textarea { resize: vertical; min-height: 90px; }
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--spec-signal);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+input::placeholder, textarea::placeholder { color: var(--spec-muted); }
+
+.err {
+  margin-top: 14px;
+  font-family: var(--spec-ff-b);
+  font-size: 13.5px;
+  color: var(--spec-red);
+  background: var(--spec-red-wash);
+  border: 1px solid var(--spec-red);
+  border-radius: var(--spec-r-sm);
+  padding: 10px 14px;
+}
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
