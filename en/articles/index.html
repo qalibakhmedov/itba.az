@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Articles — itba.az</title>
-<meta name="description" content="Articles written by the IT Business Analysis community will be here soon.">
+<meta name="description" content="Articles written by the IT Business Analysis community: AI, tools, practical case studies, and industry news.">
 <link rel="canonical" href="https://itba.az/en/articles/">
 <link rel="alternate" hreflang="az" href="https://itba.az/articles/">
 <link rel="alternate" hreflang="en" href="https://itba.az/en/articles/">
@@ -12,11 +12,11 @@
 <link rel="alternate" hreflang="x-default" href="https://itba.az/articles/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Articles — itba.az">
-<meta property="og:description" content="Articles written by the IT Business Analysis community will be here soon.">
+<meta property="og:description" content="Articles written by the IT Business Analysis community: AI, tools, practical case studies, and industry news.">
 <meta property="og:url" content="https://itba.az/en/articles/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Articles — itba.az">
-<meta name="twitter:description" content="Articles written by the IT Business Analysis community will be here soon.">
+<meta name="twitter:description" content="Articles written by the IT Business Analysis community: AI, tools, practical case studies, and industry news.">
 <link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
@@ -53,10 +53,49 @@
 <section class="content-page">
   <div class="container">
     <span class="badge">Articles</span>
-    <h2 class="section-title-left">No articles published yet</h2>
-    <p class="state-note" role="status">The first articles, written by community members and reviewed by an admin, will appear here once published.</p>
+    <h2 class="section-title-left">All articles</h2>
+    <div class="category-pills">
+      <a href="/en/articles/" class="cat-pill active">All</a>
+      <a href="/en/articles/category/ai/" class="cat-pill">AI</a>
+      <a href="/en/articles/category/tools/" class="cat-pill">IT BA Tools</a>
+      <a href="/en/articles/category/case_studies/" class="cat-pill">Practical Case Studies / Real Events</a>
+      <a href="/en/articles/category/news/" class="cat-pill">Industry News</a>
+    </div>
+    <input type="search" id="articleSearch" class="article-search" placeholder="Search articles…" aria-label="Search articles…">
+    <p id="articleResultsCount" class="subhead" style="display:none;margin-bottom:16px" aria-live="polite"></p>
+    <div class="article-grid" id="articleGrid">
+      <a class="card article-card" href="/en/articles/test-meqale/">
+  <span class="card-label">AI</span>
+  <h3>Test Məqaləsi</h3>
+  <p>Bu, M.6 tipoqrafiya testi üçün nümunə məqalədir.</p>
+  <div class="card-info">July 17, 2026</div>
+</a>
+    </div>
   </div>
 </section>
+<script>
+(function () {
+  var input = document.getElementById("articleSearch");
+  var countEl = document.getElementById("articleResultsCount");
+  var cards = Array.prototype.slice.call(document.querySelectorAll("#articleGrid .article-card"));
+  if (!cards.length) return;
+  var suffix = "articles shown";
+  function updateCount() {
+    var visible = cards.filter(function (c) { return c.style.display !== "none"; }).length;
+    countEl.style.display = "block";
+    countEl.textContent = visible + " / " + cards.length + " " + suffix;
+  }
+  input.addEventListener("input", function () {
+    var q = input.value.trim().toLowerCase();
+    cards.forEach(function (card) {
+      var text = card.textContent.toLowerCase();
+      card.style.display = !q || text.indexOf(q) !== -1 ? "" : "none";
+    });
+    updateCount();
+  });
+  updateCount();
+})();
+</script>
 <footer>
   <div class="container">
     <p>© 2025 itba.az – IT Business Analysis Academy</p>
