@@ -3,10 +3,10 @@
  * css/tokens-spec.css-dən sonra qoşulur, ondan oxuyur.
  *
  * Faza 3-də dashboard.html üçün yaranıb (əvvəlki adı: dashboard-spec.css),
- * Faza 3.1-də community/*.html-in ortaq --spec- bazasına genişləndirilib —
- * community.css-in köhnə temada oynadığı rolun --spec- ekvivalenti.
- * Hələ köçürülməmiş səhifələr (my-articles, write-article, test) köhnə
- * css/community.css-də qalır — MIGRATION-PLAN.md-dəki Faza 3.2/3.3-ə görə.
+ * Faza 3.1-3.3-də community/*.html-in ortaq --spec- bazasına
+ * genişləndirilib — community.css-in köhnə temada oynadığı rolun --spec-
+ * ekvivalenti. Hələ köçürülməmiş səhifələr (register-*, test) köhnə
+ * css/community.css-də qalır — MIGRATION-PLAN.md-yə görə.
  *
  * Bütün community səhifələri üçün lazım olan minimal, ortaq komponent
  * dəsti — reference/itba.html-in tam CSS-i deyil.
@@ -137,6 +137,17 @@ input:focus, select:focus, textarea:focus {
 }
 input::placeholder, textarea::placeholder { color: var(--spec-muted); }
 
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%236A7688' stroke-width='2' fill='none' fill-rule='evenodd' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 38px;
+}
+
+.field label .required { color: var(--spec-red); }
+
 .err {
   margin-top: 14px;
   font-family: var(--spec-ff-b);
@@ -147,6 +158,64 @@ input::placeholder, textarea::placeholder { color: var(--spec-muted); }
   border-radius: var(--spec-r-sm);
   padding: 10px 14px;
 }
+
+.notice {
+  margin-top: 14px;
+  font-family: var(--spec-ff-b);
+  font-size: 13.5px;
+  color: var(--spec-muted);
+  background: var(--spec-ink-3);
+  border: 1px solid var(--spec-line);
+  border-radius: var(--spec-r-sm);
+  padding: 10px 14px;
+}
+
+/* Trix editor — hazırda yalnız write-article.html istifadə edir, köhnə
+   community.css-in özündə də (ayrıca fayl olmadan) saxladığı presedentə
+   uyğun burada saxlanılır. */
+trix-toolbar {
+  background: var(--spec-ink-3);
+  border: 1px solid var(--spec-line);
+  border-radius: var(--spec-r-sm) var(--spec-r-sm) 0 0;
+  padding: 8px;
+}
+trix-toolbar .trix-button-group {
+  border-color: var(--spec-line) !important;
+  margin-bottom: 0;
+}
+trix-toolbar .trix-button {
+  background: transparent !important;
+  color: var(--spec-chalk) !important;
+  border-color: var(--spec-line) !important;
+}
+trix-toolbar .trix-button.trix-active {
+  background: var(--spec-signal-wash) !important;
+}
+/* DİQQƏT: filter:invert(1) BURAYA QƏSDƏN ƏLAVƏ EDİLMİR. Trix-in toolbar
+   ikonları hardcoded fill="#000" (qara) SVG-dir, currentColor istifadə
+   etmir (bax köhnə css/community.css-in eyni qeydi). Köhnə TÜND toolbar
+   fonunda qara ikon görünmürdü, ona görə invert(1) ağa çevirirdi. Bu
+   --spec- toolbar fonu AÇIQDIR (--spec-ink-3) — qara ikonlar artıq təbii
+   olaraq görünəndir. invert(1) əlavə etsəniz, ikonlar YENİDƏN görünməz
+   olar (ağ-üstə-ağ). Toolbar fonu bir də tündə keçərsə, bu filtr geri
+   qaytarılmalıdır.
+   */
+trix-editor {
+  min-height: 260px;
+  background: var(--spec-ink-2);
+  border: 1px solid var(--spec-line);
+  border-top: none;
+  border-radius: 0 0 var(--spec-r-sm) var(--spec-r-sm);
+  color: var(--spec-chalk);
+  font-family: var(--spec-ff-b);
+  font-size: 14.5px;
+  padding: 14px 16px;
+}
+trix-editor:focus {
+  outline: 2px solid var(--spec-signal);
+  outline-offset: 1px;
+}
+trix-editor a { color: var(--spec-signal); }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }

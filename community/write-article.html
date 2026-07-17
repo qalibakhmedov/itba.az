@@ -1,69 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="az">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
-<title>Write an article — itba.az</title>
-<link rel="stylesheet" href="/css/community.css">
+<title>Məqalə yaz — itba.az</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens-spec.css">
+<link rel="stylesheet" href="/css/community-spec.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trix@2/dist/trix.css">
 </head>
 <body>
-<canvas id="particle-bg" aria-hidden="true"></canvas>
-<div class="page">
-  <div class="container-wide">
-    <a href="/index.html" class="site-brand">← itba.az</a>
-    <p class="mini-link" style="text-align:left;margin:-10px 0 10px"><a href="dashboard.html">← Dashboard</a> · <a href="my-articles.html">My articles</a></p>
-    <div class="card" id="loadingCard">
-      <p class="subhead" style="margin:0">Loading…</p>
-    </div>
-    <div class="card" id="notAllowedCard" style="display:none">
-      <h1 style="font-size:24px" id="notAllowedTitle"></h1>
-      <p class="subhead" id="notAllowedText" style="margin:0 0 16px"></p>
-      <a href="dashboard.html" class="btn btn-ghost" style="width:auto">Back to dashboard</a>
-    </div>
-    <div class="card" id="formCard" style="display:none">
-      <h1 style="font-size:24px" id="formTitle">Write an article</h1>
-      <p class="subhead">Saved as a draft until you submit it — nothing you write here is public until an admin approves it.</p>
-      <form id="articleForm">
-        <div class="field">
-          <label for="title">Title <span class="required">*</span></label>
-          <input id="title" type="text" required>
-        </div>
-        <div class="field">
-          <label for="dek">Short excerpt (optional)</label>
-          <textarea id="dek" placeholder="One or two sentences shown on the article list" style="min-height:60px"></textarea>
-        </div>
-        <div class="field">
-          <label for="category">Category <span class="required">*</span></label>
-          <select id="category" required>
-            <option value="ai">AI</option>
-            <option value="tools">IT BA Tools</option>
-            <option value="case_studies">Practical Case Studies / Real Events</option>
-            <option value="news">Industry News</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="tags">Tags (comma-separated, optional)</label>
-          <input id="tags" type="text" placeholder="e.g. requirements, agile, banking">
-        </div>
-        <div class="field">
-          <label for="coverImageUrl">Cover image URL (optional)</label>
-          <input id="coverImageUrl" type="url" placeholder="https://…">
-        </div>
-        <div class="field">
-          <label for="bodyInput">Content <span class="required">*</span></label>
-          <input id="bodyInput" type="hidden">
-          <trix-editor input="bodyInput" aria-label="Article content"></trix-editor>
-        </div>
-        <div class="btn-row">
-          <button type="submit" class="btn btn-ghost" id="saveDraftBtn">Save draft</button>
-          <button type="button" class="btn btn-primary" id="submitReviewBtn">Submit for review</button>
-        </div>
-        <div class="err" id="errBox" style="display:none" role="alert"></div>
-        <div class="notice" id="okBox" style="display:none" aria-live="polite"></div>
-      </form>
-    </div>
+<div class="page wide">
+  <a href="/index.html" class="site-brand">← itba.az</a>
+  <p class="mini-link" style="margin:-10px 0 16px"><a href="dashboard.html">← Dashboard</a> · <a href="my-articles.html">Məqalələrim</a></p>
+  <div class="card" id="loadingCard">
+    <p class="subhead">Yüklənir…</p>
+  </div>
+  <div class="card" id="notAllowedCard" style="display:none">
+    <h1 id="notAllowedTitle"></h1>
+    <p class="subhead" id="notAllowedText" style="margin:0 0 16px"></p>
+    <a href="dashboard.html" class="btn btn-ghost">Dashboard-a qayıt</a>
+  </div>
+  <div class="card" id="formCard" style="display:none">
+    <h1 id="formTitle">Məqalə yaz</h1>
+    <p class="subhead">Təqdim edənə qədər qaralama kimi saxlanılır — admin təsdiqləməyənə qədər heç kim görmür.</p>
+    <form id="articleForm">
+      <div class="field">
+        <label for="title">Başlıq <span class="required">*</span></label>
+        <input id="title" type="text" required>
+      </div>
+      <div class="field">
+        <label for="dek">Qısa xülasə (opsional)</label>
+        <textarea id="dek" placeholder="Məqalə siyahısında görünəcək bir-iki cümlə" style="min-height:60px"></textarea>
+      </div>
+      <div class="field">
+        <label for="category">Kateqoriya <span class="required">*</span></label>
+        <select id="category" required>
+          <option value="ai">AI</option>
+          <option value="tools">IT BA Alətləri</option>
+          <option value="case_studies">Praktik Nümunələr / Real Hadisələr</option>
+          <option value="news">Sahə Xəbərləri</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="tags">Teqlər (vergüllə ayrılmış, opsional)</label>
+        <input id="tags" type="text" placeholder="məs. tələblər, agile, bankçılıq">
+      </div>
+      <div class="field">
+        <label for="coverImageUrl">Üz şəkli URL-i (opsional)</label>
+        <input id="coverImageUrl" type="url" placeholder="https://…">
+      </div>
+      <div class="field">
+        <label for="bodyInput">Məzmun <span class="required">*</span></label>
+        <input id="bodyInput" type="hidden">
+        <trix-editor input="bodyInput" aria-label="Məqalə məzmunu"></trix-editor>
+      </div>
+      <div class="btn-row">
+        <button type="submit" class="btn btn-ghost" id="saveDraftBtn">Qaralama saxla</button>
+        <button type="button" class="btn btn-primary" id="submitReviewBtn">Təsdiqə göndər</button>
+      </div>
+      <div class="err" id="errBox" style="display:none" role="alert"></div>
+      <div class="notice" id="okBox" style="display:none" aria-live="polite"></div>
+    </form>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -115,23 +116,23 @@ async function init() {
     .maybeSingle();
 
   if (!profile) {
-    document.getElementById("notAllowedTitle").textContent = "Not available for your account";
-    document.getElementById("notAllowedText").textContent = "Writing articles is limited to verified IT BA professional accounts.";
+    document.getElementById("notAllowedTitle").textContent = "Hesabınız üçün əlçatan deyil";
+    document.getElementById("notAllowedText").textContent = "Məqalə yazmaq yalnız təsdiqlənmiş IT BA professional hesablar üçün mövcuddur.";
     document.getElementById("loadingCard").style.display = "none";
     document.getElementById("notAllowedCard").style.display = "block";
     return;
   }
   if (profile.role !== "professional") {
-    document.getElementById("notAllowedTitle").textContent = "Not available for your account";
-    document.getElementById("notAllowedText").textContent = "Writing articles is limited to verified IT BA professional accounts.";
+    document.getElementById("notAllowedTitle").textContent = "Hesabınız üçün əlçatan deyil";
+    document.getElementById("notAllowedText").textContent = "Məqalə yazmaq yalnız təsdiqlənmiş IT BA professional hesablar üçün mövcuddur.";
     document.getElementById("loadingCard").style.display = "none";
     document.getElementById("notAllowedCard").style.display = "block";
     return;
   }
   const me = mapLegacyRole(profile.role, profile.verified);
   if (caps(me).publish !== "review") {
-    document.getElementById("notAllowedTitle").textContent = "Your account is pending verification";
-    document.getElementById("notAllowedText").textContent = "An admin needs to verify your professional profile before you can publish articles. You'll be able to write once that's done — check back soon.";
+    document.getElementById("notAllowedTitle").textContent = "Hesabınız təsdiq gözləyir";
+    document.getElementById("notAllowedText").textContent = "Admin peşəkar profilinizi təsdiqləməlidir. Təsdiqləndikdən sonra yaza biləcəksiniz — tezliklə yoxlayın.";
     document.getElementById("loadingCard").style.display = "none";
     document.getElementById("notAllowedCard").style.display = "block";
     return;
@@ -149,7 +150,7 @@ async function init() {
       location.href = "my-articles.html";
       return;
     }
-    document.getElementById("formTitle").textContent = "Edit article";
+    document.getElementById("formTitle").textContent = "Məqaləni redaktə et";
     document.getElementById("title").value = article.title;
     document.getElementById("dek").value = article.dek || "";
     document.getElementById("category").value = article.category;
@@ -179,7 +180,7 @@ async function saveArticle(status) {
   const bodyHtml = DOMPurify.sanitize(document.getElementById("bodyInput").value);
 
   if (!title || !bodyHtml) {
-    errBox.textContent = "Title and content are required.";
+    errBox.textContent = "Başlıq və məzmun tələb olunur.";
     errBox.style.display = "block";
     return;
   }
@@ -207,10 +208,10 @@ async function saveArticle(status) {
       if (error) throw error;
       articleId = data.id;
     }
-    okBox.textContent = status === "draft" ? "Saved as draft." : "Submitted for admin review.";
+    okBox.textContent = status === "draft" ? "Qaralama kimi saxlanıldı." : "Admin təsdiqinə göndərildi.";
     okBox.style.display = "block";
   } catch (err) {
-    errBox.textContent = (err && err.message) || "Couldn't save the article. Please try again.";
+    errBox.textContent = (err && err.message) || "Məqalə saxlanmadı. Yenidən cəhd edin.";
     errBox.style.display = "block";
   }
 }
@@ -223,6 +224,5 @@ document.getElementById("submitReviewBtn").addEventListener("click", () => saveA
 
 init();
 </script>
-<script src="/js/particle-bg.js"></script>
 </body>
 </html>
